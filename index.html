@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电力系统及新能源学习园地</title>
+<style>
+  /* ====== 电网绿色调配色 ====== */
+  :root{
+    --green-900:#0a3d2e;
+    --green-800:#0f5c3f;
+    --green-700:#12764a;
+    --green-600:#16a34a;
+    --green-500:#22c55e;
+    --green-400:#4ade80;
+    --green-300:#86efac;
+    --green-200:#bbf7d0;
+    --green-100:#dcfce7;
+    --green-50:#f0fdf4;
+
+    --teal-700:#0f766e;
+    --teal-600:#0d9488;
+    --teal-500:#14b8a6;
+
+    --ink-900:#0f172a;
+    --ink-800:#1e293b;
+    --ink-700:#334155;
+    --ink-600:#475569;
+    --ink-500:#64748b;
+    --ink-400:#94a3b8;
+    --ink-300:#cbd5e1;
+    --ink-200:#e2e8f0;
+    --ink-100:#f1f5f9;
+
+    --amber-500:#f59e0b;
+    --amber-400:#fbbf24;
+
+    --shadow-lg:0 10px 40px -10px rgba(10,61,46,.25);
+    --shadow-md:0 4px 20px -4px rgba(10,61,46,.15);
+    --shadow-sm:0 2px 8px -2px rgba(10,61,46,.10);
+
+    --radius-xl:20px;
+    --radius-lg:14px;
+    --radius-md:10px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI","Hiragino Sans GB",system-ui,sans-serif;
+    background:var(--green-50);
+    color:var(--ink-800);
+    line-height:1.7;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ====== 顶部品牌区（收紧版） ====== */
+  .hero{
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(34,197,94,.25) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(13,148,136,.20) 0%, transparent 50%),
+      linear-gradient(135deg, var(--green-800) 0%, var(--green-700) 50%, var(--teal-700) 100%);
+    color:#fff;
+    padding:26px 24px 32px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    top:-40%;right:-10%;
+    width:320px;height:320px;
+    background:radial-gradient(circle, rgba(74,222,128,.12) 0%, transparent 60%);
+    border-radius:50%;pointer-events:none;
+  }
+  .hero::after{content:none}
+  .hero-inner{
+    max-width:1200px;margin:0 auto;
+    position:relative;z-index:1;
+    display:flex;align-items:center;gap:22px;flex-wrap:wrap;
+  }
+  .hero-left{display:flex;flex-direction:column;gap:2px}
+  .hero-right{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+  .brand-row{
+    display:flex;align-items:center;gap:10px;
+  }
+  .brand-logo{
+    width:34px;height:34px;border-radius:8px;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.25);
+    display:flex;align-items:center;justify-content:center;
+    font-size:17px;backdrop-filter:blur(8px);
+  }
+  .brand-name{
+    font-size:12.5px;font-weight:600;letter-spacing:.3px;opacity:.9;
+  }
+  .hero h1{
+    font-size:26px;font-weight:800;letter-spacing:1.5px;
+    text-shadow:0 2px 20px rgba(0,0,0,.2);
+  }
+  .hero p.lead{
+    font-size:13px;opacity:.85;max-width:520px;line-height:1.65;color:rgba(255,255,255,.9);
+  }
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.25);
+    border-radius:100px;font-size:11.5px;backdrop-filter:blur(8px);
+  }
+  .hero-badge .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--green-400);
+    box-shadow:0 0 10px var(--green-400);
+  }
+
+  /* ====== 主区 ====== */
+  main{
+    flex:1;
+    max-width:1200px;
+    width:100%;
+    margin:-2px auto 0;
+    padding:18px 24px 50px;
+    position:relative;
+    z-index:2;
+  }
+
+  .section-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:28px;
+    padding:0 4px;
+  }
+  .section-title .bar{
+    width:5px;height:24px;border-radius:3px;
+    background:linear-gradient(180deg,var(--green-600),var(--teal-600));
+  }
+  .section-title h2{
+    font-size:22px;
+    font-weight:700;
+    color:var(--green-900);
+  }
+  .section-title .count{
+    margin-left:auto;
+    font-size:13px;
+    color:var(--ink-500);
+    background:#fff;
+    padding:4px 12px;
+    border-radius:100px;
+    border:1px solid var(--ink-200);
+  }
+
+  /* ====== 课件卡片网格（紧凑横向布局） ====== */
+  .course-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(440px,1fr));
+    gap:14px;
+  }
+  .course-card{
+    background:#fff;
+    border-radius:12px;
+    border:1px solid var(--green-200);
+    box-shadow:var(--shadow-sm);
+    overflow:hidden;
+    text-decoration:none;
+    color:inherit;
+    transition:transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s, border-color .2s;
+    display:flex;
+    flex-direction:row;
+    align-items:stretch;
+    position:relative;
+    padding:14px 16px 14px 14px;
+    min-height:110px;
+  }
+  .course-card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-md);
+    border-color:var(--green-400);
+  }
+
+  .card-cover{
+    width:72px;
+    flex:0 0 72px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    position:relative;
+    overflow:hidden;
+    margin-right:14px;
+  }
+  .card-cover.c1{background:linear-gradient(135deg,#16a34a,#0d9488)}
+  .card-cover.c2{background:linear-gradient(135deg,#0d9488,#0891b2)}
+  .card-cover.c3{background:linear-gradient(135deg,#15803d,#16a34a)}
+  .card-cover.c4{background:linear-gradient(135deg,#0f766e,#22c55e)}
+
+  .card-body{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:4px;
+  }
+  .card-meta{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-shrink:0;
+  }
+  .card-num{
+    background:var(--green-100);
+    color:var(--green-700);
+    font-size:11.5px;
+    font-weight:700;
+    padding:2px 8px;
+    border-radius:4px;
+    letter-spacing:.3px;
+  }
+  .card-tag{
+    font-size:11.5px;
+    color:var(--teal-700);
+    background:rgba(20,184,166,.10);
+    padding:2px 7px;
+    border-radius:4px;
+  }
+  .card-title{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink-900);
+    line-height:1.4;
+  }
+  .card-desc{
+    font-size:13px;
+    color:var(--ink-500);
+    line-height:1.55;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .card-footer{
+    display:flex;
+    align-items:center;
+    margin-top:2px;
+  }
+  .card-link{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--green-700);
+    display:flex;
+    align-items:center;
+    gap:4px;
+    transition:gap .2s;
+    flex-shrink:0;
+  }
+  .course-card:hover .card-link{gap:8px}
+  .card-arrow{transition:transform .2s}
+  .course-card:hover .card-arrow{transform:translateX(2px)}
+
+  /* ====== 即将上线占位（紧凑版） ====== */
+  .coming-soon{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(440px,1fr));
+    gap:14px;
+    margin-top:18px;
+  }
+  .placeholder-card{
+    background:repeating-linear-gradient(
+      45deg,
+      #f8fafc,
+      #f8fafc 10px,
+      #f1f5f9 10px,
+      #f1f5f9 20px
+    );
+    border:1.5px dashed var(--ink-300);
+    border-radius:12px;
+    padding:18px 16px;
+    text-align:center;
+    color:var(--ink-500);
+  }
+  .placeholder-card .ph-icon{
+    font-size:22px;
+    opacity:.6;
+    margin-bottom:4px;
+  }
+  .placeholder-card .ph-text{
+    font-size:12.5px;
+    font-weight:500;
+  }
+
+  /* ====== 页脚 ====== */
+  footer{
+    background:linear-gradient(135deg, var(--green-900) 0%, var(--green-800) 100%);
+    color:rgba(255,255,255,.85);
+    padding:36px 24px;
+    text-align:center;
+  }
+  .footer-inner{
+    max-width:1200px;
+    margin:0 auto;
+  }
+  .footer-line{
+    width:48px;
+    height:3px;
+    background:linear-gradient(90deg,var(--green-400),var(--teal-500));
+    border-radius:2px;
+    margin:0 auto 18px;
+  }
+  .footer-dept{
+    font-size:16px;
+    font-weight:600;
+    letter-spacing:2px;
+    margin-bottom:8px;
+    color:#fff;
+  }
+  .footer-copy{
+    font-size:12.5px;
+    opacity:.6;
+  }
+
+  /* ====== 响应式 ====== */
+  @media (max-width:900px){
+    .course-grid, .coming-soon{grid-template-columns:1fr}
+  }
+  @media (max-width:768px){
+    .hero{padding:18px 16px 22px}
+    .hero-inner{flex-direction:column;gap:10px;align-items:flex-start}
+    .hero-right{margin-left:0}
+    .hero h1{font-size:21px;letter-spacing:1px}
+    .hero p.lead{display:none}
+    main{margin:0 auto;padding:12px 14px 40px}
+    .section-title h2{font-size:17px}
+    .card-title{font-size:14.5px}
+    .card-desc{font-size:12px}
+    .footer-dept{font-size:14px;letter-spacing:1.5px}
+  }
+  @media (max-width:480px){
+    .course-card{min-height:96px;padding:10px 12px}
+    .card-cover{width:58px;flex-basis:58px;font-size:26px;margin-right:10px;border-radius:8px}
+    .card-title{font-size:13.5px}
+    .card-desc{-webkit-line-clamp:1}
+  }
+
+  /* ====== 无障碍焦点 ====== */
+  a:focus-visible{
+    outline:3px solid var(--green-500);
+    outline-offset:3px;
+    border-radius:var(--radius-md);
+  }
+</style>
+</head>
+<body>
+
+<!-- ====== Hero 顶部 ====== -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="brand-row">
+        <div class="brand-logo">⚡</div>
+        <div class="brand-name">JRS 新能源检测 · 内部学习平台</div>
+      </div>
+      <h1>电力系统及新能源学习园地</h1>
+      <p class="lead">
+        聚焦电能质量、微电网、新能源发电系统与电力图纸识读，为新能源检测与认证工作提供系统的知识支撑。
+      </p>
+    </div>
+    <div class="hero-right">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span>持续更新中 · 欢迎反馈</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ====== 主内容 ====== -->
+<main>
+
+  <div class="section-title">
+    <span class="bar"></span>
+    <h2>培训课件</h2>
+    <span class="count" id="courseCount">共 4 门课程</span>
+  </div>
+
+  <!-- 可扩展的课件卡片网格（后续新增课件在此追加 <a class="course-card"> 即可） -->
+  <div class="course-grid" id="courseGrid">
+
+    <!-- 01 -->
+    <a class="course-card" href="01pqbas.html">
+      <div class="card-cover c1">🔋</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">01</span>
+          <span class="card-tag">电能质量</span>
+        </div>
+        <div class="card-title">电能质量基础培训课件</div>
+        <div class="card-desc">
+          系统讲解电能质量核心概念、功率三角、谐波、电压偏差与三相不平衡，配有生活化比喻、真实案例和每章小练习，零基础友好。
+        </div>
+        <div class="card-footer">
+          <span class="card-link">开始学习 <span class="card-arrow">→</span></span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 02 -->
+    <a class="course-card" href="02mgExam.html">
+      <div class="card-cover c2">📝</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">02</span>
+          <span class="card-tag">考题精讲</span>
+        </div>
+        <div class="card-title">新能源微电网与电能质量 · 考题精讲</div>
+        <div class="card-desc">
+          覆盖选择、填空、判断、解析四大题型，按知识模块分组逐题精讲，含电力零基础入门补充，考前复习与能力提升双适用。
+        </div>
+        <div class="card-footer">
+          <span class="card-link">开始学习 <span class="card-arrow">→</span></span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 03 -->
+    <a class="course-card" href="03nesys.html">
+      <div class="card-cover c3">🏭</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">03</span>
+          <span class="card-tag">新能源系统</span>
+        </div>
+        <div class="card-title">常规综合型新能源发电系统讲解</div>
+        <div class="card-desc">
+          从微电网拓扑架构、储能PCS、Droop/VSG控制，到EMS能量管理与保护安全，系统看懂一张微电网拓扑图背后的全部技术。
+        </div>
+        <div class="card-footer">
+          <span class="card-link">开始学习 <span class="card-arrow">→</span></span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 04 -->
+    <a class="course-card" href="04pwdraw.html">
+      <div class="card-cover c4">📐</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="card-num">04</span>
+          <span class="card-tag">图纸识读</span>
+        </div>
+        <div class="card-title">电力系统设计图纸识读 · 考试解析</div>
+        <div class="card-desc">
+          全套考试题型覆盖，逐题解析电力系统设计图纸识读核心考点，选项辨析 + 通俗讲解，零基础友好，附高频易错点速记表。
+        </div>
+        <div class="card-footer">
+          <span class="card-link">开始学习 <span class="card-arrow">→</span></span>
+        </div>
+      </div>
+    </a>
+
+    <!-- 【扩展说明】
+         新增课件只需在上面 course-grid 内追加如下结构即可：
+         <a class="course-card" href="05xxx.html">
+           <div class="card-cover c1">🎯</div>
+           <div class="card-body">
+             <div class="card-meta">
+               <span class="card-num">05</span>
+               <span class="card-tag">分类标签</span>
+             </div>
+             <div class="card-title">课件名称</div>
+             <div class="card-desc">一句话简介</div>
+             <div class="card-footer">
+               <span class="card-link">开始学习 <span class="card-arrow">→</span></span>
+             </div>
+           </div>
+         </a>
+         card-cover 可选用 c1~c4 四种渐变色，或新增 c5/c6 等。
+    -->
+
+  </div>
+
+  <!-- 即将上线占位（可按需删除或替换为真实课件卡片） -->
+  <div class="section-title" style="margin-top:48px">
+    <span class="bar"></span>
+    <h2>即将上线</h2>
+  </div>
+  <div class="coming-soon">
+    <div class="placeholder-card">
+      <div class="ph-icon">🚧</div>
+      <div class="ph-text">持续建设中 · 敬请期待</div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ====== 页脚 ====== -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-line"></div>
+    <div class="footer-dept">JRS 新能源检测与认证部</div>
+    <div class="footer-copy">© 内部培训学习园地 · 仅供学习参考</div>
+  </div>
+</footer>
+
+<!-- ====== 小脚本：自动统计课件数量 ====== -->
+<script>
+  (function(){
+    var count = document.querySelectorAll('#courseGrid .course-card').length;
+    var el = document.getElementById('courseCount');
+    if(el && count){ el.textContent = '共 ' + count + ' 门课程'; }
+  })();
+</script>
+
+</body>
+</html>

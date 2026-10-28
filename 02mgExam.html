@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>新能源微电网与电能质量·零基础逐题精讲</title>
+<style>
+:root{
+  --blue:#1a5fb4; --blue-l:#e8f1fc; --blue-d:#0d3b66;
+  --green:#0f7b6c; --green-l:#e6f4f1;
+  --amber:#b45309; --amber-l:#fff7ed;
+  --ink:#1c2530; --sub:#5b6875; --line:#e3e8ee; --bg:#f4f7fa; --warn:#c2410c;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"PingFang SC","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+ background:var(--bg);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased;font-size:15.5px}
+.wrap{max-width:940px;margin:0 auto;padding:0 18px 90px}
+
+.hero{background:linear-gradient(135deg,#0d3b66 0%,#1a5fb4 52%,#2a8f9e 100%);color:#fff;
+ padding:60px 20px 52px}
+.hero .inner{max-width:940px;margin:0 auto}
+.hero h1{font-size:38px;margin:0 0 12px;letter-spacing:1px;font-weight:700}
+.hero p{font-size:16.5px;opacity:.93;margin:0 0 24px;max-width:680px}
+.hero .meta{display:flex;gap:30px;flex-wrap:wrap;font-size:14px;opacity:.92}
+.hero .meta b{display:block;font-size:23px;font-weight:700}
+.howto{max-width:940px;margin:18px auto 0;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);
+ border-radius:10px;padding:14px 18px;font-size:14.5px;line-height:1.7}
+.howto b{color:#ffe9b8}
+.hbtn{border:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.16);color:#fff;
+ border-radius:7px;padding:5px 14px;font-size:13.5px;cursor:pointer;font-family:inherit;margin-right:6px}
+.hbtn:hover{background:#fff;color:var(--blue-d)}
+
+nav{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);
+ border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,70,.06)}
+nav .inner{max-width:940px;margin:0 auto;padding:0 18px;display:flex;gap:4px;overflow-x:auto}
+nav a{padding:13px 13px;font-size:14px;color:var(--sub);text-decoration:none;white-space:nowrap;
+ border-bottom:2px solid transparent;font-weight:500}
+nav a:hover{color:var(--blue)} nav a.on{color:var(--blue);border-bottom-color:var(--blue)}
+
+h2.sec{font-size:23px;margin:40px 0 4px;padding-left:13px;border-left:4px solid var(--blue);font-weight:700}
+h2.sec small{display:block;font-size:13.5px;color:var(--sub);font-weight:400;margin-top:3px}
+h3.grp{font-size:17.5px;margin:32px 0 8px;color:var(--blue-d);font-weight:700;
+ padding:8px 14px;background:var(--blue-l);border-radius:8px}
+.grpintro{font-size:14.5px;color:#3d4a57;background:#fff;border:1px solid var(--line);
+ border-left:3px solid var(--blue);border-radius:8px;padding:12px 16px;margin:0 0 14px}
+
+.item{background:#fff;border:1px solid var(--line);border-radius:11px;padding:18px 20px;margin:12px 0;
+ box-shadow:0 1px 3px rgba(20,40,70,.05)}
+.ihead{display:flex;align-items:flex-start;gap:11px}
+.ihead .q{margin:0;font-size:16px;font-weight:600;flex:1}
+.num{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:var(--blue-l);color:var(--blue);
+ font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.opts{margin:11px 0 2px;display:flex;flex-wrap:wrap;gap:7px}
+.opt{font-size:14px;color:#37414d;background:#f7f9fb;border:1px solid var(--line);border-radius:6px;padding:3px 11px}
+.btns{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--blue);background:#fff;color:var(--blue);border-radius:7px;
+ padding:6px 15px;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:hover{background:var(--blue);color:#fff}
+.btn.base{border-color:#8aa6c9;color:#2c6392;background:#f4f9ff}
+.btn.base:hover{background:#2c6392;color:#fff}
+.btn.act{background:var(--blue);color:#fff}
+
+.detail{display:none;margin-top:14px;border-top:1px dashed var(--line);padding-top:13px}
+.detail.open{display:block}
+.block{margin:9px 0;padding-left:13px;border-left:3px solid var(--line)}
+.block p{margin:4px 0;font-size:15px;color:#2b3540}
+.btag{display:inline-block;font-size:12px;font-weight:700;border-radius:4px;padding:1px 9px;margin-right:4px}
+.ba{border-left-color:var(--amber)} .ba .btag{background:var(--amber-l);color:var(--amber)}
+.b1{border-left-color:var(--blue)} .b1 .btag{background:var(--blue-l);color:var(--blue)}
+.b2{border-left-color:var(--green)} .b2 .btag{background:var(--green-l);color:var(--green)}
+.b3{border-left-color:#8b5cf6} .b3 .btag{background:#f3eefe;color:#6d28d9}
+.b4{border-left-color:#0891b2} .b4 .btag{background:#e0f7fb;color:#0e7490}
+.otable{margin-top:8px}
+.orow{display:flex;gap:9px;align-items:flex-start;padding:8px 11px;margin:6px 0;border-radius:7px;
+ border:1px solid var(--line);background:#fafbfd;font-size:14.5px;line-height:1.7}
+.orow.hit{background:#f0fdf8;border-color:#b7e8d8}
+.orow.mis{background:#fefafa;border-color:#f0dcd8}
+.orow.belong{background:#f5f8fc;border-color:#d6e2f0}
+.oL{flex:0 0 auto;width:21px;height:21px;border-radius:5px;font-weight:700;font-size:12.5px;
+ display:flex;align-items:center;justify-content:center;margin-top:3px}
+.orow.hit .oL{background:#0f7b6c;color:#fff}
+.orow.mis .oL{background:#d9c9c5;color:#7a4038}
+.orow.belong .oL{background:#c3d4ea;color:#33506e}
+.oTag{flex:0 0 auto;font-size:12px;font-weight:700;border-radius:4px;padding:1px 8px;margin-top:3px}
+.orow.hit .oTag{background:#d5f2eb;color:#0f7b6c}
+.orow.mis .oTag{background:#fbe9e6;color:#b2410c}
+.orow.belong .oTag{background:#e3ecf7;color:#33506e}
+.oWhy{flex:1;color:#2b3540}
+.ans{font-size:15.5px;font-weight:700;color:var(--amber);background:var(--amber-l);
+ border-radius:6px;padding:3px 14px;display:inline-block}
+
+.terms{margin-top:6px}
+.term{margin:9px 0;padding:10px 13px;background:#fafbfd;border:1px solid var(--line);border-radius:8px;
+ font-size:14.8px;color:#2b3540}
+.term b{display:block;color:#6d28d9;font-size:14.5px;margin-bottom:3px}
+.term.big{padding:14px 16px;font-size:15.2px;background:#fff;border-left:3px solid #8b5cf6}
+.term.big b{font-size:16px;color:#5b21b6;margin-bottom:5px}
+
+.mark{font-size:18px;font-weight:700;width:32px;height:32px;border-radius:50%;flex:0 0 auto;
+ display:flex;align-items:center;justify-content:center;margin-top:2px}
+.mark.yes{background:var(--green-l);color:var(--green)} .mark.no{background:#fdecea;color:var(--warn)}
+
+.case{background:#fff;border:1px solid var(--line);border-radius:11px;padding:22px 24px;margin:14px 0;
+ box-shadow:0 1px 3px rgba(20,40,70,.05)}
+.case h3{margin:0 0 4px;font-size:18.5px;color:var(--blue-d)}
+.case .stem{font-size:14.2px;color:var(--sub);margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.qa{margin:16px 0}
+.qa .q{font-weight:700;font-size:15.5px;margin-bottom:7px;color:var(--blue-d)}
+.qa .a{font-size:15px;color:#2b3540;margin:0}
+.step{display:flex;gap:10px;margin:7px 0;font-size:15px}
+.step i{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;
+ font-style:normal;font-size:12.5px;display:flex;align-items:center;justify-content:center;margin-top:5px}
+.tip{margin-top:16px;background:var(--amber-l);border:1px solid #f6dcb4;border-radius:8px;padding:12px 16px;font-size:14.5px}
+.tip b{color:var(--amber)}
+
+.quick{background:#fff;border:1px solid var(--line);border-radius:11px;padding:20px 22px;margin:14px 0}
+.quick .row{display:flex;gap:10px;font-size:14.8px;margin:9px 0;align-items:baseline}
+.quick .k{flex:0 0 auto;font-weight:700;color:var(--blue);min-width:76px}
+code{background:#f1f4f8;border-radius:4px;padding:1px 7px;font-size:13.5px;
+ font-family:ui-monospace,Menlo,Consolas,monospace}
+footer{text-align:center;color:var(--sub);font-size:13px;padding:30px 20px 0;border-top:1px solid var(--line);margin-top:44px}
+.top{position:fixed;right:22px;bottom:26px;width:44px;height:44px;border-radius:50%;background:var(--blue);
+ color:#fff;border:none;font-size:19px;cursor:pointer;box-shadow:0 4px 14px rgba(20,60,120,.3);display:none}
+.top.show{display:block}
+@media(max-width:640px){.hero h1{font-size:27px}.hero{padding:42px 18px 34px}.item{padding:15px 15px}.case{padding:17px 16px}}
+</style>
+</head>
+<body>
+
+<div class="hero"><div class="inner">
+  <h1>新能源微电网与电能质量</h1>
+  <p>零基础版逐题精讲 · 假设你完全不懂电，从"电压是什么"讲起，每题配「先懂这几个词」的术语补课</p>
+  <div class="meta">
+    <div><b>47</b>题目全覆盖</div>
+    <div><b>7</b>电力入门概念</div>
+    <div><b>100+</b>术语补课词条</div>
+  </div>
+  <div class="howto">
+    <div style="margin-bottom:10px">
+      <button class="hbtn" onclick="ex(true)">全部展开</button>
+      <button class="hbtn" onclick="ex(false)">全部收起</button>
+      <span style="opacity:.85">（想一次看完全部解析就点「全部展开」）</span>
+    </div>
+    <b>怎么用：</b>① 先读「第 0 章 电力零基础入门」，搞懂电压、电流、频率、有功无功这些词；
+    ② 做每道题前先点「零基础补课」，把题里出现的陌生词看懂；
+    ③ 自己先选答案，再点「查看答案与解析」对照。
+  </div>
+</div></div>
+
+<nav><div class="inner">
+  <a href="#ch0">第0章 电力入门</a>
+  <a href="#choice">选择题 30题</a>
+  <a href="#fill">填空题 5题</a>
+  <a href="#judge">判断题 10题</a>
+  <a href="#case">解析题 2题</a>
+  <a href="#quick">速查与复习</a>
+</div></nav>
+
+<div class="wrap">
+
+<section id="ch0">
+<h2 class="sec">第 0 章 · 电力零基础入门<small>完全没学过电？先把这 7 个概念看完，后面的题就都能读懂了</small></h2>
+<div class="term big"><b>电是什么：用水来打比方</b><span>把电线想成水管。<b>电压</b>＝水压（推着电往前走的劲儿，单位伏特 V）；<b>电流</b>＝水流（单位安培 A）；<b>功率</b>＝水压×水流（单位瓦 W），表示「每秒干多少活」。家里 220V 是电压，电表走的度数（kWh）是电量。</span></div><div class="term big"><b>直流电 DC 与交流电 AC</b><span>直流电像水管里始终朝一个方向流的水，电池、光伏板、手机充电器出来的都是直流；交流电像来回晃动的水，方向每秒变 100 次。电网用交流电，因为它能用变压器轻松升压、远距离输送损耗小。</span></div><div class="term big"><b>50Hz 是什么</b><span>我国电网的交流电每秒完整来回 50 次，叫 50 赫兹（Hz）。它是整个电网统一的「心跳节奏」。发电量＝用电量时频率才稳在 50Hz：发电不够频率下降，发多了频率上升。所以频率是电网供需平衡的「体温计」。</span></div><div class="term big"><b>有功功率与无功功率</b><span><b>有功</b>是真正干活的电——点亮灯、转电机、烧水；单位瓦 W。<b>无功</b>不干活但少不了——电机、变压器要<b>建立磁场</b>才能工作，这部分功率在电源和负载之间来回倒手，不消耗；单位乏 var。类比：一杯啤酒，酒液是有功，泡沫是无功，没泡沫你就端不上桌。</span></div><div class="term big"><b>三相电与三相不平衡</b><span>工业用电是三根火线（A/B/C），彼此错开 120°，可以让电机平稳旋转、输电更省材料。三根承担的负荷不一样大就叫<b>三相不平衡</b>，会让中线带电、电机发热、损耗增加。</span></div><div class="term big"><b>逆变器、整流器、变流器</b><span><b>逆变器</b>：直流→交流（光伏板发的直流电要变成交流才能上网）。<b>整流器</b>：交流→直流（给电池充电）。<b>变流器</b>：两个方向都能干，储能的 PCS 就是双向变流器。</span></div><div class="term big"><b>什么是微电网</b><span>把「发电＋用电＋控制」缩小到一个园区、工厂、海岛或村庄里的小型电力系统。它的看家本领是<b>可并可离</b>：接上大电网一起跑叫<b>并网</b>，断开自己扛叫<b>离网/孤岛</b>。里面通常装着光伏、风电、储能、柴油发电机和负荷。</span></div>
+</section>
+
+<section id="choice">
+<h2 class="sec">一、选择题精讲<small>共 30 题 60 分 · 按知识模块分成五组，每组前有模块导言</small></h2>
+
+<h3 class="grp">一、微电网架构与电能质量（1-10 题）</h3>
+<div class="grpintro">这部分先考「微电网长什么样」，再考「电好不好用」。<b>电能质量</b>就看五把尺子：电压稳不稳、频率准不准、波形干不干净、三相均不均、会不会闪。题目按「持续多久」把问题分成瞬态（一瞬间）和稳态（长期存在）两大类。</div>
+
+<div class="item">
+  <div class="ihead"><span class="num">01</span><p class="q">微电网主要组网架构方式不包括的是</p></div>
+  <div class="opts"><span class="opt">A 并网型交流</span><span class="opt">B 离网型直流</span><span class="opt">C 离网型交流</span><span class="opt">D 超高压直流</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d0a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d0b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d0a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>微电网组网架构常见三种：并网型交流、离网型交流、离网型直流。超高压直流属于远距离输电网技术。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow belong"><span class="oL">A</span><span class="oTag">属于</span><span class="oWhy">并网型交流微电网：平时接大电网一起跑，可切换到孤岛。三种标准架构之一，所以不是「不包括」的答案。</span></div><div class="orow belong"><span class="oL">B</span><span class="oTag">属于</span><span class="oWhy">离网型直流微电网：不接大电网、内部走直流母线，适合直流负荷密集的场景。也是标准架构之一。</span></div><div class="orow belong"><span class="oL">C</span><span class="oTag">属于</span><span class="oWhy">离网型交流微电网：独立运行、内部走交流，常见于海岛、无电地区。同样是标准架构之一。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">超高压直流：±800kV 级远距离输电干线，属于输电网技术，与园区级微电网不是一个量级，所以是「不包括」的那一项。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>记住「架构三兄弟」：并网交流、离网交流、离网直流。看到「超高压」就想到大输电，不是微电网。</p></div>
+  </div>
+  <div class="detail" id="d0b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>「组网架构」是什么</b><span>指微电网内部怎么连线、用哪种电流（交流 AC 还是直流 DC）、能不能接大电网。三种标准组合：并网型交流、离网型交流、离网型直流。</span></div><div class="term"><b>超高压直流是啥</b><span>±800kV 级别的输电干线，用来把西部的电送到东部，是「电力高速公路」，容量以百万千瓦计，跟园区级微电网完全不是一个量级。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">02</span><p class="q">并网型交流微电网可细化为哪两种切换方式</p></div>
+  <div class="opts"><span class="opt">A 0秒或小于1秒</span><span class="opt">B 1秒或5秒</span><span class="opt">C 0秒或大于20秒</span><span class="opt">D 10秒或30秒</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d1a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d1b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d1a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>按切换过程是否停电划分：0秒切换（无缝切换）与大于20秒切换（允许短时停电后恢复供电）。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">0秒＋小于1秒：前半对、后半错。小于1秒不是标准分类里的时间档，属拼凑出来的干扰项。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">1秒或5秒：完全凭空的两个时间，标准里没有这一档。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">0秒切换（无缝切换）与大于20秒切换，是并网型交流微电网的两种标准细分方式。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">10秒或30秒：又是两个凑出来的数字，不是标准分类。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>考的是「两个极端」：要么0秒无缝，要么超过20秒慢慢切，中间值不是标准分类。</p></div>
+  </div>
+  <div class="detail" id="d1b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么要「切换」</b><span>微电网从并网转到孤岛时，要先断开和大电网连接的开关。开关一断，里面的负荷瞬间失去电源，就看谁能立刻顶上。</span></div><div class="term"><b>0秒切换靠什么</b><span>靠储能和 UPS 不间断电源。它们一直在旁边「热备」，开关一跳立刻接管，负荷完全没感觉，这叫无缝切换。</span></div><div class="term"><b>大于20秒切换</b><span>没有储能兜底，停电后要靠重新启动柴油发电机、重新并网来恢复供电，中间会黑灯一段时间，重要负荷需要自备 UPS 顶住。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">03</span><p class="q">持续数秒以上乃至连续的电压、频率、谐波问题属于</p></div>
+  <div class="opts"><span class="opt">A 瞬态</span><span class="opt">B 稳态</span><span class="opt">C 暂态</span><span class="opt">D 冲击</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d2a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d2b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d2a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>电能质量事件按持续时间划分，培训提纲常用「二分法」：瞬态（微秒至毫秒级、一闪而过）与稳态（数秒以上乃至长期存在）。工程上更细的口径还会在中间单列「暂态／短时变动」一类，即约 10ms 至 1min 的电压暂降、暂升与短时中断（IEEE 1159 口径）。两种说法并不矛盾，只是粗细不同：二分法把中间这一档并入稳态。本题题干给出「数秒以上乃至连续」的时间特征，指向<b>稳态</b>。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">瞬态指微秒至毫秒级、一闪而过的事件，与「数秒以上乃至连续」的时间特征相反。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">稳态指数秒以上乃至长期存在的问题，如长期电压偏差、谐波持续超标，与题干时间特征吻合。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">暂态／短时变动指约 10ms 至 1min 的事件（如电压暂降），比题干说的「数秒以上乃至连续」短，而且它不是本题选项体系里的答案。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">「冲击」是对现象形态的描述（如冲击性负荷），不是按持续时间划分的类别名称。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>一直存在、长时间不走的叫稳态，一闪而过的叫瞬态。题干写明「数秒以上乃至连续」，直接锁定稳态。做题时抓住题干的时间特征就够了，不必纠结到底分两类还是三类。</p></div>
+  </div>
+  <div class="detail" id="d2b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>电能质量是什么</b><span>衡量「电好不好用」的一套指标：电压稳不稳、频率准不准、波形干不干净、三相均不均。电不好用，设备会发热、误动作甚至损坏。</span></div><div class="term"><b>按持续时间怎么分</b><span>按持续时间划分（IEEE 1159 常用口径）：<b>瞬态</b>＝微秒至毫秒，一闪而过（雷击尖峰、开关操作）；<b>暂态／短时变动</b>＝约 10ms 至 1min，典型是电压暂降、暂升与短时中断，可再细分为瞬时（10ms~0.5s）、暂时（0.5s~3s）、短时（3s~1min）；<b>稳态／长期变动</b>＝超过 1min 持续存在，如长期欠电压、谐波持续超标、三相不平衡、频率偏差。培训提纲常把中间一档并入稳态，简化成「瞬态 vs 稳态」两分法——两种说法只是粗细不同，不是谁错。</span></div><div class="term"><b>为什么会有「两类」和「三类」两种说法</b><span>两分法是培训用的简化口径，只区分「一闪而过」和「长期存在」，把中间的暂降暂升现象并入稳态；三分法是工程标准（IEEE 1159、国标系列）的细口径，把 10ms~1min 的短时变动单独拿出来，因为电压暂降的成因、危害和治理手段都与长期偏差不同。考试时看题干：只问长不长用两分法，问到具体时间界限才用三分法。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">04</span><p class="q">雷电、开关操作引起的微秒至毫秒级冲击性过电压属于</p></div>
+  <div class="opts"><span class="opt">A 瞬态</span><span class="opt">B 稳态</span><span class="opt">C 暂态</span><span class="opt">D 长期波动</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d3a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d3b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d3a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>瞬态指持续时间极短（微秒至毫秒级）的冲击性过电压或冲击电流，典型成因就是雷击与开关操作。工程上再细分为脉冲型（雷击那样的单向尖峰）与振荡型（开关操作引起的衰减振荡）。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">瞬态＝微秒至毫秒级的冲击性过电压或过电流，雷击与开关操作正是它的两大典型成因。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">稳态是数秒以上长期存在的问题，不可能只有微秒至毫秒。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">暂态／短时变动是约 10ms 至 1min 这一档，比题干的「微秒至毫秒」长得多。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">长期波动与「微秒至毫秒」直接矛盾，属于自相矛盾的干扰项。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>雷击、拉合开关造成的一瞬间尖峰就是瞬态，来得快去得也快。</p></div>
+  </div>
+  <div class="detail" id="d3b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>过电压是什么</b><span>电压突然超过正常值很多，像水管里出现一个高压冲击波，可能击穿设备绝缘。雷击可达几百万伏。</span></div><div class="term"><b>为什么开关操作也会产生</b><span>线路里有电感和电容，突然合闸或跳闸会让它们产生振荡，叠加出尖峰电压。生活中快速关水龙头时水管「咚」的一下（水锤效应）是同一个道理。</span></div><div class="term"><b>怎么防</b><span>装避雷器和浪涌保护器 SPD，把尖峰能量泄放到大地，保护后面的设备。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">05</span><p class="q">谐波按频率特性分为常规谐波、间谐波和</p></div>
+  <div class="opts"><span class="opt">A 基波</span><span class="opt">B 高次谐波</span><span class="opt">C 三次谐波</span><span class="opt">D 直流分量</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d4a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d4b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d4a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>谐波按频率特性分为常规谐波（基波整数倍）、间谐波（非整数倍）和高次谐波三类。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">基波是 50Hz 的正波本身，是谐波的参照对象，不是谐波的一种。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">按频率特性分为常规谐波（基波整数倍）、间谐波（非整数倍）和高次谐波三类，此处缺的正是高次谐波。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">三次谐波（150Hz）只是常规谐波里的某一个具体次数，是「成员」不是「类别」，层级不对。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">直流分量频率为 0，不属于谐波范畴（部分标准把它单独列为一项），不是按频率特性划分的三类之一。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>整数倍是常规，非整数倍是间谐波，频率更高的归入高次谐波。</p></div>
+  </div>
+  <div class="detail" id="d4b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>基波与谐波</b><span>我国电网的标准波形是 50Hz 的<b>正弦波</b>，这个 50Hz 叫<b>基波</b>。谐波就是叠加在基波上、频率是基波倍数的杂波：2次=100Hz、3次=150Hz、5次=250Hz……</span></div><div class="term"><b>谐波哪来的</b><span>非线性负荷——整流器、变频器、LED 电源、电动车充电桩、电弧炉，它们「吃东西不是匀速的」，把标准正弦波啃出了缺口，用数学分解就得到一堆谐波。</span></div><div class="term"><b>间谐波 vs 高次谐波</b><span>频率<b>不是</b>基波整数倍的叫间谐波（比如 87Hz），常由变频器和电弧炉产生；频率特别高的归入高次谐波。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">06</span><p class="q">电能质量指标中 THD 表示</p></div>
+  <div class="opts"><span class="opt">A 电压偏差</span><span class="opt">B 三相不平衡度</span><span class="opt">C 频率偏差</span><span class="opt">D 总谐波畸变率</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d5a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d5b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d5a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>THD 即 Total Harmonic Distortion，总谐波畸变率，用于衡量波形偏离标准正弦波的程度。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">电压偏差是实际电压与额定电压之差占额定值的百分比，有独立符号，不用 THD 表示。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">三相不平衡度用负序／零序分量与正序分量之比衡量，与 THD 无关。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">频率偏差是实际频率与 50Hz 之差，单位是 Hz，不用 THD 表示。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">THD＝Total Harmonic Distortion，总谐波畸变率，衡量波形偏离标准正弦波的程度。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>THD 越大，波形越「歪」，说明谐波污染越严重，是谐波治理的核心考核指标。</p></div>
+  </div>
+  <div class="detail" id="d5b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>畸变率怎么算</b><span>把所有谐波分量的有效值加起来，除以基波有效值，再乘 100%。比如 THD=5%，表示杂波总量是正波的 5%。</span></div><div class="term"><b>多少算合格</b><span>公用电网电压总谐波畸变率一般要求 ≤5%，要求高的场合更严。THD 越小波形越接近漂亮的正弦波，THD 大了波形就「歪七扭八」。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">07</span><p class="q">电压偏差是指</p></div>
+  <div class="opts"><span class="opt">A 电压有效值与额定值之差占额定值百分比</span><span class="opt">B 相位差</span><span class="opt">C 谐波次数</span><span class="opt">D 频率变化率</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d6a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d6b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d6a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>电压偏差＝（实际电压有效值－额定电压）÷额定电压×100%，属于稳态类电能质量指标。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">电压偏差＝（实际电压有效值－额定电压）÷额定电压×100%，是标准定义。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">电压与电流的相位差的余弦是功率因数，跟电压偏差是两回事。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">谐波次数是谐波频率与基波频率的比值，是个倍数，不是偏差。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">频率变化率描述频率变化的快慢（如 RoCoF），与电压偏差无关。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>就是「实际比额定高多少或低多少」，用百分比表示，和相位、频率都没关系。</p></div>
+  </div>
+  <div class="detail" id="d6b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>额定电压</b><span>设备设计的标准工作电压。我国居民单相 220V，工业三相 380V，允许在 ±7% 内波动。</span></div><div class="term"><b>偏差大了会怎样</b><span>电压长期偏低，电机电流增大、发热甚至烧毁；电压长期偏高，绝缘老化加快、灯泡寿命缩短。</span></div><div class="term"><b>有效值是什么</b><span>交流电的大小一直在变，有效值是「等效发热能力」的折算值。我们说 220V 就是指有效值。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">08</span><p class="q">电压闪变主要由什么引起</p></div>
+  <div class="opts"><span class="opt">A 电缆过长</span><span class="opt">B 接地电阻过大</span><span class="opt">C 负荷快速波动</span><span class="opt">D 电池容量过大</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d7a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d7b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d7a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>电弧炉、轧机、频繁启停等冲击性波动负荷引起电压快速波动，人眼感受到灯光闪烁。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">电缆过长会造成末端电压下降（电压偏差），属于长期偏低，不会造成快速反复的闪变。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">接地电阻过大影响的是故障电流大小与保护灵敏度、安全，与闪变无直接因果关系。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">电弧炉、轧机、频繁启停等快速波动负荷使电流剧烈变化，线路压降随之抖动，电压就闪。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">电池容量大小与电压闪变没有因果关系，属于凑数的干扰项。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>用电忽大忽小，灯就忽明忽暗，这就是闪变。根源在负荷波动，不在线路长度。</p></div>
+  </div>
+  <div class="detail" id="d7b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么电压会跟着负荷变</b><span>线路有电阻，电流越大在线路上损失的电压越多，末端电压就越低。所以大功率设备一启动，灯就会暗一下。</span></div><div class="term"><b>闪变和电压偏差的区别</b><span>电压偏差是「长期偏高偏低」，闪变是「快速反复抖动」。人眼对每秒几次到二十几次的亮度变化最敏感，所以叫闪变。</span></div><div class="term"><b>谁是元凶</b><span>电弧炉、电焊机、轧钢机、频繁启停的大型电机——这些「冲击性负荷」功率剧烈跳变，是闪变的主要来源。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">09</span><p class="q">用于动态无功补偿、抑制电压波动的装置是</p></div>
+  <div class="opts"><span class="opt">A SVG/STATCOM</span><span class="opt">B 普通接触器</span><span class="opt">C 熔断器</span><span class="opt">D 电压互感器</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d8a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d8b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d8a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>SVG 又称 STATCOM，可快速、连续、双向调节无功功率，用于抑制电压波动与闪变。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">SVG 又称 STATCOM，可连续、无级、毫秒级地发出或吸收无功，专门用于动态无功补偿与抑制电压波动。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">普通接触器只是一个电动开关，只能通断，不具备发出或吸收无功的能力。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">熔断器就是保险丝，过流时熔断切断电路，是保护器件，与补偿无关。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">电压互感器把高电压按比例变成低电压供测量和保护采样用，只测量不补偿。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>SVG 是「快枪手」，毫秒级补无功；接触器、熔断器只会通断，谈不上动态补偿。</p></div>
+  </div>
+  <div class="detail" id="d8b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么要补无功</b><span>电机、变压器靠磁场工作，需要无功来建立磁场。无功不够，电压就会被拉下来；无功太多，电压又会抬高。补无功就是稳电压。</span></div><div class="term"><b>「动态」是什么意思</b><span>传统电容器只能整组投入或切除，一档一档跳；SVG 用电力电子器件可以连续、无级、毫秒级地发出或吸收无功，哪儿缺补哪儿，所以叫「动态」。</span></div><div class="term"><b>其它三个是什么</b><span>接触器=电动开关，熔断器=保险丝，电压互感器=把高电压变成低电压供测量用，都不具备补偿能力。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">10</span><p class="q">有源电力滤波器 APF 的主要功能是</p></div>
+  <div class="opts"><span class="opt">A 升压输电</span><span class="opt">B 储存电能</span><span class="opt">C 滤除谐波、补偿无功</span><span class="opt">D 测量绝缘电阻</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d9a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d9b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d9a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>APF 实时检测负载谐波电流，主动注入反向补偿电流，从而滤除谐波并可兼顾无功补偿。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">升压输电是升压变压器的活儿，APF 不负责升压。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">储存电能是电池、超级电容的活儿，APF 本身不储能（它只按需要提供瞬时补偿电流）。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">APF 实时检测负载谐波电流，主动注入大小相等方向相反的补偿电流将其抵消，并可兼顾无功补偿。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">测量绝缘电阻是兆欧表（摇表）的活儿，与 APF 无关。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>APF 像「降噪耳机」，发出一个反向的波把谐波抵消掉，所以叫「有源」滤波。</p></div>
+  </div>
+  <div class="detail" id="d9b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>无源滤波 vs 有源滤波</b><span>无源滤波用电感电容组成的「调谐回路」给谐波开一条低阻抗通道让它流走，结构简单但只能针对固定次数；有源滤波是主动「造」一个反向谐波去抵消，灵活、响应快。</span></div><div class="term"><b>为什么叫「有源」</b><span>因为它需要接电源、要靠电力电子器件主动出力，不是被动的元件。就像降噪耳机要通电才能发出反向声波。</span></div><div class="term"><b>APF 装在哪</b><span>通常并联在谐波源附近的母线上，就近检测、就近补偿。</span></div></div></div>
+  </div>
+</div>
+<h3 class="grp">二、光伏发电技术（11-16 题）</h3>
+<div class="grpintro">光伏靠<b>光伏效应</b>——光直接变电，没有转动部件。记住三件事：组件怕热（越热功率越低）、逆变器要追最大功率点（MPPT）、并网要有低电压穿越能力（LVRT）。</div>
+
+<div class="item">
+  <div class="ihead"><span class="num">11</span><p class="q">光伏发电利用的物理学基础是</p></div>
+  <div class="opts"><span class="opt">A 电磁感应</span><span class="opt">B 光伏效应</span><span class="opt">C 热电效应</span><span class="opt">D 压电效应</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d10a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d10b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d10a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>光伏效应：半导体 PN 结受光照激发电子空穴对，在内建电场作用下形成电动势直接发电。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">电磁感应是导体在变化磁场中产生电动势，是火电、水电、风电发电机的原理，需要机械运动。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">光伏效应：光子在半导体 PN 结中激发出电子空穴对，被内建电场分离形成电动势，光直接变电、无机械运动。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">热电效应靠温差发电（如温差发电片、热电偶），与光照无关。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">压电效应靠挤压晶体产生电压（如压电陶瓷打火机），与光照无关。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>光直接变电叫光伏效应；靠转动磁场生电的是电磁感应，那是发电机和变压器的原理。</p></div>
+  </div>
+  <div class="detail" id="d10b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>光伏效应到底怎么回事</b><span>光伏板的核心是硅做的<b>PN 结</b>。光子打进来，把硅里的电子撞出来形成「电子-空穴对」；PN 结内部有个天然的电场，把电子和空穴推向不同方向，两端就积累出电压，接上回路就有电流。整个过程没有机械运动、没有燃烧。</span></div><div class="term"><b>电磁感应又是啥</b><span>导体在变化的磁场里运动会产生电——火电、水电、核电、风电的发电机都是这个原理，需要「转」起来。</span></div><div class="term"><b>热电/压电</b><span>热电效应是温差发电（温差发电片），压电效应是挤压晶体产生电压（打火机里的压电陶瓷），都不是光伏的原理。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">12</span><p class="q">「最大功率点跟踪」的英文缩写是</p></div>
+  <div class="opts"><span class="opt">A MPPT</span><span class="opt">B PWM</span><span class="opt">C PLL</span><span class="opt">D SVG</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d11a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d11b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d11a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>MPPT 即 Maximum Power Point Tracking，通过调节工作点让组件始终输出当前条件下的最大功率。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">MPPT＝Maximum Power Point Tracking，最大功率点跟踪，让组件始终工作在最大功率点附近。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">PWM＝脉宽调制，是一种通过调节脉冲宽度来等效调压的调制方式，不是最大功率点跟踪。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">PLL＝锁相环，用来锁定电网电压的相位与频率，实现同步并网，与追踪最大功率无关。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">SVG＝静止无功发生器，是补偿装置，不是控制算法。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>MPPT 就是「追着太阳找最大出力」的控制算法，逆变器的重要功能之一。</p></div>
+  </div>
+  <div class="detail" id="d11b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么需要「跟踪」</b><span>光伏板的输出电压和电流是互相牵制的：电压调高电流就小，电压调低电流就大。只有某一个电压点上「电压×电流」最大，这个点就是最大功率点。而且它随光照和温度不断移动。</span></div><div class="term"><b>MPPT 干什么事</b><span>逆变器每秒都在微调工作电压，试探着往功率更大的方向挪，找到顶点后保持在附近。好的 MPPT 能多收 5%~30% 的电。</span></div><div class="term"><b>其它缩写</b><span>PWM=脉宽调制（一种调压方式），PLL=锁相环（用来跟踪电网相位），SVG=静止无功发生器。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">13</span><p class="q">光伏组件随环境温度升高，其典型变化是</p></div>
+  <div class="opts"><span class="opt">A 短路电流降低</span><span class="opt">B 功率线性升高</span><span class="opt">C 开路电压升高</span><span class="opt">D 开路电压降低</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d12a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d12b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d12a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>温度升高时开路电压明显下降，短路电流略有上升，综合结果是组件输出功率下降。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">温度升高时短路电流是略有上升而非降低，而且它不是「典型」的主导变化。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">温度升高功率是下降而非升高，更不是线性升高。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">方向说反了：温度升高开路电压是下降而非升高。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">温度升高使 PN 结内建电场减弱，开路电压明显下降，虽短路电流略升，但总功率下降。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>组件怕热：越热电压越低、功率越小，所以盛夏高温天发电量反而要打折。</p></div>
+  </div>
+  <div class="detail" id="d12b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>开路电压 / 短路电流</b><span><b>开路电压</b>＝不接负载时两端的电压（最高电压）；<b>短路电流</b>＝把两端直接短接时的电流（最大电流）。这两个是组件的身份证参数。</span></div><div class="term"><b>温度系数</b><span>组件标称功率是在 25℃、光照 1000W/m² 的标准条件下测的。温度每升高 1℃，开路电压约降 0.3%，功率约降 0.4%。夏天组件表面能到 60~70℃，比标称低一大截。</span></div><div class="term"><b>实际影响</b><span>所以装在屋顶通风良好的支架上比贴着屋面发电多；也说明「天气越热发电越多」是个误解，真正决定发电量的是光照强度和温度。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">14</span><p class="q">组串式逆变器相比集中式逆变器的主要优点是</p></div>
+  <div class="opts"><span class="opt">A 单价最低</span><span class="opt">B 对组串失配和阴影适应性强</span><span class="opt">C 不需要散热</span><span class="opt">D 只能用于离网</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d13a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d13b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d13a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>组串式每台只接少量组串、多路独立 MPPT，能显著降低阴影、朝向不一致和失配损失。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">集中式单机功率大、单位造价更低，单价最低的反而是集中式，不是组串式。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">组串式每台只接少量组串、配多路独立 MPPT，能显著降低阴影、朝向不一致和失配带来的损失。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">逆变器功率器件工作时必然发热，组串式同样需要散热（风扇或自然散热），说「不需要散热」是错的。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">组串式逆变器大量用于并网电站，说「只能用于离网」完全说反了。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>集中式像「一人生病全家吃药」，组串式各管各的，局部阴影的影响小得多。</p></div>
+  </div>
+  <div class="detail" id="d13b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>什么是组串</b><span>若干块组件串联成一路叫一个组串，输出几百伏直流，再接到逆变器。</span></div><div class="term"><b>失配损失</b><span>串联电路电流处处相等，其中一块被遮挡或朝向不同，电流就被它拖垮，整串都跟着减产，这叫「木桶效应」。</span></div><div class="term"><b>两种逆变器怎么选</b><span>集中式一台 500kW 机器管上百个组串，单价低、效率略高，但只有 1~2 路 MPPT，适合地形开阔、朝向一致的大型地面电站；组串式每台几十 kW、多路独立 MPPT，适合屋顶、山地、朝向复杂的场景。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">15</span><p class="q">光伏「低电压穿越 LVRT」是指</p></div>
+  <div class="opts"><span class="opt">A 组件耐压降低</span><span class="opt">B 逆变器关机</span><span class="opt">C 电池低压报警</span><span class="opt">D 电网电压跌落时不脱网并提供无功支撑</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d14a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d14b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d14a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>LVRT 要求电网故障、电压跌落期间光伏不脱网，并向电网注入无功电流帮助电压恢复。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">LVRT 是逆变器在电网电压跌落时的运行能力，与组件本身的耐压水平无关。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">方向完全说反：LVRT 要求的恰恰是电网故障时<b>不关机、不脱网</b>。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">电池低压报警是储能系统 BMS 的功能，光伏 LVRT 不涉及电池。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">LVRT 即电网电压跌落期间光伏保持并网不脱网，并向电网注入无功电流帮助电压恢复。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>电网「感冒」时光伏不能撂挑子，要撑住不脱网，还要帮着顶一把无功。</p></div>
+  </div>
+  <div class="detail" id="d14b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么要有这个要求</b><span>早年光伏一遇到电网故障就自己脱网保命。装得多了以后问题来了：电网故障→大批光伏脱网→缺电更多→电压更低→更多脱网，形成恶性崩溃。所以规程强制要求「撑住」。</span></div><div class="term"><b>具体要求</b><span>电网电压跌到 20% 时要保持并网至少 0.625 秒；电压跌到 0 也要撑 0.15 秒。期间还要向电网注入无功电流，帮着把电压顶回去。</span></div><div class="term"><b>类比</b><span>电网就像一艘船遇到风浪，LVRT 要求乘客不要跳船，还要帮忙往外舀水。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">16</span><p class="q">下列设备中不属于光伏系统核心设备的是</p></div>
+  <div class="opts"><span class="opt">A 光伏组件</span><span class="opt">B 燃煤锅炉</span><span class="opt">C 光伏逆变器</span><span class="opt">D 汇流箱</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d15a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d15b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d15a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>光伏系统核心设备包括组件、逆变器、汇流箱、支架、箱变等；燃煤锅炉是火电厂设备。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow belong"><span class="oL">A</span><span class="oTag">属于</span><span class="oWhy">光伏组件是把光变成电的核心部件，属于必须的核心设备。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">燃煤锅炉是火电厂烧煤产蒸汽的设备，与光伏发电毫无关系，因此是「不属于」的那一项。</span></div><div class="orow belong"><span class="oL">C</span><span class="oTag">属于</span><span class="oWhy">光伏逆变器把组件发出的直流变交流并实现并网，是系统核心设备。</span></div><div class="orow belong"><span class="oL">D</span><span class="oTag">属于</span><span class="oWhy">汇流箱把多路组串的直流汇总并配置保护与防雷，同样属于核心设备。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>看到「燃煤」两个字就知道它跟光伏毫无关系，属于一眼可排除的干扰项。</p></div>
+  </div>
+  <div class="detail" id="d15b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>一套光伏电站由什么组成</b><span><b>组件</b>（把光变电）→ <b>汇流箱</b>（把很多路直流汇总、带保护和防雷）→ <b>逆变器</b>（直流变交流）→ <b>箱变</b>（升压到 10kV 或更高）→ <b>并网柜/计量</b>。支架、电缆、监控系统是配套。</span></div><div class="term"><b>汇流箱为什么必要</b><span>一个电站有几十上百路组串，不可能每路都拉一根电缆到逆变器，先就近汇总再引入，还方便加装熔断器和防雷器。</span></div><div class="term"><b>燃煤锅炉</b><span>烧煤把水烧成高温高压蒸汽，推动汽轮机带动发电机——这是火电厂的核心，跟光伏没有半点关系。</span></div></div></div>
+  </div>
+</div>
+<h3 class="grp">三、风力发电技术（17-18 题）</h3>
+<div class="grpintro">风机是把风的动能转成电能。关键在两条路线之争：<b>双馈</b>有齿轮箱、变流器小；<b>直驱</b>没齿轮箱、走全功率变流器。另外风功率与风速的<b>三次方</b>成正比，这决定了风电出力天生剧烈波动。</div>
+
+<div class="item">
+  <div class="ihead"><span class="num">17</span><p class="q">风电系统中将风能转化为电能的核心设备是</p></div>
+  <div class="opts"><span class="opt">A 光伏组件</span><span class="opt">B 储能电池</span><span class="opt">C 风力发电机</span><span class="opt">D SVG</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d16a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d16b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d16a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>风力机捕获风能驱动发电机旋转，再经变流器并网，完成风能到电能的转换。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">光伏组件是把光变电的设备，属于光伏系统，不是风电系统。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">储能电池负责存电与调节，不是把风能转成电能的设备。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">风力发电机（WT/WTG）把风轮捕获的风能转成电能，是风电系统的核心设备。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">SVG 是无功补偿装置，是配套治理设备，不做能量转换。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>风机＝风轮＋发电机，是把风变成电的主角；储能只是配角，负责调节。</p></div>
+  </div>
+  <div class="detail" id="d16b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>风机怎么发电</b><span>风推动叶片→风轮旋转→主轴→（齿轮箱增速）→发电机转子转动→发出电→变流器→箱变→并网。</span></div><div class="term"><b>风功率的三次方定律</b><span>风的功率与风速的<b>三次方</b>成正比：风速翻倍，功率变 8 倍。所以风电场选址极度看重风资源，也解释了为什么风电出力波动那么大。</span></div><div class="term"><b>风速的三个关键值</b><span>切入风速（约 3m/s，太小发不了）、额定风速（约 11~13m/s，达到满发）、切出风速（约 25m/s，太大要停机保护）。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">18</span><p class="q">关于风电系统下列说法正确的是</p></div>
+  <div class="opts"><span class="opt">A 不需要偏航变桨系统</span><span class="opt">B 出力不受风速影响</span><span class="opt">C 只能离网运行</span><span class="opt">D 直驱型省去齿轮箱，经全功率变流器并网</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d17a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d17b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d17a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>直驱机组风轮直接驱动发电机，取消齿轮箱，经全功率变流器并网；偏航与变桨系统必不可少。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">风电机组必须靠偏航系统正面迎风、靠变桨系统调节捕风与刹车，说「不需要」是错的。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">风功率与风速三次方成正比，出力受风速影响极大，说「不受影响」完全错误。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">风电既能并网也能离网运行，「只能离网」说反了。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">直驱型机组风轮直接驱动多极发电机，取消齿轮箱，全部功率经全功率变流器并网，故障率低、维护少。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>直驱就是「没有齿轮箱」，靠全功率变流器把不稳定的电「翻译」成能并网的电。</p></div>
+  </div>
+  <div class="detail" id="d17b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>双馈 vs 直驱</b><span><b>双馈</b>：风轮经齿轮箱增速后驱动绕线转子异步发电机，变流器只处理转子部分（约 30% 容量），成本低但齿轮箱易故障；<b>直驱</b>：取消齿轮箱，风轮直接驱动多极同步发电机，全部功率都过「全功率变流器」，故障率低、维护少，但发电机又大又重。</span></div><div class="term"><b>偏航系统</b><span>机舱底部的电机把整个机舱转起来，让风轮始终正面迎风，像风向标一样追着风转。</span></div><div class="term"><b>变桨系统</b><span>调整叶片自身的角度：风小时把叶片「张开」多捕风，风太大时把叶片「顺桨」减小受力，超速时还能紧急刹车。</span></div></div></div>
+  </div>
+</div>
+<h3 class="grp">四、储能系统（19-24 题）</h3>
+<div class="grpintro">储能是微电网的「稳定器」和「充电宝」。记牢<b>三个角色</b>：削峰填谷赚钱、当微电网电源撑孤岛、参与电网调峰调频。硬件上就<b>三件套</b>：电池（身体）、BMS（神经）、PCS（手脚）。</div>
+
+<div class="item">
+  <div class="ihead"><span class="num">19</span><p class="q">储能中负责电池与电网之间交直流双向能量转换的设备是</p></div>
+  <div class="opts"><span class="opt">A PCS</span><span class="opt">B BMS</span><span class="opt">C 光伏组件</span><span class="opt">D 汇流箱</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d18a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d18b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d18a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>PCS 储能变流器实现交直流双向变换：放电时逆变，充电时整流，是储能并网的关口设备。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">PCS 储能变流器双向工作：放电时逆变（直流→交流），充电时整流（交流→直流）。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">BMS 管的是电池的监测、均衡与保护，不做交直流能量转换。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">光伏组件是把光变成直流电的发电设备，不承担电池与电网之间的转换。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">汇流箱是光伏侧直流汇流设备，与储能并网侧的变流无关。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>PCS 是电池的「翻译官」，充和放两个方向都经过它，所以叫双向变流。</p></div>
+  </div>
+  <div class="detail" id="d18b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么非要 PCS</b><span>电池只能存直流电，电网是交流电，两种电说不同的「语言」，中间必须有个翻译官。而且这个翻译官要能双向翻译：放电时把电池的直流「翻」成交流送出去，充电时把电网的交流「翻」回直流存进去。</span></div><div class="term"><b>PCS 决定什么</b><span>储能的功率（能多快充放）由 PCS 决定，容量（能存多少）由电池决定。题目里「200kW/400kWh」就是「PCS 200kW / 电池 400kWh」，意味着满功率放电可放 2 小时。</span></div><div class="term"><b>四象限运行</b><span>PCS 既能发有功也能吸有功，既能发无功也能吸无功，四个方向都能走，所以能同时承担充放电和无功支撑。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">20</span><p class="q">负责电池单体电压、温度、SOC/SOH 等状态管理的是</p></div>
+  <div class="opts"><span class="opt">A PCS</span><span class="opt">B EMS</span><span class="opt">C BMS</span><span class="opt">D PLC</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d19a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d19b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d19a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>BMS 电池管理系统负责采集单体电压、电流、温度，估算 SOC/SOH，并完成均衡与保护。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">PCS 负责功率变换与执行，不管单体状态管理，属于「手脚」。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">EMS 是上层的能量管理与调度决策系统，管全局策略，不直接管电池单体。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">BMS 采集单体电压、电流、温度，估算 SOC/SOH，并完成均衡与保护。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">PLC 是可编程逻辑控制器，多用于工业现场的顺序控制，不是电池管理系统。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>BMS 是电池的「体检医生＋保姆」，管监测、管均衡、还管过充过放保护。</p></div>
+  </div>
+  <div class="detail" id="d19b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么电池要专人管</b><span>一个电池包由几百上千节单体串并联而成，跟一队士兵一样：最弱的那一节决定整队能撑多久。过充会起火，过放会永久损伤，温度不均会加速老化。</span></div><div class="term"><b>SOC 与 SOH</b><span><b>SOC</b>（State of Charge）剩余电量百分比，就像手机右上角那个数字；<b>SOH</b>（State of Health）健康度，容量衰减到初始值的百分比，一般低于 80% 就该退役了。</span></div><div class="term"><b>均衡是什么</b><span>各单体电量总是慢慢拉开差距，均衡就是把多的那节放掉一点（被动均衡，用电阻耗散）或转移到少的那节（主动均衡），让整组容量不被短板拖死。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">21</span><p class="q">微电网的「大脑」，能量管理与调度决策系统通常指</p></div>
+  <div class="opts"><span class="opt">A 光伏支架</span><span class="opt">B 电缆桥架</span><span class="opt">C 变压器</span><span class="opt">D EMS</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d20a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d20b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d20a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>EMS 能量管理系统负责数据采集、功率预测、优化调度和运行模式切换，是微电网决策中枢。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">光伏支架只是支撑组件的钢结构，没有任何决策功能。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">电缆桥架是敷设电缆的托架，纯属辅件。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">变压器只改变电压等级，是被动的电气设备，不做调度决策。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">EMS 能量管理系统负责数据采集、功率预测、优化调度与运行模式切换，是微电网的大脑。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>EMS 管全局调度，BMS 管电池细节，别把「大脑」和「神经末梢」搞混了。</p></div>
+  </div>
+  <div class="detail" id="d20b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>EMS 具体干什么</b><span>采集全系统数据（发多少、用多少、储能剩多少）→ 预测明天光照和风速、预测负荷 → 算出最优策略（什么时候充电放电、要不要启柴发）→ 下达指令给各个设备 → 监视运行状态并报警。</span></div><div class="term"><b>EMS / BMS / PCS 谁管谁</b><span><b>EMS</b> 是大脑，管全局决策；<b>BMS</b> 是电池的神经，管单体监测与均衡；<b>PCS</b> 是手脚，负责执行充放电动作。EMS 下命令，PCS 执行，BMS 保证执行过程中电池安全。</span></div><div class="term"><b>为什么必须有它</b><span>光伏风电靠天吃饭，负荷随时在变，什么时候充、什么时候放、什么时候切孤岛，靠人盯不过来，必须自动决策。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">22</span><p class="q">磷酸铁锂电池相比三元锂电池的突出优点是</p></div>
+  <div class="opts"><span class="opt">A 能量密度更高</span><span class="opt">B 热稳定性安全性更好</span><span class="opt">C 成本一定最低</span><span class="opt">D 低温性能最好</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d21a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d21b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d21a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>磷酸铁锂分解温度高、热稳定性好、循环寿命长，安全性优于三元锂，但能量密度较低。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">能量密度更高的恰恰是三元锂，磷酸铁锂在这方面是劣势。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">磷酸铁锂分解温度高（500℃以上）、热稳定性好、循环寿命长，安全性明显优于三元锂。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">「一定」太绝对。铁锂电芯成本通常较低，但系统成本还受设计、规模与行情影响，不能说一定最低。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">铁锂的低温性能反而是短板，低温下容量与功率衰减较三元更明显。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>铁锂更稳更耐造，三元更能装电但也更容易「上火」，储能电站多偏爱铁锂。</p></div>
+  </div>
+  <div class="detail" id="d21b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>三元和铁锂指什么</b><span>都是锂电池，区别在于正极材料：三元是镍钴锰（NCM），磷酸铁锂是 LFP。正极不同，性格就不同。</span></div><div class="term"><b>各自的脾气</b><span><b>三元</b>：能量密度高（同重量装更多电，乘用车追求续航用它），但热稳定性差，约 200℃ 就可能热失控起火；<b>铁锂</b>：分解温度 500℃ 以上，循环寿命 3000~6000 次，更耐造，但能量密度低、低温性能略差。</span></div><div class="term"><b>为什么储能电站爱用铁锂</b><span>电站最怕起火，而且一用就是十年，安全和寿命比「轻不轻」重要得多。所以储能主流是磷酸铁锂，电动车主流是三元（高端车也在转铁锂）。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">23</span><p class="q">超级电容最适合的应用场景是</p></div>
+  <div class="opts"><span class="opt">A 小时级能量搬移</span><span class="opt">B 替代光伏组件</span><span class="opt">C 秒级亚秒级功率缓冲</span><span class="opt">D 长距离输电</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d22a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d22b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d22a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>超级电容功率密度高、能量密度低、循环寿命长，适合秒级功率支撑与短时波动平滑。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">小时级能量搬移需要高能量密度，超级电容能量密度约为锂电池的 1/20，干不了长跑。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">超级电容是储能元件，不会发电，谈不上替代光伏组件。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">超级电容功率密度高、响应快、循环寿命长，最适合秒级甚至亚秒级的功率缓冲与波动平滑。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">长距离输电与储能元件无关，属于凑数的干扰项。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>超级电容「爆发力强、耐力差」，适合干短平快的活，长时间放电还得靠电池。</p></div>
+  </div>
+  <div class="detail" id="d22b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>它和电池存电有什么不同</b><span>电池靠<b>化学反应</b>存电，存得多但反应慢、循环次数有限；超级电容靠电极表面<b>吸附离子</b>（双电层）存电，是纯物理过程，所以能瞬间大电流充放、可循环上百万次，但存的总量很少。</span></div><div class="term"><b>能量密度 vs 功率密度</b><span><b>能量密度</b>=单位重量存多少电（耐力），超级电容约为锂电池的 1/20；<b>功率密度</b>=单位重量能多快放出电（爆发力），超级电容是电池的十倍以上。</span></div><div class="term"><b>典型用法</b><span>配合电池组成混合储能：超级电容吃下秒级的剧烈波动（保护电池），电池负责小时级的能量搬移；还用于制动能量回收、瞬时电压支撑。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">24</span><p class="q">储能低谷充电、高峰放电以降低成本的运行模式称为</p></div>
+  <div class="opts"><span class="opt">A 调峰调频</span><span class="opt">B 微电网电源</span><span class="opt">C 黑启动</span><span class="opt">D 削峰填谷</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d23a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d23b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d23a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>利用峰谷电价差在低谷充电、高峰放电，既节约电费又削减系统负荷峰谷差，即削峰填谷。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">调峰调频是响应电网调度指令、服务整个电网的运行模式，与「低谷充电高峰放电降成本」的描述不符。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">微电网电源指孤岛时当主控源撑电压频率，也不对应题干的降本描述。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">黑启动是全停后靠自身恢复供电的能力，与利用峰谷价差无关。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">利用峰谷电价差在低谷充电、高峰放电以节约电费，同时削平负荷峰谷差，正是削峰填谷。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>本质是「低买高卖赚差价」，顺带帮电网把负荷曲线削平，一举两得。</p></div>
+  </div>
+  <div class="detail" id="d23b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>什么是峰谷电价</b><span>电目前还无法大规模廉价储存，发多少就得用多少。电网为了劝大家别都在高峰用电，对工商业用户实行分时电价：高峰贵（可能 1 元/度）、低谷便宜（可能 0.3 元/度）。</span></div><div class="term"><b>怎么赚钱</b><span>夜里低谷时用便宜的电把电池充满，白天高峰时放出来自己用，等于省下了高峰的高价电费。这个差价就是储能最直接的收益来源。</span></div><div class="term"><b>顺带的好处</b><span>用户侧少买高峰电，电网的负荷曲线就被「削掉峰、填平谷」，发电厂不用为了一天几小时的高峰去多建机组，全社会都省钱。</span></div></div></div>
+  </div>
+</div>
+<h3 class="grp">五、运行与控制（25-30 题）</h3>
+<div class="grpintro">这部分最抽象也最容易得分。核心就一句话：<b>并网时大电网定调，孤岛时储能定调</b>。对应两种控制模式——PQ（听令出力）和 U/f（自己定规矩）。多台逆变器之间靠<b>下垂控制</b>自动按比例分担，不靠通信线。</div>
+
+<div class="item">
+  <div class="ihead"><span class="num">25</span><p class="q">微电网中常常包含的电源一般不包括</p></div>
+  <div class="opts"><span class="opt">A 大型火电机组</span><span class="opt">B 光伏风电</span><span class="opt">C 储能系统</span><span class="opt">D 柴油发电机和小水电</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d24a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d24b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d24a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>微电网电源以分布式为主：光伏、风电、储能、柴发、小水电等，不含大型火电机组。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">大型火电机组容量以百兆瓦计、启停以小时计，体量与技术特性都进不了微电网，是「不包括」的那一项。</span></div><div class="orow belong"><span class="oL">B</span><span class="oTag">属于</span><span class="oWhy">光伏、风电是微电网最典型的分布式电源，属于常见电源。</span></div><div class="orow belong"><span class="oL">C</span><span class="oTag">属于</span><span class="oWhy">储能系统是微电网稳定运行的支撑环节，属于常见组成部分。</span></div><div class="orow belong"><span class="oL">D</span><span class="oTag">属于</span><span class="oWhy">柴油发电机是兜底电源，小水电是就近的可再生资源，都属于微电网常见电源。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>微电网讲究「小而灵」，大火电是主网主力军，体量和技术特性都进不了微网。</p></div>
+  </div>
+  <div class="detail" id="d24b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>分布式电源是什么</b><span>容量小（kW 到 MW 级）、分散布置在用户附近、就地消纳的电源，跟「大机组、大电网、远距离」的传统模式相对。</span></div><div class="term"><b>火电机组为什么不合适</b><span>一台大型火电机组 300MW~1000MW，需要煤场、锅炉、汽轮机、冷却塔，启停要几个小时，还讲究规模经济。微电网一个园区可能总共才几 MW，根本用不起、也带不动。</span></div><div class="term"><b>微电网里为什么留柴发和小水电</b><span>柴发是「最后兜底」——储能没电、光伏没光时能立刻顶上；小水电是就近的可再生资源，容量小、适合分布式开发。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">26</span><p class="q">微电网并网运行时，系统的电压和频率主要由谁决定</p></div>
+  <div class="opts"><span class="opt">A 光伏组件</span><span class="opt">B 大电网</span><span class="opt">C 电缆截面</span><span class="opt">D 支架倾角</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d25a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d25b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d25a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>并网时大电网容量远大于微电网，提供电压与频率支撑，微电源通常按 PQ 方式出力。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">光伏靠天吃饭、出力不可控，无法承担为整个系统定电压频率的职责。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">并网时大电网容量远大于微电网，相当于「无穷大母线」，电压与频率由它决定。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">电缆截面影响载流量与线路压降，但不能决定系统电压频率。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">支架倾角只影响光伏接收的辐射量，与系统电压频率无关。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>并网时大电网就是「定海神针」，电压和频率由它说了算，微电源只管发多少。</p></div>
+  </div>
+  <div class="detail" id="d25b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>什么是「无穷大母线」</b><span>大电网装机以亿千瓦计，一个几 MW 的微电网相对它就是「往大海里倒一杯水」。微电网多发一点少发一点，大电网的电压频率纹丝不动。所以并网时微电网是「跟着唱」，大电网「定调」。</span></div><div class="term"><b>这时微电源干什么</b><span>按指令输出有功和无功就行（PQ 控制），不用操心电压和频率，因为有人撑着。这也是为什么并网运行相对简单。</span></div><div class="term"><b>什么时候变「孤岛」</b><span>大电网故障或计划检修断开连接点后，微电网自己孤零零地运行，从此没人给它定调了。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">27</span><p class="q">微电网孤岛运行时，通常由谁承担电压频率支撑</p></div>
+  <div class="opts"><span class="opt">A 光伏组件</span><span class="opt">B 汇流箱</span><span class="opt">C 电表</span><span class="opt">D 储能PCS（V/f控制）</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d26a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d26b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d26a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">D</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>孤岛运行失去大电网支撑，须由储能 PCS 或柴发等主控源建立并维持系统电压与频率。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">光伏出力不可控，靠逆变器并网，属于跟网型设备，撑不起电压频率。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">汇流箱是直流汇流与保护设备，不具备建立电压频率的能力。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">电表只负责计量，完全不参与控制。</span></div><div class="orow hit"><span class="oL">D</span><span class="oTag">答案</span><span class="oWhy">孤岛时靠储能 PCS 以 V/f 控制建立并维持电压频率，是构网型主控源（柴油发电机也可承担）。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>离网时没人撑腰，得靠储能站出来「挑大梁」，当电压频率的定盘星。</p></div>
+  </div>
+  <div class="detail" id="d26b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么光伏风电撑不起来</b><span>光伏靠光、风电靠风，出力自己说了不算，让它去「定调」（缺多少补多少）它做不到；逆变器本身也不具备维持电网电压的能力。它们属于「跟网型」设备——别人建好网它才能往里送电。</span></div><div class="term"><b>储能为什么行</b><span>电池的能量是实打实存着的，要多少给多少，PCS 又是电力电子器件，响应速度毫秒级。它能像一台「发电机」一样自己建立 380V/50Hz，然后谁缺功率它立刻补——这叫「构网型」。</span></div><div class="term"><b>V/f 控制</b><span>V=电压，f=频率。V/f 控制就是「我来定电压和频率，功率随负荷自动补」，这正是孤岛运行最需要的本事。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">28</span><p class="q">关于 P/Q 模式与 U/f 模式，下列说法正确的是</p></div>
+  <div class="opts"><span class="opt">A PQ控电压频率Uf控功率</span><span class="opt">B 两者只用于离网</span><span class="opt">C PQ控有功无功常用于并网，Uf控电压频率常用于孤岛</span><span class="opt">D Uf并网PQ孤岛</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d27a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d27b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d27a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">C</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>PQ 模式按指令输出有功与无功，适合并网运行；U/f 模式建立电压频率参考，适合孤岛主控源。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">说反了：PQ 控制的是有功和无功，U/f 控制的才是电压和频率。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">两种模式都要用：并网用 PQ，孤岛用 U/f，说「只在离网中使用」是错的。</span></div><div class="orow hit"><span class="oL">C</span><span class="oTag">答案</span><span class="oWhy">PQ 模式按指令输出有功与无功、常用于并网运行；U/f 模式控制电压与频率、常用于孤岛运行。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">正好说反：U/f 用于孤岛而非并网，PQ 用于并网而非孤岛。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>有人撑腰时就听令出力（PQ），独自撑场时就得自己定规矩（U/f）。</p></div>
+  </div>
+  <div class="detail" id="d27b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>P、Q、U、f 都是啥</b><span><b>P</b>=有功功率（瓦），<b>Q</b>=无功功率（乏），<b>U</b>=电压（伏），<b>f</b>=频率（赫兹）。前两个是「我出多少力」，后两个是「电网的状态好不好」。</span></div><div class="term"><b>两种模式的本质区别</b><span><b>PQ 模式</b>：我是电流源，电压频率别人定好了，我只管按指令注入多少有功无功；<b>U/f 模式</b>：我是电压源，我来定电压和频率，负荷要多少我给多少。</span></div><div class="term"><b>类比</b><span>合唱团里，指挥定调子（U/f），其他人跟着唱（PQ）。并网时大电网是指挥，孤岛时储能必须接替当指挥。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">29</span><p class="q">下垂控制 Droop Control 主要用于</p></div>
+  <div class="opts"><span class="opt">A 组件清洗</span><span class="opt">B 多逆变器对等控制、按容量分担功率</span><span class="opt">C 电缆选型</span><span class="opt">D 电池化成</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d28a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d28b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d28a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">B</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>下垂控制模拟同步发电机外特性，使多台逆变器无需互相通信即可按容量分担有功与无功。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow mis"><span class="oL">A</span><span class="oTag">排除</span><span class="oWhy">组件清洗属于运维工作，与控制策略毫无关系。</span></div><div class="orow hit"><span class="oL">B</span><span class="oTag">答案</span><span class="oWhy">下垂控制让多台逆变器无需互相通信即可按容量分担有功与无功，实现多机对等控制。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">电缆选型是设计阶段的选型计算，属于一次专业，与控制策略无关。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">电池化成是电池生产工序（首次充放电激活），不是运行控制策略。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>多台机器「各让一步」，自动按比例出力，不用互相打电话，可靠性高。</p></div>
+  </div>
+  <div class="detail" id="d28b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么要「分担」</b><span>微电网里可能有好几台储能逆变器并联运行。如果大家各自为政，有的拼命出力有的偷懒，会互相打架甚至环流。需要一种办法让它们按容量比例自觉分摊。</span></div><div class="term"><b>下垂的灵感来自哪</b><span>传统同步发电机有个天然脾气：负载加重，转速（频率）会稍微降一点。把这个特性画成曲线就是「下垂曲线」。逆变器模仿这条曲线——输出有功越多，我这边频率就降一点；输出无功越多，电压就降一点。</span></div><div class="term"><b>妙处在哪</b><span>只要所有逆变器都按同一条规则「让一步」，它们就自动达到平衡、按容量分担，<b>不需要任何通信线</b>。少一根通信线就少一个故障点，可靠性高。缺点是电压频率会有小幅偏差。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">30</span><p class="q">关于 APF、SVG 在微电网中的地位，下列说法正确的是</p></div>
+  <div class="opts"><span class="opt">A 属选配设备但大部分时候非常重要</span><span class="opt">B 必配缺一不可</span><span class="opt">C 仅用于输电网，微电网不需要</span><span class="opt">D 只起计量作用</span></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'d29a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'d29b')">零基础补课</button>
+  </div>
+  <div class="detail" id="d29a">
+    <div class="block ba"><span class="btag">正确答案</span><span class="ans">A</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>APF 与 SVG 并非强制必配，但在谐波、无功、电压波动突出的微电网中往往成为关键设备。</p></div>
+    <div class="block b4"><span class="btag">逐项分析</span><div class="otable"><div class="orow hit"><span class="oL">A</span><span class="oTag">答案</span><span class="oWhy">APF 与 SVG 属于治理设备，并无强制必配的硬性规定，但在谐波、无功、电压波动突出的微电网中往往非常关键。</span></div><div class="orow mis"><span class="oL">B</span><span class="oTag">排除</span><span class="oWhy">说「必配缺一不可」过头了，它们不像逆变器、开关那样是系统运行的基础设备，是否配置取决于实测的谐波与无功水平。</span></div><div class="orow mis"><span class="oL">C</span><span class="oTag">排除</span><span class="oWhy">输电网、配电网、微电网都会用到 APF 与 SVG，说「微电网不需要」是错的。</span></div><div class="orow mis"><span class="oL">D</span><span class="oTag">排除</span><span class="oWhy">计量靠电表与互感器，APF 用于滤除谐波、SVG 用于动态无功补偿，两者都是治理设备而非计量设备。</span></div></div></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>它们不是「标配」，却是「常用药」，凡是有谐波和电压波动的场景基本少不了。</p></div>
+  </div>
+  <div class="detail" id="d29b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>必配还是选配</b><span>从规范上讲它们是「治理设备」，不像逆变器、开关那样是系统运行的基础，所以不是强制必配。要不要装取决于实测的谐波和无功水平。</span></div><div class="term"><b>为什么又说很重要</b><span>微电网里电力电子装置扎堆（逆变器、变流器、充电桩），谐波和无功问题天生突出，加上光伏风电波动大，实际工程中几乎都要装。装不装不是问题，装多大才是问题。</span></div><div class="term"><b>它们不是计量设备</b><span>计量靠电表和互感器；APF 是「治病的」，SVG 是「稳压的」，属于治理类。输电网、配电网、微电网都能用，不是输电网专属。</span></div></div></div>
+  </div>
+</div>
+</section>
+
+<section id="fill">
+<h2 class="sec">二、填空题精讲<small>共 5 题 10 分 · 考术语准确性，必须一字不差</small></h2>
+
+<div class="item">
+  <div class="ihead"><span class="num">01</span><p class="q">微电网主要组网架构有并网型交流微电网、离网型交流微电网和____</p></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'f0a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'f0b')">零基础补课</button>
+  </div>
+  <div class="detail" id="f0a">
+    <div class="block ba"><span class="btag">应填入</span><span class="ans">离网型直流微电网</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>三种基本架构：并网型交流、离网型交流、离网型直流。直流架构可减少交直流变换环节，适合直流负荷多的场景。</p></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>交流有两种、离网还能走直流，记住「并网必交流，离网交直流都行」。</p></div>
+  </div>
+  <div class="detail" id="f0b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>直流微电网好在哪</b><span>光伏发直流、电池存直流、LED 照明用直流、数据中心服务器用直流、电动车充直流。如果微电网内部走直流母线，这些设备就能少一次「交流↔直流」的转换，每次转换都要损失 3%~5%，加起来能省不少。</span></div><div class="term"><b>为什么没普及</b><span>直流电没有「过零点」，灭弧困难，直流断路器又贵又难做，保护技术不成熟。所以目前交流仍是绝对主流，直流微电网多用于数据中心、通信基站这类直流负荷密集的场所。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">02</span><p class="q">谐波按频率特性主要分为常规谐波、____和高次谐波</p></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'f1a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'f1b')">零基础补课</button>
+  </div>
+  <div class="detail" id="f1a">
+    <div class="block ba"><span class="btag">应填入</span><span class="ans">间谐波</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>间谐波的频率与基波不成整数倍关系，常由变频器、电弧炉等产生，会引起灯光闪烁和滤波器设计困难。</p></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>整数倍是常规谐波，非整数倍就叫间谐波，填空常考这个「间」字。</p></div>
+  </div>
+  <div class="detail" id="f1b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>到底什么叫「间」</b><span>「间」就是「夹在中间」。50Hz 的电网里，100Hz、150Hz 是整数倍（2次、3次谐波），而 87Hz、125Hz 这种夹在中间的、不是整数倍的，就叫间谐波。</span></div><div class="term"><b>谁在制造间谐波</b><span>变频器、周波变换器、电弧炉、风电变流器这些「工作状态不断变化」的设备。它们的谐波频率会随运行状态漂移，落在非整数倍位置上。</span></div><div class="term"><b>有什么危害</b><span>最容易引起灯光闪烁（因为它和基波叠加会产生拍频），还会让原本按整数倍设计的滤波器失谐失效，干扰电力线载波通信，甚至引起感应电机振动。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">03</span><p class="q">储能系统三大核心设备可概括为：电池、BMS 和____</p></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'f2a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'f2b')">零基础补课</button>
+  </div>
+  <div class="detail" id="f2a">
+    <div class="block ba"><span class="btag">应填入</span><span class="ans">PCS（储能变流器）</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>电池是储能本体，BMS 负责监测、均衡与保护，PCS 负责交直流双向变换与并网控制，三者缺一不可。</p></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>记住「储能三件套」：电池是身体，BMS 是神经，PCS 是手脚。</p></div>
+  </div>
+  <div class="detail" id="f2b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>三者怎么配合</b><span><b>电池</b>是身体，负责存电；<b>BMS</b>是神经，时刻感知每节电芯的电压温度，保证不出危险；<b>PCS</b>是手脚，负责把电送出去或收回来。三者缺一不可——只有电池是「哑巴」，没有 BMS 会出安全事故，没有 PCS 根本接不上电网。</span></div><div class="term"><b>EMS 算不算第四个</b><span>EMS 是更高层的「大脑」，管整个微电网的调度。单纯说<b>储能系统本身</b>的三大件，就是电池、BMS、PCS。</span></div><div class="term"><b>功率和容量分别由谁决定</b><span>PCS 决定<b>功率</b>（kW，能多快充放），电池决定<b>容量</b>（kWh，能存多少）。两者相除就是「能满功率放几小时」。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">04</span><p class="q">电池剩余电量状态用____表示，健康状态用 SOH 表示</p></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'f3a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'f3b')">零基础补课</button>
+  </div>
+  <div class="detail" id="f3a">
+    <div class="block ba"><span class="btag">应填入</span><span class="ans">SOC</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>SOC（State of Charge）表示剩余电量百分比，SOH（State of Health）表示电池健康与老化程度。</p></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>SOC 就像油量表的百分比，SOH 就像电池的「健康分」，两者都是百分比但含义不同。</p></div>
+  </div>
+  <div class="detail" id="f3b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>SOC 怎么测出来的</b><span><b>测不出来，只能估</b>。常用方法：安时积分（把进出电流对时间累加，像记账）+ 开路电压修正（休息一会儿测电压查表）+ 卡尔曼滤波等算法修正。所以 SOC 会有误差，需要定期「满充校准」。</span></div><div class="term"><b>SOH 是什么</b><span>电池用久了容量会衰减，SOH=当前实际容量÷出厂容量。比如新车电池 60kWh，用了几年只能充 48kWh，SOH 就是 80%。一般低于 80% 就不适合继续在车上用，可以「梯次利用」到储能电站。</span></div><div class="term"><b>为什么 SOC 不能随便用到 0 或 100</b><span>深度充放电会加速老化，系统通常会留「缓冲」，比如只在 10%~90% 之间运行。题目里 SOC 降到 20% 就要停止放电，就是这条规则。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">05</span><p class="q">储能系统运行模式包括削峰填谷、____和调峰调频等</p></div>
+  <div class="btns">
+    <button class="btn pri" onclick="tg(this,'f4a')">查看答案与解析</button>
+    <button class="btn base" onclick="tg(this,'f4b')">零基础补课</button>
+  </div>
+  <div class="detail" id="f4a">
+    <div class="block ba"><span class="btag">应填入</span><span class="ans">微电网电源</span></div>
+    <div class="block b1"><span class="btag">知识解析</span><p>储能可作为微电网主电源在孤岛时提供电压频率支撑，也可参与削峰填谷和电网调峰调频服务。</p></div>
+    <div class="block b2"><span class="btag">通俗讲解</span><p>储能三种角色：省钱（削峰填谷）、当电源（撑孤岛）、服务电网（调峰调频）。</p></div>
+  </div>
+  <div class="detail" id="f4b">
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>三种角色详解</b><span>① <b>削峰填谷</b>：低谷充电高峰放电，赚电价差，服务的是「用户的钱包」；② <b>微电网电源</b>：孤岛时当主控源建立电压频率，服务的是「供电可靠性」；③ <b>调峰调频</b>：响应电网调度指令，帮大电网削峰或稳频率，服务的是「整个电网」，可获得补偿收益。</span></div><div class="term"><b>调峰 vs 调频</b><span><b>调峰</b>：时间尺度是小时级，应对用电高峰低谷的起伏（慢慢腾腾）；<b>调频</b>：时间尺度是秒级甚至毫秒级，应对发电用电的瞬时失衡（要求快），储能响应快，特别适合调频。</span></div><div class="term"><b>还有第四种：黑启动</b><span>大电网全停后，储能可以不依赖外界自己「点火」，带动其他机组逐步恢复供电，这叫黑启动，是储能的独特价值。</span></div></div></div>
+  </div>
+</div>
+</section>
+
+<section id="judge">
+<h2 class="sec">三、判断题精讲<small>共 10 题 10 分 · 答案直接显示，重点看「为什么」和术语补课</small></h2>
+
+<div class="item">
+  <div class="ihead"><span class="num">01</span><p class="q">微电网只能并网运行，不能独立离网运行</p><span class="mark no">×</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j0b')">为什么</button></div>
+  <div class="detail" id="j0b">
+    <div class="block b1"><span class="btag">判据</span><p>微电网的核心特征就是并网与离网灵活切换，能够独立带负荷稳定运行。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>微电网的定义</b><span>国际上的共识：微电网是「由分布式电源、储能、负荷和保护控制装置组成，能够<b>并网运行也能独立运行</b>的小型电力系统」。只能并网不能离网的，那叫「分布式发电」，不叫微电网。</span></div><div class="term"><b>为什么要能离网</b><span>就是为了大电网停电时还能保住重要负荷——医院、数据中心、海岛、边防。这是微电网存在的最大意义。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">02</span><p class="q">储能是微电网孤岛稳定运行的重要支撑环节</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j1b')">为什么</button></div>
+  <div class="detail" id="j1b">
+    <div class="block b1"><span class="btag">判据</span><p>孤岛时没有大电网支撑，靠储能平衡功率缺额并提供电压频率支撑。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>孤岛为什么难</b><span>并网时缺多少电大电网自动补，多发的电大电网收。孤岛后这个「缓冲垫」没了，每一瓦都得当场平衡。而光伏风电靠天吃饭，负荷又随时变，供需时刻在错开。</span></div><div class="term"><b>储能扮演什么角色</b><span>它是孤岛运行的「定海神针」兼「缓冲垫」：缺电就放、多电就吸，同时用 V/f 控制撑住电压和频率。没有储能，孤岛系统几乎必然崩溃。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">03</span><p class="q">光伏组件温度升高时，输出功率一般会下降</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j2b')">为什么</button></div>
+  <div class="detail" id="j2b">
+    <div class="block b1"><span class="btag">判据</span><p>温度升高使开路电压下降，功率随温度上升而降低，选型时要看温度系数。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么热了反而少发电</b><span>温度升高让半导体内部载流子运动更剧烈，PN 结的「内建电场」被削弱，能推出的电压就变小了。虽然电流会略微增加，但电压掉得多，总功率（电压×电流）是下降的。</span></div><div class="term"><b>实践中的影响</b><span>盛夏正午光照最强的时刻，组件表面温度能到 60~70℃，此时发电效率比凉爽的春日反而低。所以有些电站装通风支架、甚至给组件喷水降温。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">04</span><p class="q">PCS 只能将直流电变成交流电，不能反向整流充电</p><span class="mark no">×</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j3b')">为什么</button></div>
+  <div class="detail" id="j3b">
+    <div class="block b1"><span class="btag">判据</span><p>PCS 是双向变流器，放电时逆变、充电时整流，两个方向都能运行。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么必须双向</b><span>储能的本职工作就是「充进去、放出来」，如果只能放电不能充电，那电池永远只能放空一次，毫无意义。所以 PCS 天生就是双向的。</span></div><div class="term"><b>技术上怎么实现</b><span>PCS 的核心是 IGBT 等全控型器件组成的桥式电路，通过控制开关时序，同一套硬件既能逆变也能整流，就像同一条道路可以双向通行。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">05</span><p class="q">BMS 除监测电压、电流、温度外，还负责电池均衡管理</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j4b')">为什么</button></div>
+  <div class="detail" id="j4b">
+    <div class="block b1"><span class="btag">判据</span><p>均衡管理是 BMS 核心功能之一，用于消除单体差异、延长整组电池寿命。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么不均衡是麻烦</b><span>电池组像一串灯笼，串联电路电流处处相等。容量最小的那节先充满、先放完，为了保护它，整组就得提前停止充放——其他节的容量白白浪费。而且差距会越用越大。</span></div><div class="term"><b>两种均衡</b><span><b>被动均衡</b>：给电压高的那节并联电阻，把多出来的电变成热量放掉，简单便宜但费电；<b>主动均衡</b>：用电容或电感把电从高的那节搬到低的那节，效率高但电路复杂、成本高。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">06</span><p class="q">谐波过大会导致变压器发热、电缆损耗增加、保护误动</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j5b')">为什么</button></div>
+  <div class="detail" id="j5b">
+    <div class="block b1"><span class="btag">判据</span><p>谐波带来附加损耗与过热，还可能干扰保护采样，导致保护装置误动作。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>为什么会发热</b><span>频率越高，导体的<b>集肤效应</b>越明显（电流挤到导线表面，等效电阻变大），电缆损耗增加；变压器铁芯的涡流损耗也随频率升高而增大，于是异常发热、寿命缩短。</span></div><div class="term"><b>为什么会误动</b><span>保护装置靠测量电压电流的波形来判断故障。谐波把波形搞得七扭八歪，采样值失真，装置可能把正常情况误判成短路而跳闸，或者该跳时不跳。</span></div><div class="term"><b>还有个隐蔽危害</b><span>谐波容易和补偿电容器发生<b>谐振</b>，把谐波放大好几倍，严重时电容器鼓包爆炸。所以装电容器组要配抗谐波电抗器。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">07</span><p class="q">间谐波是频率为基波整数倍的谐波</p><span class="mark no">×</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j6b')">为什么</button></div>
+  <div class="detail" id="j6b">
+    <div class="block b1"><span class="btag">判据</span><p>整数倍的是常规谐波；间谐波频率与基波不成整数倍关系，这是常考易错点。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>正过来记</b><span><b>整数倍</b>=常规谐波（2次100Hz、3次150Hz、5次250Hz）；<b>非整数倍</b>=间谐波。题目把两者说反了。</span></div><div class="term"><b>为什么总记混</b><span>因为名字里有个「谐波」就以为是同类。记住「间」=「夹在中间、不成整数倍」，就不会错了。这是本卷的高频送分题，千万别丢。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">08</span><p class="q">微电网孤岛运行时，频率和电压仍需维持在规定范围内</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j7b')">为什么</button></div>
+  <div class="detail" id="j7b">
+    <div class="block b1"><span class="btag">判据</span><p>孤岛运行同样要保证供电质量，由储能或柴发等主控源维持电压与频率。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>孤岛不等于「能亮就行」</b><span>孤岛运行时如果电压偏低、频率漂移，接在上面的电机、变频器、精密设备照样会损坏或停机。孤岛供电的质量要求和并网时是一样的。</span></div><div class="term"><b>靠谁维持</b><span>主控源（储能 PCS 或柴发）用 V/f 控制把电压和频率「钉」在额定值附近，缺多少功率补多少。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">09</span><p class="q">防孤岛保护只在离网光伏系统中需要，并网系统不需要</p><span class="mark no">×</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j8b')">为什么</button></div>
+  <div class="detail" id="j8b">
+    <div class="block b1"><span class="btag">判据</span><p>并网系统必须配置防孤岛保护，防止非计划孤岛运行危及检修人员安全。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>什么是非计划孤岛</b><span>电网因为故障或检修停电了，但光伏电站还在发电，继续往那段线路上送电，形成一个「电网以为没电、其实有电」的孤岛。</span></div><div class="term"><b>为什么危险</b><span>线路工人以为已经断电，上去检修，结果被光伏反送的电击伤——这是真实发生过的事故。另外孤岛里的电压频率不受控，设备也容易损坏，电网重合闸时还会非同期合闸产生巨大冲击。</span></div><div class="term"><b>怎么防</b><span>逆变器装<b>防孤岛保护</b>：被动式（检测电压频率是否越限、相位是否跳变）+ 主动式（主动注入小扰动，孤岛时扰动会被放大从而被发现）。一旦判定孤岛，必须在 2 秒内停止并网。</span></div></div></div>
+  </div>
+</div>
+<div class="item">
+  <div class="ihead"><span class="num">10</span><p class="q">并网型交流微电网可细化为0秒切换或大于20秒切换两种方式</p><span class="mark yes">√</span></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'j9b')">为什么</button></div>
+  <div class="detail" id="j9b">
+    <div class="block b1"><span class="btag">判据</span><p>0秒切换即无缝切换；大于20秒切换允许短时停电后再恢复供电。</p></div>
+    <div class="block b3"><span class="btag">先懂这几个词</span><div class="terms"><div class="term"><b>两种方式的本质差别</b><span><b>0秒切换</b>：有储能或 UPS 在旁边热备，开关断开的瞬间它们立刻接管，负荷电压和频率连续不断，叫「无缝切换」，重要负荷必须用这种；<b>大于20秒切换</b>：允许停电一段时间，靠重新启动柴发或恢复供电来复电，成本更低。</span></div><div class="term"><b>为什么是 20 秒这个数</b><span>这是标准给出的分界：切换过程在 20 秒以内完成的归为一类（需要快速响应措施），超过 20 秒的属于允许短时中断的另一类。考试就考这两个档位。</span></div></div></div>
+  </div>
+</div>
+</section>
+
+<section id="case">
+<h2 class="sec">四、解析题精讲<small>共 2 题 20 分 · 先补基础，再按小问拆解</small></h2>
+<div class="item" style="margin-bottom:18px">
+  <div class="ihead"><span class="num">基</span><p class="q">做解析题之前，先搞懂这 6 个概念</p></div>
+  <div class="btns"><button class="btn base" onclick="tg(this,'cb')">展开基础概念</button></div>
+  <div class="detail" id="cb"><div class="block b3"><span class="btag">先懂这几个词</span><div class="term"><b>电能质量五大指标</b><span><b>电压偏差</b>（长期偏高偏低）、<b>频率偏差</b>（偏离 50Hz）、<b>谐波</b>（波形不干净）、<b>三相不平衡</b>（三根火线负担不均）、<b>电压波动与闪变</b>（电压快速抖动）。这五项就是判断「电好不好用」的尺子。</span></div><div class="term"><b>新能源为什么「难伺候」</b><span>火电是「听话」的：要多少发多少，还能靠巨大的转子提供<b>惯量</b>（电网受冲击时的缓冲）。光伏风电靠天吃饭，说停就停，而且通过电力电子器件并网，没有转动惯量，电网受冲击时没人「扛」一下。</span></div><div class="term"><b>惯量是什么</b><span>火电、水电的发电机有几十吨重的转子在飞转，它储存着巨大的动能。电网突然缺电时，转子会先「慢下来」释放动能顶一下，为其他机组争取几秒钟的响应时间。光伏风电没有这个大铁疙瘩，抗扰动能力天生弱。</span></div><div class="term"><b>构网型 vs 跟网型</b><span><b>跟网型</b>（Grid-following）：需要先有电网给我电压和频率参考，我才能往里送电，光伏风电逆变器多属此类；<b>构网型</b>（Grid-forming）：我自己能建立电压和频率，别人可以跟着我，储能 PCS 和柴发属于此类。孤岛运行必须靠构网型设备撑起来。</span></div><div class="term"><b>什么是峰谷电价</b><span>电网对工商业用户按时段收不同电价：用电高峰贵、低谷便宜。目的是引导用户错峰用电，减少电网为应付高峰而多建的机组。</span></div><div class="term"><b>黑启动</b><span>整个电网全黑的情况下，不依赖外界电源，靠自身储能或具有自启动能力的机组「点火」，逐步带动其他机组和负荷恢复供电。储能非常适合干这活。</span></div></div></div>
+</div>
+
+<div class="case">
+  <h3>解析题一 · 光伏风电并网带来的电能质量问题</h3>
+  <p class="stem">结合「光伏 + 风电 + 储能 + 微电网」应用场景，回答下列三问。</p>
+  <div class="qa"><div class="q">(1) 光伏、风电等新能源并网会给电能质量带来哪些主要问题？（4 分）</div><p class="a">① <b>电压波动与闪变</b>：出力随光照、风速间歇波动，功率忽大忽小，引起电压快速起伏，云飘过、阵风来都会让电压抖动；② <b>谐波与间谐波</b>：大量逆变器、变流器靠高频开关工作，向电网注入谐波，风电变流器还会产生间谐波；③ <b>三相不平衡</b>：户用光伏多为单相接入，分散挂在不同相上，造成三相出力与负荷不对称；④ <b>频率波动与无功电压调节压力</b>：出力随机、缺乏惯量，系统调频与无功支撑的负担明显加重，电压越限风险上升。</p></div><div class="qa"><div class="q">(2) 储能系统如何改善这些问题？（3 分）</div><p class="a">① 储能<b>毫秒级</b>响应，快速充放电把新能源出力的毛刺削平，直接消除电压波动与闪变；② PCS 可独立调节无功，<b>提供无功支撑</b>稳定电压，改善电压偏差；③ 削峰填谷平抑负荷曲线、参与<b>调频</b>弥补惯量不足；孤岛时还能以构网型方式建立电压频率参考。</p></div><div class="qa"><div class="q">(3) 工程中常用哪些装置或策略进行治理？（3 分）</div><p class="a"><b>装置</b>：SVG / STATCOM 做动态无功补偿抑制电压波动；APF 有源电力滤波器滤除谐波；无源滤波支路针对固定次谐波；储能 PCS 兼顾功率平滑与无功支撑。<b>策略</b>：EMS 统一协调各设备；逆变器采用 PQ 控制与下垂控制实现功率分担；配置电能质量在线监测，形成「监测—诊断—治理」闭环。</p></div>
+  <div class="tip">按「问题表现 → 产生机理 → 治理装置 → 控制策略」四步作答。<b>常见失分：</b>只写装置名称不写作用；漏掉频率与三相不平衡；只谈硬件不提 EMS 协调与控制策略。</div>
+</div>
+<div class="case">
+  <h3>解析题二 · 园区综合型新能源微电网运行与切换</h3>
+  <p class="stem">某园区微电网：光伏 300kW、风电 200kW、储能 200kW/400kWh、柴油发电机 1 台、重要负荷 150kW。</p>
+  <div class="qa"><div class="q">(1) 该微电网属于哪种组网架构类型？并网型交流微电网可细化为哪两种切换方式？（2 分）</div><p class="a">含光伏、风电、储能、柴发，且可并网可孤岛，属于<b>并网型交流微电网</b>。切换方式细化为 <b>0 秒切换</b>（无缝切换，负荷无感知）与 <b>大于 20 秒切换</b>（允许短时停电后再恢复）两种。</p></div><div class="qa"><div class="q">(2) 并网与孤岛分别由谁决定电压和频率？PQ 与 U/f 模式分别在什么情况下使用？（4 分）</div><p class="a"><b>并网时</b>由<b>大电网</b>决定电压与频率——它容量巨大，是「无穷大母线」，微电源只需按指令出力。<b>孤岛时</b>由<b>储能 PCS（或柴油发电机）</b>承担电压频率支撑，它们是构网型设备。<b>PQ 模式</b>按指令输出有功与无功，常用于并网运行；<b>U/f 模式</b>建立并维持电压与频率，常用于孤岛运行的主控源。</p></div><div class="qa"><div class="q">(3) 电网突然失电时，微电网应如何完成「并网 → 孤岛」切换？（2 分）</div><div class="step"><i>1</i><span>检测电网失电并确认孤岛条件成立</span></div><div class="step"><i>2</i><span>跳开并网点开关，与主网解列</span></div><div class="step"><i>3</i><span>储能 PCS 由 PQ 切换为 U/f 控制，建立电压与频率</span></div><div class="step"><i>4</i><span>切除非重要负荷，保证功率平衡</span></div><div class="step"><i>5</i><span>启动柴油发电机并入，补充功率缺额</span></div><div class="step"><i>6</i><span>逐步恢复供电，转入稳定孤岛运行</span></div></div><div class="qa"><div class="q">(4) 若储能 SOC 降至 20%，EMS 应如何处理？（2 分）</div><p class="a">① 停止或限制储能<b>放电</b>，防止过放损伤电池；② <b>启动柴油发电机</b>顶替功率缺额；③ 按优先级<b>切除可中断负荷</b>，全力保障 150kW 重要负荷；④ 必要时申请恢复并网，或有序停机待充。</p></div>
+  <div class="tip"><b>容量校核：</b>储能 200kW/400kWh 带 150kW 重要负荷约可支撑 2 小时（400÷150≈2.7h，扣除放电深度约 2h）；光伏风电受天气影响不可依赖，必须留备用容量并由柴发兜底。</div>
+</div>
+</section>
+
+<section id="quick">
+<h2 class="sec">五、核心速查与复习建议<small>考前最后过一遍</small></h2>
+<div class="quick">
+  <div class="row"><span class="k">架构三兄弟</span><span>并网型交流 · 离网型交流 · 离网型直流（<b>超高压直流</b>属于输电网，不在其中）</span></div>
+  <div class="row"><span class="k">储能三件套</span><span>电池（身体）· <code>BMS</code>（神经，管监测均衡）· <code>PCS</code>（手脚，双向变流）</span></div>
+  <div class="row"><span class="k">控制两模式</span><span><code>P/Q</code> 用于并网按指令出力 · <code>U/f</code> 用于孤岛建立电压频率</span></div>
+  <div class="row"><span class="k">电能质量</span><span><code>THD</code> 总谐波畸变率 · 稳态（数秒以上）对瞬态（微秒毫秒级）</span></div>
+  <div class="row"><span class="k">谐波三分</span><span>常规谐波（整数倍）· 间谐波（<b>非</b>整数倍）· 高次谐波</span></div>
+  <div class="row"><span class="k">孤岛靠谁</span><span>储能 PCS 或柴发（构网型）撑电压频率 · 光伏风电是跟网型，撑不起来</span></div>
+</div>
+<div class="case">
+  <h3>高频考点与常见失分</h3>
+  <p style="font-size:15px;margin:6px 0"><b>高频考点：</b>孤岛电压频率支撑 · 防孤岛保护 · 间谐波定义 · LVRT 低电压穿越 · 削峰填谷 · 下垂控制 · APF 与 SVG 作用</p>
+  <div class="tip"><b>常见失分：</b>① 只写装置名称不写作用；② 并网转孤岛步骤顺序混乱；③ SOC 过低处理漏答「防过放」；④ 把间谐波误认为基波整数倍；⑤ 认为防孤岛保护只在离网系统需要。</div>
+</div>
+</section>
+
+<footer>《新能源微电网与电能质量》考试试卷 · 零基础逐题精讲课件 · 适用于电网基层技术工种培训后考核</footer>
+</div>
+
+<button class="top">&#8593;</button>
+<script>
+function tg(btn,id){
+  var d=document.getElementById(id);
+  if(d.classList.contains('open')){d.classList.remove('open');btn.classList.remove('act');}
+  else{d.classList.add('open');btn.classList.add('act');}
+}
+function ex(open){
+  var sel = open ? '.detail' : '.detail.open';
+  document.querySelectorAll(sel).forEach(function(d){
+    var btn=document.querySelector('[onclick*="'+d.id+'"]');
+    if(open){d.classList.add('open'); if(btn)btn.classList.add('act');}
+    else{d.classList.remove('open'); if(btn)btn.classList.remove('act');}
+  });
+}
+(function(){
+  var links=[].slice.call(document.querySelectorAll('nav a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  var top=document.querySelector('.top');
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY+130, cur=0;
+    secs.forEach(function(s,i){ if(s && s.offsetTop<=y) cur=i; });
+    links.forEach(function(a,i){ a.classList.toggle('on', i===cur); });
+    top.classList.toggle('show', window.scrollY>600);
+  });
+  top.onclick=function(){window.scrollTo({top:0,behavior:'smooth'});};
+})();
+</script>
+</body>
+</html>

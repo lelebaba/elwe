@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《电力系统设计图纸识读》考试解析课件 · 零基础友好版</title>
+<style>
+:root{
+  --bg:#0f172a; --bg2:#1e293b; --card:#ffffff; --ink:#1f2937; --ink2:#475569;
+  --line:#e2e8f0; --acc:#2563eb; --acc2:#1d4ed8; --green:#16a34a; --greenbg:#f0fdf4;
+  --amber:#b45309; --amberbg:#fffbeb; --rose:#be123c; --rosebg:#fff1f2;
+  --blue:#1d4ed8; --bluebg:#eff6ff; --purple:#7e22ce; --purplebg:#faf5ff;
+  --gray:#64748b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;background:#f1f5f9;color:var(--ink);line-height:1.85;font-size:16px}
+/* ===== 侧边导航 ===== */
+.nav{position:fixed;top:0;left:0;width:250px;height:100vh;background:var(--bg);color:#cbd5e1;overflow-y:auto;z-index:50;padding:18px 0 30px}
+.nav h1{font-size:15px;color:#fff;padding:0 18px 12px;line-height:1.6;border-bottom:1px solid #334155;margin-bottom:10px}
+.nav h1 small{display:block;color:#94a3b8;font-size:12px;font-weight:normal}
+.nav a{display:block;color:#cbd5e1;text-decoration:none;font-size:13px;padding:6px 18px;border-left:3px solid transparent;transition:background .15s,color .15s,border-color .15s}
+.nav a:hover{background:#1e293b;color:#fff;border-left-color:var(--acc)}
+.nav a .n{color:#64748b;margin-right:6px;font-size:12px}
+.nav a.sub{padding-left:34px;font-size:12.5px;color:#94a3b8}
+.nav a.active{background:linear-gradient(90deg,rgba(37,99,235,.25),rgba(37,99,235,.05));color:#fff;font-weight:700;border-left:3px solid #60a5fa}
+.nav a.active .n{color:#93c5fd}
+.nav .part{font-size:11px;letter-spacing:2px;color:#64748b;padding:14px 18px 4px;text-transform:uppercase}
+/* ===== 答题交互 ===== */
+.opt.clickable{cursor:pointer;transition:transform .1s,box-shadow .15s}
+.opt.clickable:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.15)}
+.opt.user-picked{border-color:var(--acc);background:var(--bluebg);font-weight:700}
+.opt.user-picked .mark::after{content:" 已选";color:var(--acc);font-size:11px;font-weight:700}
+.opt.judged-correct{border-color:var(--green);background:var(--greenbg);box-shadow:0 0 0 3px rgba(22,163,74,.15)}
+.opt.judged-wrong{border-color:#fca5a5;background:#fef2f2}
+.judge-panel{display:flex;gap:10px;margin:12px 0}
+.judge-panel button{flex:1;font-size:18px;font-weight:800;padding:12px 0;border-radius:10px;border:2px solid var(--line);background:#f8fafc;cursor:pointer;transition:all .15s}
+.judge-panel button:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(37,99,235,.2)}
+.judge-panel button.j-pick{border-color:var(--acc);background:var(--bluebg);color:var(--acc2)}
+.judge-panel button.j-correct{border-color:var(--green);background:var(--greenbg);color:var(--green)}
+.judge-panel button.j-wrong{border-color:#fca5a5;background:#fef2f2;color:var(--rose)}
+.judge-result{font-size:15px;font-weight:700;margin:10px 0;padding:10px 14px;border-radius:10px;display:none}
+.judge-result.ok{background:var(--greenbg);color:var(--green);display:block}
+.judge-result.no{background:var(--rosebg);color:var(--rose);display:block}
+.q-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.q-actions button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 12px;font-size:12.5px;cursor:pointer;color:var(--ink2);transition:all .15s}
+.q-actions button:hover{border-color:var(--acc);color:var(--acc2);background:var(--bluebg)}
+/* 答案/解析隐藏态（默认隐藏，body.reveal 时显示） */
+body:not(.reveal) .ansbox,
+body:not(.reveal) .explain,
+body:not(.reveal) details.fold{display:none}
+.q-actions button.done{color:var(--green);border-color:#bbf7d0;background:var(--greenbg)}
+.q-actions button.active{color:var(--acc2);border-color:var(--acc);background:var(--bluebg);font-weight:700}
+/* 快捷键/工具栏 */
+.toolbar{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);z-index:40;padding:10px 48px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.toolbar .t{font-size:14px;font-weight:700;color:#0f172a;margin-right:auto}
+.toolbar button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 14px;font-size:13px;cursor:pointer;color:var(--ink)}
+.toolbar button:hover{background:var(--bluebg);border-color:var(--acc);color:var(--acc2)}
+.toolbar button.primary{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+.toolbar button.primary:hover{background:var(--acc2)}
+.toolbar button.active{background:var(--green);border-color:var(--green);color:#fff;font-weight:700}
+.scorebar{font-size:12.5px;color:#94a3b8;font-weight:400;margin-left:6px}
+.scorebar b{color:#60a5fa;font-size:13px}
+/* ===== 主体 ===== */
+main{margin-left:250px;padding:0 0 80px}
+.hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 70%,#1d4ed8 100%);color:#fff;padding:56px 48px}
+.hero h2{font-size:30px;font-weight:700;letter-spacing:1px}
+.hero p{color:#bfdbfe;margin-top:14px;max-width:820px}
+.hero .tags{margin-top:18px}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 14px;font-size:13px;margin:0 8px 8px 0}
+section.chapter{padding:48px 48px 8px;max-width:1000px;margin:0 auto}
+h2.chap{font-size:24px;color:#0f172a;border-left:6px solid var(--acc);padding-left:14px;margin-bottom:8px}
+.chap-desc{color:var(--ink2);margin-bottom:24px;padding-left:20px}
+/* 卡片 */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin-bottom:22px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.card h3{font-size:17px;margin-bottom:10px;color:#0f172a}
+.tip{background:var(--bluebg);border-left:4px solid var(--blue);border-radius:10px;padding:14px 18px;margin:14px 0;font-size:14.5px}
+.tip.warn{background:var(--amberbg);border-left-color:var(--amber)}
+.tip.ok{background:var(--greenbg);border-left-color:var(--green)}
+.analogy{background:var(--purplebg);border:1px dashed var(--purple);border-radius:12px;padding:14px 18px;margin:14px 0;font-size:14.5px}
+.analogy b{color:var(--purple)}
+/* 题目区 */
+.qcard{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:26px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.qhead{background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:12px}
+.qhead .qnum{background:var(--acc);border-radius:8px;padding:2px 12px;font-size:15px;font-weight:700}
+.qhead .qkind{font-size:12px;color:#94a3b8;margin-left:auto;letter-spacing:1px}
+.qbody{padding:20px 24px}
+.qtext{font-size:16px;font-weight:600;margin-bottom:14px;color:#0f172a}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.opt{border:1.5px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14.5px;background:#f8fafc;position:relative}
+.opt .mark{position:absolute;right:10px;top:8px;font-size:12px;font-weight:700}
+.opt .olabel{font-weight:700;color:var(--ink);margin-right:6px}
+/* 答案与解析块 */
+.ansbox{background:var(--greenbg);border:1.5px solid #bbf7d0;border-radius:12px;padding:14px 18px;margin:16px 0}
+.ansbox .label{font-size:13px;color:var(--green);font-weight:700;letter-spacing:2px}
+.ansbox .answer{font-size:20px;font-weight:800;color:#15803d;margin:4px 0}
+.ansbox .answer small{font-size:13px;font-weight:500;color:var(--ink2);display:block;margin-top:2px}
+.explain{font-size:14.5px;color:var(--ink)}
+.explain h4{font-size:15px;color:var(--acc2);margin:14px 0 6px}
+.explain h4::before{content:"◆ ";font-size:12px}
+.opt-analysis{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:12px 0}
+.opt-analysis li{margin:6px 0 6px 18px;font-size:14px}
+.opt-analysis .ok-i{color:var(--green);font-weight:700}
+.opt-analysis .no-i{color:var(--rose);font-weight:700}
+.opt-analysis .mid-i{color:var(--amber);font-weight:700}
+.concept{background:var(--bluebg);border-radius:12px;padding:14px 18px;margin:12px 0;font-size:14.5px}
+.concept b.t{color:var(--acc2)}
+table.tbl{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+table.tbl th,table.tbl td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+table.tbl th{background:#f1f5f9}
+table.tbl tr:nth-child(even) td{background:#fafcff}
+.kv{display:grid;grid-template-columns:170px 1fr;gap:8px 14px;font-size:14.5px}
+.kv dt{color:var(--ink2);text-align:right;font-weight:600}
+/* 折叠 */
+details.fold{border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#fafcff}
+details.fold summary{cursor:pointer;padding:10px 16px;font-weight:600;font-size:14.5px;color:var(--acc2);list-style:none}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold[open] summary{border-bottom:1px dashed var(--line)}
+details.fold .fold-body{padding:12px 16px;font-size:14px}
+/* 判断题/填空题 */
+.tf-answer{font-size:34px;font-weight:900;color:var(--green)}
+.tf-answer.no{color:var(--rose)}
+/* 图签演示 */
+.titleblock{border:2px solid #0f172a;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:minmax(44px,auto);font-size:12.5px;max-width:640px}
+.titleblock .tb-cell{border:1px solid #94a3b8;padding:6px 8px}
+.titleblock .tb-cell .k{color:var(--gray);font-size:11px}
+.titleblock .tb-title{grid-column:1/3;grid-row:1/3;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;border-right:2px solid #0f172a}
+/* 知识卡片网格 */
+.concept-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.concept-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+.concept-card h5{font-size:15px;color:var(--acc2);margin-bottom:6px}
+.concept-card p{font-size:13.5px;color:var(--ink2)}
+/* 顶部进度 */
+.progress-wrap{position:sticky;top:52px;z-index:39;background:#fff;padding:0 48px}
+.progress-bar{height:4px;background:#e2e8f0}
+.progress-bar>div{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#16a34a)}
+.backtop{position:fixed;right:26px;bottom:26px;background:var(--acc);color:#fff;border:none;border-radius:50%;width:46px;height:46px;font-size:18px;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.4);z-index:60}
+@media (max-width:900px){
+  .nav{display:none}
+  main,.toolbar,.progress-wrap,section.chapter{margin-left:0;padding-left:16px;padding-right:16px}
+  .opts,.concept-grid{grid-template-columns:1fr}
+}
+@media print{
+  .nav,.toolbar,.progress-wrap,.backtop{display:none}
+  main{margin:0}
+  .qcard,.card{box-shadow:none;break-inside:avoid}
+  .ansbox,.explain,details.fold,details.fold .fold-body{display:block !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ 侧边导航 ============ -->
+<nav class="nav" id="nav">
+<h1>《电力系统设计图纸识读》<small>考试解析课件 · 零基础友好版<br>逐题答案 + 选项辨析 + 通俗讲解</small></h1>
+<div class="part">学习导引</div>
+<a href="#basics" class="sub"><span class="n">§0</span>先读懂这门课在考什么</a>
+<a href="#basics1" class="sub"><span class="n">§1</span>电从哪里来，到哪里去（全流程）</a>
+<a href="#basics2" class="sub"><span class="n">§2</span>10个必须认识的核心设备</a>
+<a href="#basics3" class="sub"><span class="n">§3</span>电压等级 &amp; 高低压分界</a>
+<a href="#basics4" class="sub"><span class="n">§4</span>图纸的"语言"：图符·文字符号·标注</a>
+<div class="part">试卷逐题解析</div>
+<a href="#choice" class="sub"><span class="n">一</span>选择题 1–30（含选项辨析）</a>
+<a href="#fill" class="sub"><span class="n">二</span>填空题 1–5</a>
+<a href="#judge" class="sub"><span class="n">三</span>判断题 1–10</a>
+<a href="#essay" class="sub"><span class="n">四</span>解析题 1–2（完整参考答案）</a>
+<div class="part">记忆工具</div>
+<a href="#memory" class="sub"><span class="n">★</span>高频易错点速记表</a>
+<a href="#memory2" class="sub"><span class="n">★</span>设备文字符号速查表</a>
+</nav>
+
+<main>
+<!-- ============ 进度条 ============ -->
+<div class="progress-wrap"><div class="progress-bar"><div id="progressFill"></div></div></div>
+
+<!-- ============ Hero ============ -->
+<header class="hero" id="top">
+<h2>《电力系统设计图纸识读》考试解析课件</h2>
+<p>这份课件按"零基础友好"原则编写：先补 30 分钟基础，再逐题讲透。每道选择题不仅给答案，还把 <b>四个选项为什么对/为什么错</b> 逐一讲清；每道题都关联一个生活化的类比，帮没有电力基础的人真正"看懂"考点，而不是背答案。
+<br><b>💡 交互功能</b>：选择题/判断题可"先选答案，系统判对错"；答案与解析默认隐藏，点"显示全部答案与详解"按钮切换；左侧导航随页面滚动自动高亮当前章节。</p>
+<div class="tags">
+<span class="tag">📄 满分 100 分 = 选择 60 + 填空 10 + 判断 10 + 解析 20</span>
+<span class="tag">🎯 适用：新能源 / 配电 / 输电基层工种</span>
+<span class="tag">🧑‍🏫 假设读者不懂电，从零讲起</span>
+<span class="tag">🖥 建议全屏阅读，Ctrl+P 可打印</span>
+</div>
+</header>
+
+<!-- 工具栏 -->
+<div class="toolbar">
+<span class="t">📖 学习提示</span>
+<button id="btnGlobalReveal" class="primary">👁 显示全部答案与详解</button>
+<button id="btnReset">↺ 重置答题</button>
+<span class="scorebar">练习得分：<b id="scoreText">未开始</b></span>
+<button onclick="window.print()">打印</button>
+</div>
+
+<!-- ==================================================
+     § 基础导读
+================================================== -->
+<section class="chapter" id="basics">
+<h2 class="chap">学习导引：先花 10 分钟建立"电力世界地图"</h2>
+<p class="chap-desc">下面五个小节是整份试卷的知识地基。每道题的解析都会回扣这里，建议先通读一遍再看题。</p>
+
+<!-- 0 考试考什么 -->
+<div class="card" id="basics0">
+<h3>§0 这份试卷到底在考什么？</h3>
+<div class="explain">
+<p>它<b>不是</b>考你会不会算复杂的电路，而是考你能不能"看图"。电网公司的日常工作就是看图纸干活，所以整卷围绕四件事：</p>
+<table class="tbl">
+<tr><th style="width:130px">模块</th><th>考什么</th><th style="width:220px">生活类比</th></tr>
+<tr><td><b>图纸基础</b></td><td>图纸幅面、符号、文字符号、标注方法、图签</td><td>看"图纸"就像看地图，先得懂图例</td></tr>
+<tr><td><b>一次设备</b></td><td>断路器、隔离开关、互感器、变压器、避雷器、母线…在图里长什么样</td><td>认识水管系统的阀门、水表、水泵</td></tr>
+<tr><td><b>新能源</b></td><td>光伏组串、汇流箱、逆变器、储能 PCS、风电箱变、集电线路</td><td>把太阳/风能变成市电，接回电网的完整"生产线"</td></tr>
+<tr><td><b>配电系统</b></td><td>主接线形式、TN-S 接地、双电源切换、馈线布置</td><td>小区变电室怎么把市电分给各家各户</td></tr>
+</table>
+<div class="tip ok">✅ 学习策略：先读 §1–§4 打地基 → 过一遍选择题 → 看每道题的"选错选项为什么错" → 用 ★ 速记表冲刺。<b>做错的题 = 你的知识漏洞</b>，课件里每个漏洞都配了通俗解释。</div>
+</div>
+</div>
+
+<!-- 1 全流程 -->
+<div class="card" id="basics1">
+<h3>§1 电从哪里来，到哪里去？（一条完整的"电的旅程"）</h3>
+<div class="explain">
+<p>想象发电厂是"水的源头"，电能的旅程是这样的：</p>
+<div class="concept-grid">
+<div class="concept-card"><h5>1️⃣ 发电</h5><p>火电（烧煤）、水电（水轮机）、风电（风机）、光伏（太阳能板）、储能（电池放电）… 产生的是<b>交流电</b>，电压一般不高（火电约 10.5~22kV，风电 690V）。</p></div>
+<div class="concept-card"><h5>2️⃣ 升压</h5><p>发电机出来的电压太低，直接送远路"损耗大"（导线发热）。所以先用<b>变压器</b>把电压升到 110kV、220kV 甚至 500kV。类比：水管想送得远，先加大水压。</p></div>
+<div class="concept-card"><h5>3️⃣ 输电</h5><p>高压电网把电送到各地。<b>输电线</b>（110kV 及以上的铁架子上挂的线）→ <b>变电站</b>逐级降压：220kV→110kV→35kV/10kV。</p></div>
+<div class="concept-card"><h5>4️⃣ 配电</h5><p>10kV 线进<b>10kV 配电变电站</b>（你家门口的"小区变电台"），再降到 380V/220V，通过<b>低压配电柜</b>分给工厂、小区、商铺。</p></div>
+<div class="concept-card"><h5>5️⃣ 用电</h5><p>你家电表后面，220V 插座里就有电。工业用户多用 380V 三相电。</p></div>
+<div class="concept-card"><h5>🔌 新能源并网点</h5><p>光伏电站/风电场发出的电，经逆变器/升压后<b>送进电网</b>，成为上面第 2~4 步的一部分。考卷里的"并网"就是这个意思。</p></div>
+</div>
+<div class="analogy">💡 <b>一句话记住</b>：发（升压）→ 输（高压）→ 配（降压）→ 用。电压像"水压"，升压=增压，降压=减压；电压越高，同样送同样多的"水"，管路损耗越小。</div>
+<div class="tip warn">⚠️ 我国电压等级习惯：<b>10kV</b> 是配电网主力（"k"=千，10kV=10000 伏）；35kV 常见于风电场升压站；风电机组出口一般 <b>690V</b>（不到 1kV，属低压侧概念但比民用电高很多）。</div>
+</div>
+</div>
+
+<!-- 2 核心设备 -->
+<div class="card" id="basics2">
+<h3>§2 必须认识的 10 个核心设备（试卷高频词）</h3>
+<div class="explain">
+<p>下面这张表是整卷的"词汇表"。每个设备给一个"生活版"身份和一句话功能。后面每道题都会反复用到。</p>
+<table class="tbl">
+<tr><th style="width:150px">设备</th><th style="width:130px">生活类比</th><th>一句话功能</th><th style="width:150px">图上识别要点</th></tr>
+<tr><td><b>断路器</b><br>（QF / 开关柜里的）</td><td>电路里的"总闸+保险"合体</td><td>能<b>带负荷</b>接通/断开电路，故障时自动跳闸切断（包括短路电流）</td><td>文字符号 <b>QF</b>；方框中带斜杠的小开关符号</td></tr>
+<tr><td><b>隔离开关</b><br>（QS）</td><td>"看得见的安全闸"——只能空载拉合</td><td>断开后形成<b>明显的断开点</b>，用于检修时隔离电源；<b>不能带负荷操作</b>（拉合时会产生电弧烧坏设备）</td><td>文字符号 <b>QS</b>；斜线加小钩，明显断口</td></tr>
+<tr><td><b>电流互感器</b><br>（TA / CT / 符号 TA）</td><td>电流的"水表"——不直接串大电流，按比例缩小看表</td><td>把大电流变成 5A/1A 小电流，供电表、保护用。<b>二次侧严禁开路</b>（开路会产生上万伏高压！）</td><td>两个叠放的椭圆/圆圈，一次绕线圈一侧、二次小侧</td></tr>
+<tr><td><b>电压互感器</b><br>（TV / PT）</td><td>电压的"压力表"——按比例缩小</td><td>把高电压变成 100V 小电压供测量保护。<b>二次侧严禁短路</b>（短路电流像短路的水管，会烧毁）</td><td>三个叠放圆圈/椭圆</td></tr>
+<tr><td><b>变压器</b>（T）</td><td>"增压器/减压阀"</td><td>改变电压：升压（发端）、降压（用户端）；双绕组变压器在图上是<b>两个相交的圆圈</b></td><td>两个相交圆圈=双绕组；三个=三绕组</td></tr>
+<tr><td><b>母线</b></td><td>水管的"主管道"，所有支路从它接出</td><td>汇集、分配电能的导体。图上=一条<b>粗水平线段</b>（或竖线），各设备引线接在上面</td><td>粗线段，引出小竖线接设备</td></tr>
+<tr><td><b>避雷器</b>（避雷线/接地网配合）</td><td>电压"泄洪闸"</td><td>正常时不导电；出现<b>过电压</b>（雷电浪涌）时迅速导通，把浪涌泄入大地，保护设备绝缘</td><td>文字符号 <b>GE</b>；符号像一个带箭头的电阻</td></tr>
+<tr><td><b>光伏组件/组串</b></td><td>一块太阳能板=一节"电池"，串起来电压相加</td><td>组件<b>串联</b>提高电压，<b>并联</b>（多组串）提高电流/功率</td><td>"PV"字样，方阵框</td></tr>
+<tr><td><b>逆变器</b>（PV 侧）/ <b>PCS</b>（储能侧）</td><td>"翻译官"：把直流翻译成交流</td><td>光伏：DC→AC；储能 PCS：双向变换，电池充放电都走它</td><td>方框标注 INV/PCS</td></tr>
+<tr><td><b>电缆</b>（YJV 等）</td><td>带"绝缘皮"的水管，里面跑铜</td><td>型号字母=绝缘材料+护套材料+导体，考卷必考 YJV、LGJ</td><td>图例中画线标注型号截面</td></tr>
+</table>
+<div class="analogy">💡 <b>断路器 vs 隔离开关 记忆口诀</b>："断路器<b>能</b>带负荷，隔离开关<b>不能</b>；断路器的活隔离干不了，隔离的'断口看得见'断路器干不了"。为什么？断路器内部有灭弧室，能切断电弧；隔离开关没有灭弧能力，只能在没有电流时拉合。</div>
+</div>
+</div>
+
+<!-- 3 电压等级 -->
+<div class="card" id="basics3">
+<h3>§3 电压等级与高低压分界</h3>
+<div class="explain">
+<dl class="kv">
+<dt>低压</dt><dd>对地电压 <b>≤1000V</b>（民用电 220V、工业三相 380V 都属低压）</dd>
+<dt>高压</dt><dd>对地电压 <b>&gt;1000V</b>（10kV、35kV、110kV、220kV…）</dd>
+<dt>常见等级</dt><dd>0.4kV（=380V 线电压，低压配电）→ 10kV → 35kV → 110kV → 220kV → 500kV（特高压 ≥1000kV，本卷<b>不含特高压</b>）</dd>
+</dl>
+<div class="tip">📌 <b>为什么 0.4kV 写 380V？</b> 三相系统中"线电压=√3×相电压"，0.4kV 指线电压 400V 级别（实际 380/220V 体系）。图上写 0.4kV 母线，实际就是 380V 交流母线。</div>
+<div class="analogy">💡 类比：电压像水压，电流像流量。<b>功率=电压×电流</b>（交流还要考虑功率因数）。送同样多的功率，电压越高所需电流越小 → 导线发热损耗（I²R）越小 → 所以远距离送电必须升压。</div>
+</div>
+</div>
+
+<!-- 4 图纸语言 -->
+<div class="card" id="basics4">
+<h3>§4 图纸的"语言"：图符、文字符号、标注</h3>
+<div class="explain">
+<p>看电气图就像读外语：先认"字母表"（文字符号），再认"图形符号"，最后读"标注"（型号、规格、敷设方式）。</p>
+
+<h4 style="margin:12px 0 6px;color:#0f172a">① 文字符号（GB/T 5094 / GB 7159 体系，图纸最常用的几类）</h4>
+<table class="tbl">
+<tr><th style="width:90px">符号</th><th>设备</th><th style="width:260px">记忆窍门</th></tr>
+<tr><td><b>QF</b></td><td>断路器（可带负荷开断）</td><td>Q=开启类（Q 系列），F=断路器（"分断"的 F）</td></tr>
+<tr><td><b>QS</b></td><td>隔离开关</td><td>S=隔离/断开（"分离"的 S）</td></tr>
+<tr><td><b>QK</b></td><td>电抗器（限流元件）</td><td>少见，记"K=抗"音近</td></tr>
+<tr><td><b>TA</b> / CT</td><td>电流互感器</td><td>TA=Current Transformer（T 变压器类 + A 电流）</td></tr>
+<tr><td><b>TV</b> / PT</td><td>电压互感器</td><td>TV=Transformer Voltage（T + V 电压）</td></tr>
+<tr><td><b>T</b></td><td>变压器</td><td>T=Transformer</td></tr>
+<tr><td><b>GE</b></td><td>避雷器</td><td>GE=Surge（避雷）</td></tr>
+</table>
+
+<h4 style="margin:12px 0 6px;color:#0f172a">② 图形符号（GB/T 4728 体系）</h4>
+<div class="concept-grid">
+<div class="concept-card"><h5>双绕组变压器</h5><p>两个相交圆圈 ○⊙，一次侧/二次侧各接一个圈</p></div>
+<div class="concept-card"><h5>母线</h5><p>粗水平线段，引出小竖线接设备</p></div>
+<div class="concept-card"><h5>接地符号</h5><p>一条竖线下面三横，一长两短（像倒"≡"）</p></div>
+<div class="concept-card"><h5>电流互感器</h5><p>两个叠放椭圆，一次侧粗线穿过，二次侧引出接表计</p></div>
+<div class="concept-card"><h5>电压互感器</h5><p>三个叠放圆圈（或三角形排列），接在相与地之间</p></div>
+<div class="concept-card"><h5>断路器</h5><p>方框（开关符号）内带斜杠，两端有"刀"形触点</p></div>
+</div>
+
+<h4 style="margin:12px 0 6px;color:#0f172a">③ 常见标注速记</h4>
+<table class="tbl">
+<tr><th style="width:120px">标注</th><th>含义</th></tr>
+<tr><td><b>YJV</b></td><td><b>YJ</b>=交联聚乙烯绝缘，<b>V</b>=聚氯乙烯护套（铜芯，导体省略）</td></tr>
+<tr><td><b>YJV22</b></td><td>同上 + 钢带铠装（直埋常用）</td></tr>
+<tr><td><b>LGJ-240/30</b></td><td><b>L</b>铝 <b>G</b>钢芯 <b>J</b>绞线，截面积 240mm²/钢芯 30mm²（钢芯铝绞线）</td></tr>
+<tr><td><b>CT</b>（敷设）</td><td>沿桥架/线槽敷设（Cable Tray）</td></tr>
+<tr><td><b>WC</b></td><td>穿管暗敷（Wall Concealed）</td></tr>
+<tr><td><b>FC</b></td><td>埋地敷设（Floor Concealed）</td></tr>
+<tr><td>比例 <b>1:100</b></td><td>图上 1mm = 实际 100mm</td></tr>
+</table>
+
+<div class="analogy">💡 <b>图纸标题栏（图签）</b>就像文件的"封面+版权页"：图名、图号、设计单位、设计人、审核、比例、日期、版本…<b>设备采购价格不属于图签</b>（那是商务文件的事）。这就是选择题第 30 题的考点。</div>
+</div>
+</div>
+
+<!-- 图签示例 -->
+<div class="card">
+<h3>🖼 典型图签（标题栏）长什么样</h3>
+<div class="explain">
+<div class="titleblock" style="margin:10px auto">
+  <div class="tb-cell tb-title">10kV 配电所一次接线图</div>
+  <div class="tb-cell"><div class="k">图号</div>PD-10kV-001</div>
+  <div class="tb-cell"><div class="k">比例</div>1:50</div>
+  <div class="tb-cell"><div class="k">设计单位</div>×××设计院</div>
+  <div class="tb-cell"><div class="k">设计</div>张工</div>
+  <div class="tb-cell"><div class="k">校核</div>李工</div>
+  <div class="tb-cell"><div class="k">审核</div>王总工</div>
+  <div class="tb-cell"><div class="k">日期</div>2026-07</div>
+  <div class="tb-cell"><div class="k">版本</div>A</div>
+</div>
+<p style="font-size:14px;color:var(--ink2);margin-top:10px">图签 = <b>图名、图号、设计/校核/审核、比例、日期、版本、设计单位</b>。采购价格永远不出现在图纸上，属于合同/预算文件。这就是选择题第 30 题的考点。</p>
+</div>
+</div>
+</section>
+
+<!-- ==================================================
+     一、选择题 1–8
+================================================== -->
+<section class="chapter" id="choice">
+<h2 class="chap">一、选择题逐题解析（共 30 题 · 每题 2 分）</h2>
+<p class="chap-desc">每题结构：<b>题目 → 四个选项（点选作答，系统即时判对错）→ 答案 → 选项辨析（逐个讲为什么对/为什么错）→ 通俗讲解与知识关联</b>。默认答案与解析隐藏，点"📖 查看完整解析"展开。</p>
+
+<!-- Q1 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 1 题</span> 国标与标准 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">我国电气简图用图形符号执行的国家标准是（　）。</div>
+<div class="opts" data-qn="1">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>GB/T 14689《技术制图 图纸幅面和格式》 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>GB 50054《低压配电设计规范》 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>GB/T 6988《电气技术用文件的编制》 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>GB/T 4728《电气简图用图形符号》 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>GB/T 4728《电气简图用图形符号》</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：GB/T 14689 规定的是<b>图纸幅面（A0~A4 尺寸）和格式（图框、图签位置）</b>，不是图形符号本身。这是第 2 题的考点，别混淆。</li>
+<li><span class="no-i">B 错</span>：GB 50054 是<b>工程设计规范</b>（低压配电设计怎么做），属于"设计依据"类标准，与符号画法无关。</li>
+<li><span class="no-i">C 错</span>：GB/T 6988 讲<b>电气技术文件怎么编制</b>（文件组织、描述规则），是"文件格式"而非"符号画法"。</li>
+<li><span class="ok-i">D 对</span>：GB/T 4728 就是规定<b>电气简图（电路原理图、接线图等）里每种设备画什么符号</b>的国家标准，等同采用 IEC 60617。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>你可以把 GB/T 4728 想象成"电气图纸的语言字典"：断路器画成什么、变压器画成两个相交圆圈，全都由它规定。记住口诀：<b>"4728 管符号，14689 管幅面，6988 管文件，50054 管设计"</b>。本卷出现 4728（选择第1题+填空第1题），属必得分点。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q2 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 2 题</span> 图纸幅面 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">按照 GB/T 14689-2008，A4 图纸的幅面尺寸为（　）。</div>
+<div class="opts" data-qn="2">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>841mm×1189mm <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>420mm×594mm <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>210mm×297mm <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>297mm×420mm <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>210mm×297mm（短边×长边，即日常 A4 纸）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：841×1189 是 <b>A0</b> 幅面（最大号图纸，像一块大板子）。</li>
+<li><span class="no-i">B 错</span>：420×594 是 <b>A2</b> 幅面。</li>
+<li><span class="ok-i">C 对</span>：<b>A4 = 210×297（短边×长边）</b>，就是你打印文件用的 A4 纸，尺寸完全一致。</li>
+<li><span class="no-i">D 错</span>：297×420 是 <b>A3</b> 幅面（两张 A4 并排放的大小）。它比 A4 大一倍，是出题人用"相邻幅面"做的干扰项。<b>本题考点就是"A3 和 A4 别搞混"。</b></li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>图纸幅面就是"图纸纸张"的规格。按 GB/T 14689 的"对折"体系：<b>A0(841×1189) → 对折 A1(594×841) → 对折 A2(420×594) → 对折 A3(297×420) → 对折 A4(210×297)</b>。五个幅面速记表：</p>
+<table class="tbl">
+<tr><th>幅面</th><th>短边mm</th><th>长边mm</th><th>惯用写法（短×长）</th></tr>
+<tr><td>A0</td><td>841</td><td>1189</td><td>841×1189</td></tr>
+<tr><td>A1</td><td>594</td><td>841</td><td>594×841</td></tr>
+<tr><td>A2</td><td>420</td><td>594</td><td>420×594</td></tr>
+<tr><td>A3</td><td>297</td><td>420</td><td>297×420</td></tr>
+<tr><td><b>A4</b></td><td>210</td><td>297</td><td><b>210×297</b></td></tr>
+</table>
+<div class="tip warn">📌 记忆锚点：每个幅面恰好是上一个"对折一半"。<b>A4 = 210×297</b>（选择第 2 题），<b>A3 = 297×420</b>（填空第 2 题）——两题考的是相邻两个幅面，数值容易记混，务必背牢全部五个。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q3 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 3 题</span> 一次系统图符号 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">一次系统图（主接线图）中，母线通常用（　）表示。</div>
+<div class="opts" data-qn="3">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>圆圈 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>加粗的水平线段（带引出线） <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>虚线方框 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>三角形 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>加粗水平线段（带引出线）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：圆圈（两个相交圆圈）是<b>双绕组变压器</b>的符号，见第 6 题。</li>
+<li><span class="ok-i">B 对</span>：母线在图中画成<b>加粗的水平（或竖直）线段</b>，各进出线设备从它上面用小竖线引出接出——就像主管道上接出一堆支管。</li>
+<li><span class="no-i">C 错</span>：虚线方框多用于表示<b>功能范围、辅助系统或尚未确定的部分</b>，不是母线。</li>
+<li><span class="no-i">D 错</span>：三角形常见于三相星形/三角形接法、发电机符号或变压器绕组标注，不代表母线。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p><b>母线</b>是变电站/配电房里的"公共主管道"，所有进线（电源进来到）、出线（送到各用户/设备去）都接到母线上。你在主接线图上看到一条<b>又粗又直的横线</b>，两侧引出一堆竖线接各种设备——那就是母线。常见形式：<b>单母线</b>（一条线）、<b>单母线分段</b>（两条线中间用母联开关连着，第 21、22 题考点）、<b>双母线</b>（两条平行粗线，每回路可任选一条母线运行，可靠性更高）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q4 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 4 题</span> 文字符号 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电气图纸中，断路器的文字符号是（　）。</div>
+<div class="opts" data-qn="4">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>QF <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>QS <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>QK <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>QG <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>QF = 断路器（负荷开关/可带负荷开断）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：<b>Q</b> 是"开启（控制）类"设备的字母前缀，<b>F</b> 对应断路器（分断能力）。</li>
+<li><span class="no-i">B 错</span>：QS = <b>隔离开关</b>（第 5 题主角）。"S"联想"Separation（分离）"。</li>
+<li><span class="no-i">C 错</span>：QK = <b>电抗器/限流类</b>开关（K 联想"抗"），图纸中较少见。</li>
+<li><span class="no-i">D 错</span>：QG 不是标准断路器符号；G 在电气符号体系中一般与"发电机（G）"或接地相关，出题人用 D 做干扰。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>记忆口诀：<b>"Q 家人里 F 分断、S 分离、K 抗阻"</b>。断路器（QF）是能<b>带负荷</b>接通分断的"主力开关"，故障时自动跳；隔离开关（QS）只能空载拉合，但断口肉眼可见，检修时用它"锁死断电"。两者在图上常常成对出现：QF 在前、QS 在后，检修时拉开 QS 形成明显断口。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q5 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 5 题</span> 隔离开关 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">关于隔离开关的运行特性，下列说法正确的是（　）。</div>
+<div class="opts" data-qn="5">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>可带负荷接通或断开电路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>只能用于隔离电源，不能带负荷操作 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>可切断短路电流 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>与断路器功能完全相同 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>只能隔离电源，严禁带负荷操作</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：带负荷拉隔离开关会产生<b>强烈电弧</b>，可能烧断刀口、甚至造成相间短路爆炸——这是运行人员最忌讳的"带负荷拉合隔离开关"违章。</li>
+<li><span class="ok-i">B 对</span>：隔离开关没有灭弧装置，唯一用途是在<b>无电流（已断开负荷）</b>状态下拉开，形成"看得见的断口"，保障检修安全。</li>
+<li><span class="no-i">C 错</span>：短路电流可达数千安培，只有<b>断路器</b>（配继电器保护）才能安全切断；隔离开关拉弧直接爆炸。</li>
+<li><span class="no-i">D 错</span>：断路器能带负荷分合+灭弧+保护跳闸；隔离开关只能空载隔离。功能<b>互补而非相同</b>，通常"断路器先分、隔离开关再拉"顺序操作。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>把电路想象成水管：断路器是带"消火阀门"的总闸，能大流量下安全关断；隔离开关只是<b>手动的短接片刀</b>，只能在水流为零时拔出来，拔出来后你一眼看到"这里断了"，检修工人才敢动里面的设备。为什么图上两者总在一起？<b>QF 负责"干活"（分合负荷），QS 负责"看住"（可视化断电）</b>。</p>
+<div class="tip">📌 判断题第 2 题考的就是这个知识点（√）。"停电先拉隔离、送电后合隔离"的顺序是：停——先 QF 后 QS；送——先 QS 后 QF。口诀：<b>"停电先刀（断负荷）后闸，送电先闸后刀"</b>（刀=隔离开关，闸=断路器）。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q6 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 6 题</span> 变压器符号 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">图纸中，双绕组电力变压器的图形符号通常用（　）表示。</div>
+<div class="opts" data-qn="6">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>一个矩形 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>一个三角形 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>三条平行线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>两个相交的圆圈 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>两个相交的圆圈（一次/二次绕组）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：矩形一般表示<b>发电机、电动机、电抗器</b>等功能模块（方框器件），不表示变压器绕组。</li>
+<li><span class="no-i">B 错</span>：三角形表示<b>电机绕组星/三角接法</b>、发电机或"旋转元件"，与变压器无关。</li>
+<li><span class="no-i">C 错</span>：三条平行线（或粗短横线组）常代表<b>三相导线、三相设备端</b>，或者电感/电抗绕组画法，不是变压器标准符号。</li>
+<li><span class="ok-i">D 对</span>：<b>两个相交圆圈</b> = 两个磁耦合绕组（一次、二次）。若三绕组变压器则画<b>三个相交圆圈</b>；自耦变压器画两圈中一条公共边。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>为什么是两个相交圆圈？想象两个线圈套在同一个铁芯上，互相"靠在一起"（磁耦合）——圆圈相交表达"磁路共享"。一次侧接高压/低压线，二次侧出另一边。这是全卷最核心的图形符号之一，<b>看到两圈=双绕组变压器，看到三圈=三绕组</b>，务必记住。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q7 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 7 题</span> 电流互感器 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电流互感器（TA/CT）的二次侧在运行中（　）。</div>
+<div class="opts" data-qn="7">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>不允许开路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>不允许短路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>可以开路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>可以随意短路或开路 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>二次侧严禁开路（可短路，甚至必须短接）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：CT 二次开路 → 铁芯深度饱和 → 二次侧瞬间感应出<b>数千甚至上万伏高压</b>，危及人身、击穿绝缘、烧毁 CT。</li>
+<li><span class="no-i">B 错</span>：CT 二次<b>允许（有时需要）短路</b>。正常工作时二次就"近似短路"（接的是小电阻负载，5A 电流输出）。短路 CT 二次是安全的。</li>
+<li><span class="no-i">C 错</span>：开路=危险（见 A）。</li>
+<li><span class="no-i">D 错</span>："随意"错在开路那半边。记住：<b>CT 二次怕开路，不恐短路</b>。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>电流互感器把几千安的大电流按比例缩到 5A 给你表计"看"（就像大水管的水表，先把水流放小再测量）。它的物理原理：<b>一次电流 × 一次匝数 = 二次电流 × 二次匝数</b>（磁动势平衡）。若二次开路，一次电流的磁动势"没有对消"，铁芯里磁通暴走，感应电压飙升——危险！所以 CT 二次回路有熔断器保护，检修时也要<b>先短接</b>二次侧再动。</p>
+<div class="tip">📌 判断题第 1 题（"CT 二次允许开路"×）考同一知识点。<b>记忆锚点：电流表（CT）怕开路，电压表（PT/TV）怕短路。</b></div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<!-- Q8 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 8 题</span> 电压互感器 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电压互感器（TV/PT）的二次侧在运行中（　）。</div>
+<div class="opts" data-qn="8">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>不允许开路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>允许开路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>不允许短路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>允许短路 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>二次侧严禁短路</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：TV 二次开路是安全的（相当于电压表断电，无电流输出）。</li>
+<li><span class="mid-i">B 表述"允许开路"不算错但答非所问</span>：本题问"运行中的约束"，核心考点是<b>不允许短路</b>；B 虽然物理上成立，但不是本题想考察的"禁忌"。</li>
+<li><span class="ok-i">C 对</span>：TV 二次电压 100V（高压侧 110/10000V 等），内阻很小，短路=大电流烧毁，类似把电源两极直接短接。</li>
+<li><span class="no-i">D 错</span>：短路会烧 TV 和保护装置，必须避免。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>TV 是"高压电压表"，把 10kV 等高压按比例缩成 100V 给你看（像把 100 吨水压的管道配个压力表，先降到 1kg 再读数）。它的二次回路<b>必须接电压类表计</b>（高阻抗负载）。若把 100V 二次侧短路 → 100V 直接短接，电流只有受内阻限制 → 极大 → 线圈烧毁。<b>所以 TV 二次回路必须装熔断器</b>（保护），而 CT 二次回路<b>不允许</b>装熔断器（防开路）。</p>
+<div class="tip">📌 判断题第 5 题（"TV 二次允许短路"×）考同一知识点。<b>记忆锚点：TV 二次怕短路、CT 二次怕开路</b>——"CT 怕断，TV 怕短"。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 9 题</span> 接地符号 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电气图纸中，接地符号表示（　）。</div>
+<div class="opts" data-qn="9">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>设备与大地之间的连接（系统接地或保护接地） <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>设备外壳装饰 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>电缆屏蔽层 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>信号参考点 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>设备与大地连接（系统接地/保护接地）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：接地符号（三横一竖）就是表达<b>这一点已可靠接入大地</b>，用于系统接地（变压器中性点接地）或保护接地（外壳接 PE）。</li>
+<li><span class="no-i">B 错</span>：外壳装饰跟接地没有功能关系（虽然外壳确实要"接 PE 线"，但原因不是装饰）。</li>
+<li><span class="no-i">C 错</span>：电缆屏蔽层"确实也接地"，但它只是接地的<b>对象之一</b>，不是接地符号的定义。</li>
+<li><span class="mid-i">D 有迷惑性</span>：信号参考点（共模/地电位参考）是电子电路概念，不是电气图纸中"接地符号"在电力系统的标准含义。题目问的是"电气图纸"里接地符号的功能，标准答案是 A。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>接地的本质：把某一点<b>可靠导入大地</b>。大地是最大的"导电体"，把电流"泄掉"。电力系统里两类主要接地：</p>
+<ul style="margin-left:18px">
+<li><b>系统接地</b>：变压器/发电机中性点接地（10kV 系统中性点经消弧线圈/小电阻接地），决定故障电流路径。</li>
+<li><b>保护接地</b>：设备外壳接 PE 线，一旦内部绝缘破损带电，电流经 PE 入地 + 触发保护跳闸，避免人碰外壳触电。</li>
+</ul>
+<p>图上看到"<b>竖线 + 三横（一长两短）</b>"就是它。PE 线就是保护接地导体（绿黄双色），见第 19 题 TN-S。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 10 题</span> 避雷器 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电气图纸中，避雷器的主要作用是（　）。</div>
+<div class="opts" data-qn="10">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>计量电量 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>隔离电源 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>限制过电压、保护设备绝缘 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>补偿无功 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>限制过电压（雷电/操作冲击）保护绝缘</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：计量电量是<b>电表（电流/电压互感器 + 计量装置）</b>的活。</li>
+<li><span class="no-i">B 错</span>：隔离电源是<b>隔离开关</b>（QS）的活。</li>
+<li><span class="ok-i">C 对</span>：避雷器（SPD/阀式避雷器）并联在设备与地之间，正常不导通；出现<b>过电压</b>（雷击浪涌、操作冲击）时瞬时导通，把浪涌泄入大地，把设备端电压"钳位"在安全水平，保护绝缘。</li>
+<li><span class="no-i">D 错</span>：补偿无功是<b>并联电容器 / 电抗器 / SVG</b> 的活。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>把避雷器想象成水路的"泄洪闸"：平时关着（电阻极高、不导电），一旦电压浪涌（比如雷电带来几万伏冲击）超过设定值，泄洪闸瞬间打开，把"浪涌"导入大地，保护后面的设备绝缘不击穿。泄完自动关断，恢复正常。<b>避雷器永远并联在被保护设备与地之间</b>。</p>
+<div class="tip">📌 与"架空地线（避雷线）"区分（第 28 题）：架空地线<b>悬挂在线路上方</b>，直接"替导线挡雷"并把雷电流引入大地；避雷器装在<b>变电站设备旁</b>，拦"闯进来"的剩余过电压。两者都是防雷，但位置和作用不同。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 11 题</span> 光伏串联 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">光伏发电系统图中，光伏组件采用串联方式连接的主要目的是（　）。</div>
+<div class="opts" data-qn="11">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>提高输出电流 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>提高输出电压 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>提高功率因数 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>降低绝缘要求 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>串联提高电压（并联才提高电流）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：串联电路中电流相同（同一股电流流过所有组件），<b>并联</b>才能提高总电流。</li>
+<li><span class="ok-i">B 对</span>：每块组件电压相加，串联 N 块 → 电压 ≈ N × 单块电压。例：一块 45V（开路），串 20 块 = 900V（解析题第 1 题考这个）。</li>
+<li><span class="no-i">C 错</span>：功率因数是交流侧概念（电压与电流相位差），光伏直流侧谈不上功率因数；逆变器并网后才有 PF，跟串并联无关。</li>
+<li><span class="no-i">D 错</span>：恰恰相反——<b>串联越多电压越高，绝缘要求越高</b>（900V 直流需要按更高耐压设计），不是降低。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>光伏组件像"一节干电池"（单块 30~45V 电压级别），一块发电的功率很小，单块直接并网电压太低、电流太大、线损太大。<b>串联 = 多节电池串起来（电压相加、电流不变）；并联 = 多路电池并起来（电流相加、电压不变）</b>。一个光伏系统 = 先串成"组串"提电压，再并多组串提功率 → 进逆变器 → 变交流 → 并网。</p>
+<div class="tip">📌 填空题第 3 题直接考这个知识点：<b>串联提高电压、并联提高电流</b>。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 12 题</span> 组串概念 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">光伏系统图中，"组串"通常是指（　）。</div>
+<div class="opts" data-qn="12">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>若干光伏组件串联构成的直流单元 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>若干光伏组件并联构成的交流单元 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>一台逆变器 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>一个汇流箱 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>组串 = 若干组件串联成的直流支路（String）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：组串（String）在图纸上画成一串"小方块"（组件）首尾相接，标注组件数和类型。<b>直流、串联</b>是组串的核心特征。</li>
+<li><span class="no-i">B 错</span>：组串内部是<b>串联</b>；并且组串输出是<b>直流</b>（DC），不是交流。"并联+交流"两个特征都反了。</li>
+<li><span class="no-i">C 错</span>：逆变器（Inverter）是 DC→AC 设备，是组串的<b>下游</b>，不是组串本身。</li>
+<li><span class="no-i">D 错</span>：汇流箱是把<b>多路组串</b>汇集到直流母线的箱体，它"包含"组串的输出端，但不是组串定义。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>一张光伏系统图通常这样分层：<b>组件（Cell）→ 组串（String，多块串）→ 逆变器输入（多组串并）→ 逆变器 → 交流配电 → 并网</b>。"组串"是图纸上能看到的<b>最小直流单元</b>，图上会标"组串 1"、"组串 2"…每个组串有自己独立的 MPPT 通道（多路 MPPT 逆变器）。记住：<b>组串=一串组件串起来的直流支路</b>。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 13 题</span> 直流汇流箱 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">光伏直流汇流箱在系统图中的主要作用是（　）。</div>
+<div class="opts" data-qn="13">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>直流变交流 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>升压输电 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>计量电能量 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>汇流、保护（熔断器/断路器）及防雷 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>汇流 + 保护 + 防雷 + 计量接口</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：DC→AC 是<b>逆变器</b>的功能，不是汇流箱。</li>
+<li><span class="no-i">B 错</span>：升压是<b>变压器/升压站</b>的活，汇流箱只做直流侧的"汇合+保护"。</li>
+<li><span class="no-i">C 错</span>：电量计量一般在<b>交流侧（关口电表）或逆变器内置</b>；汇流箱可带直流电表，但不是它"主要"功能定义。</li>
+<li><span class="ok-i">D 对</span>：直流汇流箱核心三件事：<b>①汇流</b>（把多路组串电流合并到直流母线）<b>②保护</b>（每路熔断器/小型断路器 + 总路保护 + 反接保护）<b>③防雷</b>（直流侧浪涌保护器 SPD）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>类比"多户共用一根入户电缆进楼"的汇流箱：每路组串一根"小水管"，汇流箱像<b>总水阀室</b>——每路装一个保险（熔断器，防该路短路烧总箱），总出口装总闸（断路器）和"防雷泄压阀"（SPD），再统一送到逆变器。图上汇流箱画成方框，引出多路组串、一路直流母线输出到 INV。</p>
+<div class="tip">📌 解析题第 1 题（2）问的就是"汇流箱内通常配置哪些保护元件"：<b>每路熔断器（或小型断路器）、总路断路器、浪涌保护器（SPD）、反接二极管/防孤岛装置（部分场合）、电压电流指示</b>。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 14 题</span> 组串式逆变器接线 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">组串式逆变器的直流输入侧在图纸中通常连接（　）。</div>
+<div class="opts" data-qn="14">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>低压交流母线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>光伏组串输出端 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>10kV 母线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>储能电池簇 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>直流输入 = 光伏组串（DC 侧）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：低压交流母线是<b>输出侧</b>（AC 侧），且组串逆变器一般并到中压或低压交流母线（依场景）。</li>
+<li><span class="ok-i">B 对</span>：组串式逆变器"组串"两字就指明输入是<b>光伏组串（DC）</b>。直流输入接组串，交流输出接交流母线/变压器/电网。</li>
+<li><span class="no-i">C 错</span>：10kV 母线是<b>升压后交流侧</b>，不是直流输入。逆变器 AC 输出经升压才到 10kV。</li>
+<li><span class="no-i">D 错</span>：电池簇是<b>储能 PCS</b> 的直流输入，不是光伏组串逆变器（虽然现代混合逆变器可兼容，但图纸标注上储能和光伏分属两类）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>系统流向：<b>PV 组件 →（串成）组串 → 直流汇流箱（可选）→ 组串式逆变器（DC 输入）→ AC 输出 → 交流配电柜 →（升压变压器）→ 10kV 并网柜 → 电网</b>。逆变器"DC 进、AC 出"是本质，只要记住"哪端是 DC 哪端是 AC"就不会选错。图上逆变器方框左侧标"DC+" "DC-"（接组串），右侧标"AC"（接交流母线）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 15 题</span> 储能 PCS <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">储能系统一次接线图中，储能变流器（PCS）的直流侧连接（　），交流侧连接（　）。</div>
+<div class="opts" data-qn="15">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>电池簇；光伏组件 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>交流母线；电池簇 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>光伏组件；电网 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>电池簇；交流母线/变压器 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>直流侧接电池簇，交流侧接交流母线（或升压变压器）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：前对后错。交流侧不是光伏组件（那是 PV 逆变器输入）。</li>
+<li><span class="no-i">B 错</span>：前后都反了——"直流侧接交流母线"不成立（直流侧必须是直流）。</li>
+<li><span class="no-i">C 错</span>：PCS 是储能变流器，接的是<b>电池</b>，不是光伏组件。</li>
+<li><span class="ok-i">D 对</span>：PCS 本质是<b>双向 DC/AC 变流器</b>：DC 侧 = 电池簇（充放电直流），AC 侧 = 交流母线（或升压变压器一次侧）→ 并网。充电时 AC→DC，放电时 DC→AC。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>储能系统"四件套"：<b>电池簇（存电）→ PCS（DC↔AC 双向变换）→ 变压器（升/降压）→ 交流母线/电网（并网点）</b>。PCS 是"双向翻译官"：电网富余时把交流"翻译"成直流存电池，缺电时再反向翻译出来。图上方向箭头是双向的（"⇄"）。</p>
+<div class="tip">📌 与光伏逆变器对比：光伏 INV 只能<b>单向</b> DC→AC（光伏不"充电"），PCS 是<b>双向</b> DC↔AC（可充可放）。图上箭头方向是识别关键。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 16 题</span> 风电箱变 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">风电场系统图中，箱式变压器（箱变）的主要作用是（　）。</div>
+<div class="opts" data-qn="16">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>将 35kV 降至 0.4kV <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>将风电机组出口电压（如 690V）升压至集电线路电压（如 35kV） <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>稳压 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>变频 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>690V → 35kV 升压（箱变 = 风电机组"门口"的升压站）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：方向反了。风电箱变在<b>机组出口</b>，作用是"升压"，把 690V 升到 35kV 送集电线路；"35kV→0.4kV"是末端配电变（降压到民用电）的活。</li>
+<li><span class="ok-i">B 对</span>：风机内部发电机出口电压通常 590/690V，经箱变升压到 35kV（部分场站 10kV）进集电线路，再到升压站升 110/220kV 并网。</li>
+<li><span class="no-i">C 错</span>：箱变是普通变压器，没有稳压功能（调压靠有载/无励磁分接开关，不属于"稳压"定义）。</li>
+<li><span class="no-i">D 错</span>：变频是<b>变流器/逆变器</b>的活（风机内部齿轮箱后发电机→变流器→箱变），箱变只做电压变换、不改频率。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>每台风机旁（机舱下方地面）放一个"集装箱"式的变电站 = <b>箱式变压器</b>（箱变），里面是<b>高/低压开关柜 + 变压器 + 计量</b>。风机发出的 690V 电压太低，直接送几十公里到升压站损耗大，所以"就地升压"到 35kV 再汇集。<b>一台风机对一个箱变</b>是风电场标准布置，图上画成一堆"小集装箱"沿集电线路排开，每个集装箱引两根线（进、出）。</p>
+<div class="tip">📌 判断题第 10 题直接考："箱变将风电机组出口电压升压后接入集电线路"（√）。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 17 题</span> 风电集电线路 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">风电场集电线路在图纸中的作用是（　）。</div>
+<div class="opts" data-qn="17">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>连接风电场办公区照明 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>为风电机组供电 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>汇集多台风电机组的电能送入升压站 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>传输通信信号 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>汇集机组电能 → 升压站并网</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：办公区照明用<b>低压 220V 系统</b>，与集电线路（35kV）无关（升压站可能兼带站用电，但"集电线路"定义不是这个）。</li>
+<li><span class="no-i">B 错</span>：方向反了。集电线路把电能<b>从机组送到升压站</b>，不是反过来给机组供电（机组用电走单独的站用电回路）。</li>
+<li><span class="ok-i">C 对</b>：多台机组（经各自箱变升 35kV）→ 多回 35kV 线路"汇集" → 升压站 → 110/220kV 电网。<b>"汇集送电"是核心</b>。</li>
+<li><span class="no-i">D 错</span>：通信走独立的<b>光纤/电缆通信网</b>，集电线路是"电力传输通道"，不是"信号通道"。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>把风电场想象成一个"发电厂+小电网"：每台风机=小发电机，箱变=门口升压，集电线路=厂内"输电线"，把各台"小电厂"的电<b>汇集</b>到升压站，升到大电压等级再送出风电场。图上看到"35kV 集电线路 I、II、III…"多回线路并排画，末端接升压站 35kV 母线。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 18 题</span> 电缆型号 YJV <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电缆型号"YJV"中，"YJ"表示（　），"V"表示（　）。</div>
+<div class="opts" data-qn="18">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>聚乙烯绝缘；橡胶护套 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>乙丙橡胶绝缘；聚氯乙烯护套 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>聚乙烯绝缘；聚氯乙烯护套 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>交联聚乙烯绝缘；聚氯乙烯护套 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>YJ = 交联聚乙烯（XLPE）绝缘；V = 聚氯乙烯（PVC）护套</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>："YJ"不是"聚乙烯"（那是"Y"单独），"J"特指"<b>交联</b>"；护套"V"是<b>聚氯乙烯</b>，不是橡胶（橡胶是"X"或"R"）。</li>
+<li><span class="no-i">B 错</span>：乙丙橡胶绝缘代号是"E"（如 EJV），不是 YJ。</li>
+<li><span class="mid-i">C 错</span>：只错在"聚乙烯"漏了"<b>交联</b>"——YJ 特指"交联聚乙烯（XLPE）"，普通聚乙烯是 Y，C 少了个 J 的含义。</li>
+<li><span class="ok-i">D 对</span>：<b>Y</b> = 交联聚乙烯（Yàoliánjù 拼音首字母 Y 系列中 J=交联）；<b>V</b> = 聚氯乙烯（PVC 护套）。完整读法："交联聚乙烯绝缘聚氯乙烯护套电力电缆"。铜导体省略不写（铝导体写"LYJV"或"LJ"）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>电缆型号字母表（常见）：<b>导体（L 铝，铜省略）→ 绝缘（Y 聚乙烯 / YJ 交联聚乙烯 / V 聚氯乙烯 / E 乙丙）→ 内衬层/铠装（V 裸护套 / 22 钢带铠装+PVC 外护 / 32 粗钢丝铠装）→ 外护套（V PVC / Y 聚乙烯）</b>。YJV 是 10kV 电缆最常用的型号之一：<b>交联聚乙烯绝缘（耐热好、容量大）+ PVC 护套（防潮防腐）</b>。图上标注"YJV-8.7/10kV-3×240"表示：3 芯 240mm²、10kV 级 YJV 电缆。</p>
+<div class="tip">📌 判断题第 4 题直接考这个知识点（"YJ 表示交联聚乙烯"√）。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 19 题</span> TN-S 系统 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">低压配电系统图中，TN-S 系统的特征是（　）。</div>
+<div class="opts" data-qn="19">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>保护零线（PE）与工作零线（N）自始至终分开 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>PE 与 N 合并为一根线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>无中性线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>设备外壳不接地 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>TN-S = PE 与 N 全程分开（"全分系统"）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：TN-S 定义就是<b>整个系统内 PE 线与 N 线从源头到末端完全分开</b>（五线制：L1、L2、L3、N、PE），N 走工作电流，PE 只走故障电流，互不干扰。</li>
+<li><span class="no-i">B 错</span>：PE 与 N 合并成一根 PEN 线是 <b>TN-C 系统</b>（旧系统，安全性较差，新工程禁用）。</li>
+<li><span class="no-i">C 错</span>：TN-S 有 N 线（380/220V 三相四线+保护线），"无中性线"描述的是 IT/TT 无 N 引出场景，与 TN-S 无关。</li>
+<li><span class="no-i">D 错</span>：TN-S 要求设备外壳<b>必须</b>接 PE（保护接地）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>低压配电五种接地系统（TN-S、TN-C、TN-C-S、TT、IT）：TN 系列 = 电源中性点接地+设备经保护导体接该点；字母 S=分开、C=共同、S 后又 C 表示"源头分开末端合并"。TN-S 是<b>最安全</b>的：N（蓝）走正常工作电流，PE（绿黄）平时零电流、只在故障时提供回路让保护动作。图上看到<b>五根线（3L+N+PE）</b>、PE 线独立一路、从变压器中性点与 N 分别引出到接地网，就是 TN-S。<b>解析题第 2 题（3）考的就是"PE 与 N 在图上如何区分"</b>。</p>
+<div class="tip">📌 判断题第 8 题直接考 TN-S（"PE 与 N 自始至终分开"√）。<b>PE 线颜色：绿黄双色；N 线：蓝色</b>——看图时一眼可辨。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 20 题</span> 相序标注 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电气图纸中，三相交流电路的相序常用（　）标注。</div>
+<div class="opts" data-qn="20">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>R、S、T（仅表示直流） <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>P、N、E <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>L1、L2、L3（或 A、B、C） <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>1、2、3（仅表示编号） <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>L1、L2、L3（或 A、B、C）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：R、S、T 是<b>德标（IEC/DIN）三相命名</b>，不是"仅直流"；且我国图纸惯用 L1/L2/L3 或 A/B/C。选项把 RST 描述为"仅直流"是双重错误。</li>
+<li><span class="no-i">B 错</span>：P、N、E 是 <b>IEC 单线图的 PE/ PEN/ L（Phase）</b> 等概念，P=相线（Phase），不是三相相序。</li>
+<li><span class="ok-i">C 对</span>：我国图纸三相相序标准标注：<b>L1（A）、L2（B）、L3（C）</b>，颜色对应<b>黄、绿、红</b>（A 黄 B 绿 C 红）。</li>
+<li><span class="no-i">D 错</span>：1、2、3 是"编号"，没有"相序"含义（相序=三相的先后顺序，决定电机旋转方向）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>三相交流电"三个波峰错开 120°"依次出现，这个<b>出现顺序</b>就是相序。电机靠相序决定转向（L1→L2→L3 正转，调两根线反转到）——所以图纸必须标清相序。我国习惯 <b>A（黄）、B（绿）、C（红）</b> 或 <b>L1/L2/L3</b>，颜色是<b>强制标准</b>：A 相=黄、B 相=绿、C 相=红、N=蓝、PE=绿黄双色。现场用"相序表"测，保证"接对相序"再送电，否则电机反转、某些装置拒动。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 21 题</span> 单母线分段 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">单母线分段接线的主要优点是（　）。</div>
+<div class="opts" data-qn="21">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>可省去断路器 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>无需继电保护 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>提高输送容量 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>任一段母线检修或故障时，可通过母联开关缩小停电范围 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>分段运行互不影响，故障/检修只停半段</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：分段接线<b>反而增加</b>母联断路器（多一台），不是"省去"。</li>
+<li><span class="no-i">B 错</span>：任何接线都需要继电保护，与母线形式无关。</li>
+<li><span class="mid-i">C 表述不准</span>："分段"本身不提高输送容量（容量由导线/变压器/发电机决定）；C 不是其"主要优点"。</li>
+<li><span class="ok-i">D 对</span>：母线分两段、中间用<b>母联断路器</b>连接。任一段故障/检修：母联合上 → 另一段带故障段负荷 → 只停半段、其余继续供电。<b>缩小停电范围</b>是核心优点。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>类比"一条主管道中间加一个阀门分两段"：整条管路堵死就全停；加了阀门，一段出问题可以关阀、用另一段维持供水。母线分段 + 母联断路器 = "两个半区互救"。图上看到<b>两条粗母线 + 中间一台断路器（母联 QF）</b>就是它。<b>解析题第 2 题（1）问的就是"该 10kV 主接线采用何种接线形式"</b>——答案：单母线分段（带母联）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 22 题</span> 双电源 ATS <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">双电源自动转换开关（ATS）在配电图纸中的作用是（　）。</div>
+<div class="opts" data-qn="22">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>计量电量 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>在主、备电源之间自动切换，保证重要负荷连续供电 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>补偿无功 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>滤除谐波 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>主电源失电自动切备用，保证重要负荷不中断</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：电量计量是<b>电表/关口表</b>的活。</li>
+<li><span class="ok-i">B 对</span>：ATS（Automatic Transfer Switching）监测主电源，<b>主电失电/异常 → 自动合上备电源 → 主电恢复 → 自动切回</b>。用于消防、电梯、数据中心等不允许停电的重要负荷。图纸上画成"两路进线 + 中间一个框标 ATS"。</li>
+<li><span class="no-i">C 错</span>：补偿无功是<b>电容器/SVG</b> 的活。</li>
+<li><span class="no-i">D 错</span>：滤除谐波是<b>有源滤波器/APF、滤波器组</b> 的活。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>类比"家里双回路供电 + 自动切换开关"：一路市电、一路备用（发电机/另一路市电），ATS 像"智能切换器"，一路断了<b>几秒内自动切到另一路</b>，重要负荷（如手术台、消防泵）不停电。注意与 UPS 区分：<b>ATS 只能"切"电源（有几秒切换间隙），UPS 是"电池储能"（毫秒级不断电）</b>。图上 ATS 一般标在主/备进线柜之间。</p>
+<div class="tip">📌 填空题第 4 题考这个缩写：ATS = <b>双电源自动切换设备</b>。</div>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 23 题</span> 低压配电柜排列 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">低压配电系统图中，进线柜之后通常依次设置（　）。</div>
+<div class="opts" data-qn="23">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>出线柜、进线柜 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>电容柜、母联 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>计量/进线保护、馈线出线柜 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>仅一台柜 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>进线柜 →（计量/进线保护）→ 馈线出线柜（母线分段场景加母联）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：进线柜<b>先于</b>出线柜，"出线柜、进线柜"顺序反了。</li>
+<li><span class="mid-i">B 不全面</span>：电容柜（无功补偿）和母联是<b>可能附加</b>的柜型，但不是"进线柜之后"的<b>必备</b>序列，B 漏了计量保护和馈线出线。</li>
+<li><span class="ok-i">C 对</span>：典型低压进线排列：<b>进线柜（总开关）→ 计量柜/进线保护柜（电表+保护）→ 母联（分段母线场景）→ 馈线出线柜（各支路）→（电容柜/SVG 等可选）</b>。C 抓住了"计量+保护+馈线"核心序列。</li>
+<li><span class="no-i">D 错</span>：低压配电"多台柜"是常态，仅一台柜不现实。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>把低压配电房想象成"总水阀室"：先<b>进线柜</b>（总闸，接市电进来）→ <b>计量柜</b>（电表算"用了多少水"）→ <b>保护</b>（过载/短路保护）→ <b>母线</b>（主管道）→ <b>馈线柜</b>（各支路水龙头）。图上从左到右按顺序画一排柜体，最左进线、最右馈线，中间按场景插计量/母联/电容柜。"先总后分、先量后用"是记忆顺序的口诀。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 24 题</span> 电缆敷设标注 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">电缆敷设方式标注"CT"通常表示（　）。</div>
+<div class="opts" data-qn="24">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>穿管敷设 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>直埋敷设 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>沿墙明敷 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>电缆桥架敷设 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>CT = Cable Tray 电缆桥架</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：穿管敷设代号是 <b>WC（Wall Concealed 暗敷）/ SC（穿管明敷）/ 钢管 PC 等</b>，不是 CT。</li>
+<li><span class="no-i">B 错</span>：直埋敷设代号 <b>FC / 直埋 / 埋地</b>（Floor Concealed 或中文"埋"），不是 CT。</li>
+<li><span class="no-i">C 错</span>：沿墙明敷是 <b>WE（Wall Exposed）</b>，不是 CT。</li>
+<li><span class="ok-i">D 对</span>：<b>CT = Cable Tray（电缆桥架）</b>，把电缆托在钢制"槽"上，便于敷设、巡检、扩容。图上标注"YJV-8.7/10kV-3×240 CT"就表示"YJV 3×240 电缆沿桥架敷设"。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>电缆敷设方式代号（常见）：<b>WE 沿墙明敷 / WC 暗敷 / FC 埋地 / CT 桥架 / SC 穿钢管 / PC 穿塑料管 / M 金属线槽 / C 混凝土顶板内</b>。桥架（Cable Tray）像"高架桥"，把电缆托在上方或地下（电缆沟），是厂房、变电站、数据中心最常见的敷设方式。图上标注顺序通常是"<b>型号-规格 敷设代号 起点-终点</b>"。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 25 题</span> 输电线路·档距 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路平断面图中，"档距"是指（　）。</div>
+<div class="opts" data-qn="25">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>相邻两基杆塔之间的水平距离 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>两杆塔间导线长度 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>导线最低点高度 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>绝缘子串长度 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>档距 = 相邻两基杆塔间的水平距离（Span）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 对</span>：平断面图（线路纵断面）把线路画成"波浪线+杆塔点"，相邻两基杆塔<b>水平方向</b>的距离=档距。注意是"水平"，不是斜距或导线长。</li>
+<li><span class="no-i">B 错</span>：导线实际是悬链线，比档距长（弧垂拉长后导线更长），"导线长度"不是档距定义。</li>
+<li><span class="no-i">C 错</span>：导线最低点高度是"<b>对地距离/净空</b>"，跟档距是不同概念（但两者相关：档距越大、弧垂越大、对地距离越小，见第 26 题）。</li>
+<li><span class="no-i">D 错</span>：绝缘子串长度是绝缘子串尺寸，跟档距无关。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>输电线路像"晾衣绳"：两根杆子之间挂一段线。两杆之间"晾衣绳"的水平跨度=档距。平断面图就是把整条线路"压扁"成一张图，画出每基杆塔、每个档距、导线最低点高度。<b>填空题第 5 题直接考这个定义</b>（相邻两基杆塔水平距离=档距）。普通 10kV 线路档距几百米，110/220kV 线路一档 300~500m，跨江跨谷可达千米级。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 26 题</span> 输电线路·弧垂 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路中，导线"弧垂（弛度）"是指（　）。</div>
+<div class="opts" data-qn="26">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>档距的一半 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>导线最低点与悬挂点之间的垂直距离 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>导线截面积 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>杆塔高度 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>弧垂 = 导线最低点相对悬挂点（线距杆顶连线）的垂直距离（Sag）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：档距一半是"半档距"，与弧垂是两个概念（虽然弧垂计算用"当量档距"概念，但定义不同）。</li>
+<li><span class="ok-i">B 对</span>：导线挂在两基杆塔上，因自重下垂成悬链线；<b>最低点比悬挂点低多少=弧垂</b>。温度高（热胀）弧垂变大，温度低/覆冰（重）也变大；紧线（拉紧）弧垂小。</li>
+<li><span class="no-i">C 错</span>：导线截面积是型号参数（如 LGJ-240 的 240mm²），不是弧垂。</li>
+<li><span class="no-i">D 错</span>：杆塔高度是塔身尺寸，与弧垂无关（但决定导线最低点对地距离=塔高-弧垂）。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>把导线想象成"晾衣绳"：拉得越紧，绳子越直（弧垂小）；松一点，垂得越多（弧垂大）。<b>弧垂越大，导线越低，对地距离越小</b>——车、船、人可能"碰到线"，所以弧垂有设计值，不能太大也不能太小（太小断线风险）。<b>判断题第 7 题（"弧垂越大越安全"×）</b>就是考这个方向：弧垂越大→对地距离越小→越不安全。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 27 题</span> 悬垂绝缘子串 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路悬垂绝缘子串的主要作用是（　）。</div>
+<div class="opts" data-qn="27">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>承受导线拉力并传导电流 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>防雷 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>补偿弧垂 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>支撑导线并使之与杆塔绝缘 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">D<small>悬垂绝缘子：挂住导线 + 与杆塔（钢塔）绝缘</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>："承受导线拉力"是<b>耐张绝缘子</b>（串在导线端部、拉着导线）的活；悬垂绝缘子主要承受<b>导线垂直重力</b>（"悬"着），不是水平拉力。"传导电流"也不对，它是绝缘件不导电。</li>
+<li><span class="no-i">B 错</span>：防雷靠<b>避雷线/接地网</b>，绝缘子串不承担防雷功能（虽然它自身要"耐雷击闪络"，但不是它的"作用"）。</li>
+<li><span class="no-i">C 错</span>：弧垂由导线张力和环境温度决定，绝缘子不"补偿"弧垂。</li>
+<li><span class="ok-i">D 对</span>：杆塔是钢的（带电危险），导线必须通过<b>悬垂绝缘子串</b>（一串串瓷/玻璃绝缘子）与杆塔绝缘并挂住。一串 = 几十个"小甜甜圈"串起来，承受电压越高串越长。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>看到高压铁塔上"一串串小瓷环"垂直挂着导线，就是悬垂绝缘子串（悬瓶）。它的两个职能：<b>① 物理上把导线"挂"在塔上 ② 电气上把导线（高压）与塔（接地）隔开</b>。电压越高需要绝缘距离越大 → 串越长（10kV 一两个、110kV 约 7~9 片、220kV 约 13~16 片、500kV 25~28 片）。另外有<b>耐张串</b>（斜拉、拉紧导线）和<b>跳线串</b>（设备进出线），图上形状略有不同。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 28 题</span> 架空地线（避雷线） <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路中，架设避雷线（架空地线）的主要作用是（　）。</div>
+<div class="opts" data-qn="28">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>输送电能 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>通信 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>雷击时屏蔽导线、将雷电流引入大地，保护线路 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>支撑导线 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">C<small>防雷屏蔽：替导线挡雷，雷电流经杆塔入地</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：架空地线<b>不输送电能</b>，它是"接地的备用导线"（实际可作 OPGW 复合地线传光信号，但主业是防雷）。</li>
+<li><span class="mid-i">B 有迷惑性</span>：部分线路地线是 <b>OPGW（光纤复合架空地线）</b>，兼具通信功能；但题目问"主要作用"，标准答案是<b>防雷</b>（C），通信只是某些线路的"附加"功能，不是"架设它的主要理由"。</li>
+<li><span class="ok-i">C 对</span>：导线上方挂一根<b>不接电源、两端接地</b>的钢绞线/OPGW，雷电来时"先打它"（它位置最高、电阻小），雷电流经杆塔<b>引入大地</b>，保护导线不直接遭雷击。类比"避雷针"的原理——"引雷入地，护住后面"。</li>
+<li><span class="no-i">D 错</span>：支撑导线是<b>导线本身的张力+绝缘子串</b>的活，地线不承担导线。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>高压铁塔最上面那根线（比导线还高、细、灰黑）就是<b>架空地线（避雷线）</b>，两端连到杆塔（杆塔接地入地）。作用是"替导线挡雷"——雷云放电找<b>最高点、电阻最小</b>的路径，于是先打地线 → 电流沿地线流到杆塔 → 入地 → 导线躲过一劫。没有地线的线路，导线直接被雷击概率大增（"绕击"）。<b>110kV 及以上基本都架双根地线，330/500kV 甚至更多</b>。它与"避雷器"（装在变电站设备旁）的区别，见第 10 题。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 29 题</span> 导线型号 LGJ <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">导线型号"LGJ-240/30"中，"LGJ"表示（　）。</div>
+<div class="opts" data-qn="29">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>铝绞线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>钢芯铝绞线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>铜绞线 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>铝合金绞线 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">B<small>LGJ = 钢芯铝绞线；240/30 = 铝截面 240mm² / 钢芯 30mm²</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="no-i">A 错</span>：纯铝绞线代号是 <b>LJ</b>（L=铝，J=绞线），没有钢芯"G"。</li>
+<li><span class="ok-i">B 对</span>：<b>L=铝、G=钢芯、J=绞线</b> → 钢芯铝绞线。铝负责导电（外面），钢芯负责拉紧（里面，耐重、耐风）。"240/30"：铝部分截面积 240mm²，钢芯 30mm²（总 270mm²）。</li>
+<li><span class="no-i">C 错</span>：铜绞线代号 <b>TJ</b>（T=铜），成本高，架空线路基本不用铜。</li>
+<li><span class="no-i">D 错</span>：铝合金绞线代号 <b>ALJ</b> 或"LJJ"（铝合金），不是 LGJ。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>架空导线用"钢芯铝绞线"的原因：铝导电好但"软、不耐拉"；钢耐拉但导电差。<b>把钢芯包在里面当"骨架"，外面铝导电，"各司其职"</b>。型号解读口诀：<b>"前字母=材料，数字=截面"</b>。LGJ-240/30 是 110kV 线路常用导线（220kV 用 400/450 级）。其他常见：<b>LGJ-120/20</b>（35kV）、<b>LGJB/ 分裂导线</b>（高压用多根并"子导线"减少电晕损耗）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">第 30 题</span> 图纸标题栏 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">图纸标题栏（图签）通常包含的内容不包括（　）。</div>
+<div class="opts" data-qn="30">
+<div class="opt clickable" data-letter="A"><span class="olabel">A.</span>设备采购价格 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="B"><span class="olabel">B.</span>图名、图号 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="C"><span class="olabel">C.</span>设计单位与设计人 <span class="mark">?</span></div>
+<div class="opt clickable" data-letter="D"><span class="olabel">D.</span>比例与日期 <span class="mark">?</span></div>
+</div>
+<div class="ansbox"><div class="label">正确答案</div><div class="answer">A<small>图签不含设备采购价格（商务信息，不在图纸上）</small></div></div>
+<div class="explain">
+<h4>选项辨析</h4>
+<div class="opt-analysis"><ul>
+<li><span class="ok-i">A 是答案</span>：设备采购价格是<b>商务/合同文件</b>内容，图纸（工程文件）只记录技术信息，不记录价格。这是设计文件与造价文件的分界。</li>
+<li><span class="mid-i">B、C、D 都属于图签</span>：图签（标题栏）标准内容：<b>图名、图号、设计/校核/审核签名、设计单位、比例、日期、版本、页数、工程名称</b>。B/C/D 三项都"应该"在图签里，不是"不包括"的项。</li>
+</ul></div>
+<h4>通俗讲解</h4>
+<p>图签在图纸右下角（或右上），是图纸的"身份证+签名页"，功能类似书籍的封面+版权页：<b>这张图叫什么（图名）、编号多少（图号）、谁画谁审（签名）、什么单位出的（设计单位）、什么时候出的（日期）、版本几（A/B/C）、比例多大（1:100）、属于哪个工程（工程名称）</b>。价格是"采购/预算文件"的事，图纸本身不写。看图时先读图签，能立刻知道"这张图是干什么的、可信度多高（是否审过）"。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+</section>
+<!-- ==================================================
+     二、填空题
+================================================== -->
+<section class="chapter" id="fill">
+<h2 class="chap">二、填空题逐题解析（共 5 题 · 每题 2 分）</h2>
+<p class="chap-desc">填空题考"精确记忆"：标准编号、数值、术语。每空都要写"原文"，不写大意。</p>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">填空 1</span> 国标编号 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">我国电气简图用图形符号执行的国家标准是 GB/T（　），该标准等同采用 IEC 60617。</div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer">4728<small>即 GB/T 4728《电气简图用图形符号》，等同采用 IEC 60617</small></div></div>
+<div class="explain">
+<p>与选择题第 1 题是同一知识点。<b>填空要写完整编号"4728"</b>，不能只写"GB"或"4728-2010"（除非题目给了版本）。"等同采用 IEC 60617"说明中国符号体系和国际接轨，全球电气工程师看图都能认。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">填空 2</span> 图纸幅面 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">按照 GB/T 14689-2008，A3 图纸的幅面尺寸为（　）mm×（　）mm。</div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer">297 × 420<small>A3 = 短边 297 × 长边 420</small></div></div>
+<div class="explain">
+<p>五个幅面速记表（短×长）：A0 = 841×1189、A1 = 594×841、A2 = 420×594、<b>A3 = 297×420</b>、A4 = 210×297。A3 是工程设计常用的"对开"幅面，相当于两张 A4 并排放。两空顺序"短×长"或按题目习惯"长×短"都可，但<b>数值必须对</b>。注意选择题第 2 题 A4 尺寸是 210×297，别混淆。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">填空 3</span> 光伏串并联 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">光伏组件采用串联方式连接可提高（　），采用并联方式连接可提高（　）。</div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer">电压 × 电流<small>串联→电压相加；并联→电流相加</small></div></div>
+<div class="explain">
+<p>与选择题第 11 题同一知识点。串联像"多节电池串起来"，总电压=各电池电压之和，电流不变；并联像"多路电池并起来"，总电流=各支路电流之和，电压不变。两空填"<b>电压</b>""<b>电流</b>"即可（写"输出电压""输出电流"也对）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">填空 4</span> 缩写含义 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">图纸中缩写"PV"的英文全称是 Photovoltaic，中文含义为（　）；缩写"ATS"的英文全称是 Automatic Transfer Switching Equipment，中文含义为（　）。</div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer">光伏（太阳能发电） × 双电源自动切换（设备/装置）<small>PV = 光伏；ATS = 双电源自动切换设备（常简称"双电源切换开关"）</small></div></div>
+<div class="explain">
+<p><b>PV</b> 图上指"光伏组件/光伏方阵"，中文写"<b>光伏</b>"或"<b>太阳能发电</b>"都对（阅卷接受"光伏"）。<b>ATS</b> 是"主备电源自动切换装置"，图上画在主/备进线柜之间，功能见选择题第 22 题（保证重要负荷连续供电）。注意 ATS 是"切换装置"，不是"UPS"（UPS 用电池储能，毫秒级不断电；ATS 是几秒切换，间隙内有短路风险要加"互锁"）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">填空 5</span> 输电术语 <span class="qkind">2 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路中，相邻两基杆塔之间的水平距离称为（　）。</div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer">档距<small>Span，平断面图"相邻杆塔水平距离"</small></div></div>
+<div class="explain">
+<p>与选择题第 25 题同一概念。"档距"是输电线路专用术语（"一档"=一段两塔之间的导线）。平断面图上每个"档"标数字（如 420、380、450）就是档距（米）。注意与"弧垂"区分（弧垂=导线最低点比悬挂点低多少，见第 26 题）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button></div>
+</div>
+</div>
+
+</section>
+
+<!-- ==================================================
+     三、判断题
+================================================== -->
+<section class="chapter" id="judge">
+<h2 class="chap">三、判断题逐题解析（共 10 题 · 每题 1 分）</h2>
+<p class="chap-desc">判断题最容易"似是而非"。每道题先给 √/×，再讲"为什么对/错在哪里"，最后回扣相关选择题知识点。点击下方 √/× 按钮作答，系统即时判对错。</p>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 1</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">电气图纸中，电流互感器二次侧在运行中允许开路。（　）</div>
+<div class="judge-panel" data-jn="1" data-answer="false">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer no">×</div><small style="font-size:14px;color:var(--ink2)">CT 二次侧<b>严禁</b>开路（允许/需要短路）</small></div>
+<div class="explain">
+<p>开路 → 铁芯饱和 → 二次感应上万伏高压 → 危及人身、烧 CT。见选择题第 7 题。运行中若需断开 CT 二次回路，必须<b>先短接</b>再动。"允许开路"是"反着说"的陷阱题。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 2</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">隔离开关可以用于隔离电源，但不能带负荷接通或断开电路。（　）</div>
+<div class="judge-panel" data-jn="2" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">隔离开关只能空载拉合，不能带负荷操作</small></div>
+<div class="explain">
+<p>见选择题第 5 题。隔离开关无灭弧室，带负荷拉合会产生强烈电弧。"能隔离电源、不能带负荷操作"正是它的"能/不能"边界。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 3</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">光伏组件串联数量越多，光伏方阵的输出电压越高。（　）</div>
+<div class="judge-panel" data-jn="3" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">串联电压相加，串得越多总电压越高</small></div>
+<div class="explain">
+<p>见选择题第 11 题、填空 3。"方阵（Array）"=多个组串并联，组串内串联→串得越多单组串电压越高；组串数越多（并联）总电流越大。题目只说"串联越多→电压越高"，方向正确。注意极端情况：串得太多，总电压超过逆变器 MPPT 上限也不能并网，实际工程要"串到合适数量"。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 4</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">电缆型号"YJV"中，"YJ"表示交联聚乙烯绝缘。（　）</div>
+<div class="judge-panel" data-jn="4" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">YJ = 交联聚乙烯（XLPE）绝缘；V = PVC 护套</small></div>
+<div class="explain">
+<p>见选择题第 18 题。"Y"系列=聚乙烯，"YJ"特指"交联聚乙烯（XLPE）"。交联处理让聚乙烯耐热性从 70℃ 提到 90℃，容量提升，所以 10kV 及中压电缆首选 YJ 绝缘。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 5</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">电压互感器二次侧在运行中允许短路。（　）</div>
+<div class="judge-panel" data-jn="5" data-answer="false">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer no">×</div><small style="font-size:14px;color:var(--ink2)">TV 二次侧<b>严禁</b>短路（允许开路）</small></div>
+<div class="explain">
+<p>见选择题第 8 题。TV 二次电压 100V、内阻小，短路=大电流烧 TV。"允许短路"是反着说的陷阱（与 CT 怕开路对照：TV 怕短路、CT 怕开路，"CT 怕断、TV 怕短"）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 6</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">单母线分段接线在任一段母线检修时，可缩小停电范围。（　）</div>
+<div class="judge-panel" data-jn="6" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">母联合上后，正常段可代供故障段负荷，只停检修段</small></div>
+<div class="explain">
+<p>见选择题第 21 题。分段母线 + 母联断路器 = 两半区互救。任一段检修：合母联、拉该段进线和馈线（只停这段），另一段带全部负荷（前提母联容量够）。停电范围=一段，不是全停。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 7</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">输电线路中弧垂越大，导线对地距离越小，线路越安全。（　）</div>
+<div class="judge-panel" data-jn="7" data-answer="false">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer no">×</div><small style="font-size:14px;color:var(--ink2)">前半句对，后半句错：弧垂越大→对地距离越小→越<b>不</b>安全</small></div>
+<div class="explain">
+<p>见选择题第 26 题。弧垂大=导线低=离地近，人/车/船可能触到，不安全。题目是"前半句正确 + 后半句反了"的复合陷阱，整句=×。正确说法："弧垂在设计值范围内；过大=对地距离不足（危险），过小=导线张力过大（断线风险）。"</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 8</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">TN-S 系统中，保护零线（PE）与工作零线（N）自始至终分开敷设。（　）</div>
+<div class="judge-panel" data-jn="8" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">TN-S 定义就是 PE、N 完全分开（五线制）</small></div>
+<div class="explain">
+<p>见选择题第 19 题。TN-S=全分系统；TN-C=全合（PEN）；TN-C-S=源头合末端分（"C-S"即中间某点分开）。"自始至终分开"是 TN-S 的判定特征，也是解析题第 2 题（3）考的内容（图上如何区分 PE 与 N）。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 9</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">图纸中标注比例 1:100，表示图样上 1mm 代表实际尺寸 100mm。（　）</div>
+<div class="judge-panel" data-jn="9" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">1:100 = 图上 1mm 对应实际 100mm</small></div>
+<div class="explain">
+<p>比例=图上长度∶实际长度。1:100 读作"一比一百"，图上 1mm 对应实物 100mm（1 分米），图上 1cm 对应实物 1m。图纸 10kV 配电所平立面图常用 1:100；设备大样图用 1:20 甚至 1:10。看比例先看"小冒号 1 在前、数字在后"，方向反了（如 100:1）就是放大图，不常见。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+<div class="qcard">
+<div class="qhead"><span class="qnum">判断 10</span> <span class="qkind">1 分</span></div>
+<div class="qbody">
+<div class="qtext">风电场箱式变压器的作用是将风电机组出口电压升压后接入集电线路。（　）</div>
+<div class="judge-panel" data-jn="10" data-answer="true">
+<button type="button" data-pick="true">√</button>
+<button type="button" data-pick="false">×</button>
+</div>
+<div class="judge-result" data-result=""></div>
+<div class="ansbox"><div class="label">参考答案</div><div class="answer tf-answer">√</div><small style="font-size:14px;color:var(--ink2)">690V 机组出口 → 箱变升压 → 35kV 集电线路 → 升压站并网</small></div>
+<div class="explain">
+<p>见选择题第 16、17 题。箱变是风电场"每台机组门口"的升压站，把 590/690V 升到 35kV（部分场站 10kV）送集电线路。"升压后接入集电线路"是它的标准功能描述，整句正确。</p>
+</div>
+<div class="q-actions"><button class="show-answer">👁 只看本题答案</button><button class="reveal-q">📖 查看完整解析</button><button class="undo-q">↺ 重做本题</button></div>
+</div>
+</div>
+
+</section>
+
+<!-- ==================================================
+     四、解析题
+================================================== -->
+<section class="chapter" id="essay">
+<h2 class="chap">四、解析题逐题解析（共 2 题 · 每题 10 分）</h2>
+<p class="chap-desc">解析题考"读图 + 组织答案"。每题给"完整参考答案（阅卷要点）"+"通俗版讲解（先懂再答）"。</p>
+
+<!-- 解析题 1 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">解析 1</span> 屋顶光伏一次系统 <span class="qkind">10 分</span></div>
+<div class="qbody">
+<div class="qtext">某屋顶分布式光伏并网发电项目一次系统接线图（自电源至电网）依次为：<b>光伏组件 → 直流汇流箱 → 组串式逆变器 → 交流配电柜 → 升压变压器 → 10kV 并网柜 → 公共电网</b>。请回答：</div>
+<p style="margin:10px 0"><b>（1）按接线顺序说明图中各环节设备在系统中的主要作用。（6 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（1）</div>
+<div class="explain">
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>光伏组件</b>：吸收太阳光，通过半导体 PN 结将<b>光能转化为直流电能</b>（单块约 45V 开路、工作电压约 38V），是系统的"电源"。</li>
+<li><b>直流汇流箱</b>：把多路组串（若干组件串成的直流支路）<b>汇合到直流母线</b>，并提供<b>每路保护（熔断器/断路器）、防雷（浪涌保护器 SPD）、反接保护、直流计量接口</b>，是直流侧的"总闸室"。</li>
+<li><b>组串式逆变器</b>：把直流侧电能<b>转换为与电网同频同相的交流电</b>（DC→AC，含 MPPT 最大功率点跟踪），是系统的"翻译官"。</li>
+<li><b>交流配电柜</b>：交流侧的<b>汇集、计量、保护、并网控制</b>（断路器、避雷器、电表、防孤岛、并网点开关），是"交流总闸室"。</li>
+<li><b>升压变压器</b>：把低压交流（如 0.4kV）<b>升高到 10kV</b>（或依项目 35kV），减少送电电流、降低损耗，是"增压阀"。</li>
+<li><b>10kV 并网柜</b>：并网点设备，含<b>断路器、隔离开关、避雷器、电流/电压互感器、计量、保护</b>，是电网与光伏系统的"接口闸室"。</li>
+<li><b>公共电网</b>：接受光伏电能，同时提供<b>电压支撑与备用容量</b>（光伏出力不足时电网补上，光伏过剩时电网接收，保持频率/电压稳定）。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（阅卷要点：每环节"主要作用"答对 1 条 = 1 分，共 6 分；环节说明不必逐字复述，意思到位即可。）</p>
+</div></div>
+
+<p style="margin:14px 0 10px"><b>（2）直流汇流箱内通常配置哪些保护元件？（2 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（2）</div>
+<div class="explain">
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>每路组串熔断器（或小型断路器）</b>：保护单组串短路，防止一路故障烧总箱/烧总路。</li>
+<li><b>直流总路断路器</b>：控制整箱通断 + 短路保护，检修时拉它"总闸"。</li>
+<li><b>浪涌保护器（SPD）</b>：防雷，把雷电/操作过电压泄入地。</li>
+<li><b>反接保护（二极管/电子检测）</b>：防止某组串反接倒灌。</li>
+<li><b>汇流单元/二极管（部分场合）</b>：防止组串间电流互窜、防孤岛。</li>
+<li><b>计量/指示</b>：直流电流、电压表（或通信采集）。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（答出"每路熔断器 + 总路断路器 + 浪涌保护器"核心 3 项即满分，附加项加分。）</p>
+</div></div>
+
+<p style="margin:14px 0 10px"><b>（3）若每块光伏组件开路电压约为 45V，每个组串由 20 块组件串联，该组串的开路电压约为多少？组串并联数量主要由什么决定？（2 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（3）</div>
+<div class="explain">
+<p style="font-size:14.5px"><b>组串开路电压 ≈ 45V × 20 = 900V（DC）</b>。实际工作电压（Vmp）比开路低约 20%，即 700V 左右，仍按"900V 级"设计绝缘。</p>
+<p style="font-size:14.5px;margin-top:8px"><b>组串并联数量主要由以下决定</b>：</p>
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>逆变器最大直流输入电流（A）</b>：并联组串电流之和 ≤ 逆变器额定/最大输入电流。</li>
+<li><b>逆变器 MPPT 电压窗口</b>：并联不改变电压，但"组串电压"要在 MPPT 范围内（不超上限）。</li>
+<li><b>项目总装机容量与单机容量</b>：总容量 = 单机容量 × 台数；单机接多少组串由"单机容量 ÷ 单组串功率"得出。</li>
+<li><b>实际辐照与温度修正</b>：冬天冷→单块电压高，组串电压可能超逆变器上限，需按"最低温度时不超压"校验。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（算对 900V = 1 分；并联数量决定因素答"逆变器最大输入电流/容量"= 1 分。）</p>
+</div></div>
+
+<details class="fold"><summary>💡 通俗版讲解（先懂再答，避免死背）</summary><div class="fold-body">
+<p><b>（1）整条"生产线"这样记</b>：太阳→组件（发电，直流）→ 汇流箱（合并+保护，直流总闸室）→ 逆变器（翻成交流）→ 交流配电柜（交流总闸室）→ 变压器（升压）→ 并网柜（并到电网的"接口"）→ 电网。每个环节一句功能，6 分到手。</p>
+<p><b>（2）汇流箱内 3 大保护</b>：每路熔断（小保险，保护单路）、总闸（断路器，控制+保护整箱）、SPD（防雷）。记住"<b>熔断 + 断路 + 防雷</b>"三件套。</p>
+<p><b>（3）900V 怎么来的</b>：每块 45V，串 20 块，电压相加 = 900V（"一节电池 45V，20 节串起来"）。并联多少组串？看逆变器"能吃多少电流"——并联组串电流加起来不能超逆变器输入上限，也不能让 MPPT 电压超窗。工程上算"单组串功率 × 组串数 ≈ 逆变器容量"。</p>
+</div></details>
+<div class="q-actions"><button class="reveal-q">📖 查看完整参考答案</button></div>
+</div>
+</div>
+
+<!-- 解析题 2 -->
+<div class="qcard">
+<div class="qhead"><span class="qnum">解析 2</span> 10kV 配电变电站主接线 <span class="qkind">10 分</span></div>
+<div class="qbody">
+<div class="qtext">某 10kV 配电变电站主接线（文字示意）如下：两路 10kV 电源进线分别经进线断路器接至 10kV Ⅰ段、Ⅱ段母线，Ⅰ、Ⅱ段母线之间设母联断路器；各段母线引出馈线柜带 10kV 出线；每段母线各接一台 10kV/0.4kV 配电变压器，低压侧采用 TN-S 系统供出。请回答：</div>
+
+<p style="margin:14px 0 10px"><b>（1）该 10kV 侧主接线采用何种接线形式？母联断路器的主要作用是什么？（4 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（1）</div>
+<div class="explain">
+<p style="font-size:14.5px"><b>接线形式：单母线分段接线（带母联断路器）</b>——两段母线（Ⅰ、Ⅱ）+ 中间一台母联断路器 + 双电源进线。每段母线各自带馈线和一台配电变压器。</p>
+<p style="font-size:14.5px;margin-top:8px"><b>母联断路器的主要作用</b>：</p>
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>分段运行互不影响</b>：平时母联可分列（断开），Ⅰ、Ⅱ段独立运行，一段故障不波及另一段。</li>
+<li><b>母线故障/检修时转移负荷</b>：合母联后，正常段可带故障段负荷，缩小停电范围。</li>
+<li><b>双电源切换</b>：一路进线故障时，母联合上由另一路带全部负荷，提高供电可靠性。</li>
+<li><b>运行方式灵活</b>：可按负荷分布调整两段母线的负荷分配。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（接线形式 1 分 + 母联作用答出 2 条 2 分 + 1 条 1 分，共 4 分。）</p>
+</div></div>
+
+<p style="margin:14px 0 10px"><b>（2）当 Ⅰ 段母线需停电检修时，为保证 Ⅱ 段母线所带负荷继续供电，应如何操作？（3 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（2）</div>
+<div class="explain">
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>合上母联断路器</b>：使 Ⅱ 段母线成为"两路进线 + Ⅰ段馈线（若需转移）"的供电电源。</li>
+<li><b>拉开 Ⅰ 段母线所带各馈线出线断路器</b>（需停电检修的馈线）：把 Ⅰ 段"摘"掉，避免检修时反送电。</li>
+<li><b>拉开 Ⅰ 段进线断路器</b>（含该进线的隔离开关）：电源侧完全断开， Ⅰ 段母线"无电"，可验电、挂接地线、挂标示牌后开始检修。</li>
+<li><b>验电、挂接地线、悬挂"有人工作"标示牌</b>：完成检修安全措施（这是"停电操作"的标准流程，答出"先验电后挂接地线"是送分点）。</li>
+<li><b>Ⅱ 段母线负荷</b> 经母联由 Ⅱ 段进线继续供电（前提 Ⅱ 段进线断路器容量与母联容量足够）。若 Ⅱ 段进线容量不够，则需"限负荷"（拉低重要度馈线）后再操作。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（操作顺序要点：合母联 → 拉 Ⅰ 段馈线 → 拉 Ⅰ 段进线 → 验电接地挂牌 → Ⅱ 段带负荷，共 3 分。）</p>
+</div></div>
+
+<p style="margin:14px 0 10px"><b>（3）低压 0.4kV 侧 TN-S 系统中，PE 线与 N 线在图纸中如何区分？（3 分）</b></p>
+<div class="ansbox"><div class="label">参考答案（3）</div>
+<div class="explain">
+<ol style="margin-left:20px;font-size:14.5px;line-height:2">
+<li><b>颜色区分</b>：PE 线 = <b>绿黄双色</b>（强制标准，不得挪用）；N 线 = <b>蓝色</b>。</li>
+<li><b>文字符号区分</b>：图上 PE 标注"<b>PE</b>"（或接地符号"⏚"），N 标注"<b>N</b>"（中性线/工作零线）。</li>
+<li><b>功能区分</b>：PE 线<b>平时无电流</b>（只接设备外壳、在故障时提供保护电流回路）；N 线<b>平时有工作电流</b>（接用电设备工作回路，接 220V 负载中性点）。</li>
+<li><b>路径区分</b>：TN-S 中 PE、N <b>自变压器中性点接地端分开引</b>，PE 直接接接地网（不经过开关/熔断器），N 经进线开关/计量回路引到母线，二者<b>全程独立</b>，不得在末端再合并。</li>
+<li><b>柜面布置</b>：低压柜上 PE 母排（黄绿标识）与 N 母排（蓝色标识）<b>物理分开</b>，PE 母排直接接接地端子，N 母排在电源侧与 PE 做"一点接地"（中性点）后再分开引出。</li>
+</ol>
+<p style="font-size:13.5px;color:var(--ink2);margin-top:8px">（颜色 1 分 + 符号 1 分 + 功能/路径 1 分，共 3 分。）</p>
+</div></div>
+
+<details class="fold"><summary>💡 通俗版讲解（先把变电站"想清楚"再答）</summary><div class="fold-body">
+<p><b>（1）先画个草图</b>：</p>
+<p style="text-align:center;font-family:monospace;white-space:pre;font-size:13px">
+电源A ──QF进线A── Ⅰ段母线 ──母联QF── Ⅱ段母线 ──QF进线B── 电源B
+              │                      │
+             QF馈线×N              QF馈线×N
+              │                      │
+           10/0.4kV 变压器×1      10/0.4kV 变压器×1
+                    │
+                  0.4kV TN-S → 各用户
+</p>
+<p>"单母线分段"=两条母线 + 一台母联。母联像"桥"：平时断开（分段运行），需要时合上（互救）。</p>
+<p><b>（2）Ⅰ段停电检修 = "断掉 Ⅰ 段、保住 Ⅱ 段"</b>。核心 3 步：<b>合母联（把Ⅰ段负荷"搬"到Ⅱ段）→ 拉 Ⅰ 段进线+馈线（断电源）→ 验电接地挂牌（保人身）</b>。顺序不能乱（先合母联再拉，否则负荷全闪断）。</p>
+<p><b>（3）PE 与 N 区分 = 颜色 + 符号 + 路径三件套</b>：PE 绿黄、N 蓝；图上写 PE/N；PE 不接开关、N 接计量/保护。"一点接地"在变压器中性点，之后两路独立到末端，"TN-S 永不合并"是它的签名。</p>
+</div></details>
+<div class="q-actions"><button class="reveal-q">📖 查看完整参考答案</button></div>
+</div>
+</div>
+
+</section>
+
+<!-- ==================================================
+     ★ 速记工具
+================================================== -->
+<section class="chapter" id="memory">
+<h2 class="chap">★ 高频易错点速记表（考前 10 分钟冲刺）</h2>
+<p class="chap-desc">把下面这张表看三遍，考试 80 分稳拿。"怕断/怕短"、"串/并"、"升/降"是整卷最高频陷阱。</p>
+
+<div class="card">
+<h3>🔥 五大高频陷阱对照表</h3>
+<table class="tbl">
+<tr><th style="width:180px">陷阱</th><th>正确说法</th><th style="width:200px">反义说法（错的）</th></tr>
+<tr><td><b>CT 二次侧</b></td><td><b>严禁开路</b>（可短接）</td><td>"允许开路" ×、"不允许短路" ×</td></tr>
+<tr><td><b>TV 二次侧</b></td><td><b>严禁短路</b>（可开路）</td><td>"允许短路" ×、"不允许开路" ×</td></tr>
+<tr><td><b>隔离开关</b></td><td>只能<b>空载</b>拉合（隔离电源）</td><td>"可带负荷操作" ×、"可切短路电流" ×</td></tr>
+<tr><td><b>弧垂</b></td><td>弧垂越大 → 对地距离越小 → <b>越不安全</b></td><td>"弧垂越大越安全" ×</td></tr>
+<tr><td><b>串 / 并联</b></td><td>串 → 电压↑；并 → 电流↑</td><td>"串提高电流、并提高电压" ×</td></tr>
+<tr><td><b>TN-S</b></td><td>PE、N <b>全程分开</b></td><td>"PE 与 N 合并" ×（那是 TN-C）</td></tr>
+<tr><td><b>箱变</b>（风电）</td><td><b>升压</b>：690V → 35kV</td><td>"降压 35kV → 0.4kV" ×（那是配电变）</td></tr>
+<tr><td><b>YJ</b></td><td><b>交联</b>聚乙烯绝缘</td><td>"聚乙烯"（少了交联）×</td></tr>
+<tr><td><b>图签</b></td><td>含图名/图号/设计/比例/日期/单位</td><td>含"设备采购价格" ×</td></tr>
+<tr><td><b>ATS</b></td><td>主备电源<b>自动切换</b>（几秒间隙）</td><td>"UPS" ×（UPS 是电池储能、毫秒不断电）</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>📌 口诀记忆（考前看一眼）</h3>
+<div class="concept-grid">
+<div class="concept-card"><h5>互感器"怕断/怕短"</h5><p><b>CT 怕断（二次开路）</b>，<b>TV 怕短（二次短路）</b>。电流表（CT）串联、怕开路；电压表（TV）并联、怕短路。</p></div>
+<div class="concept-card"><h5>开关顺序"先刀后闸"</h5><p>停电：<b>先断路器、后隔离开关</b>（QF→QS）；送电：<b>先隔离、后断路器</b>（QS→QF）。刀=隔离，闸=断路器。</p></div>
+<div class="concept-card"><h5>光伏"串压并流"</h5><p>串（电压相加）+ 并（电流相加）→ 组串（串）→ 组串并联（并）→ 逆变器 → 并网。</p></div>
+<div class="concept-card"><h5>幅面"每折一半"</h5><p>A0 → 对折 A1 → 对折 A2 → 对折 A3 → 对折 A4。A3=297×420，A4=210×297（短×长）。</p></div>
+<div class="concept-card"><h5>电缆"前材后护"</h5><p>YJV：YJ=交联聚乙烯（绝缘）+ V=PVC（护套）。LGJ：L 铝 + G 钢芯 + J 绞线。</p></div>
+<div class="concept-card"><h5>风电"升压进集电"</h5><p>机组 690V → 箱变升 35kV → 集电线路汇集 → 升压站 → 110/220kV 并网。</p></div>
+<div class="concept-card"><h5>单母线分段"两半互救"</h5><p>平时分段运行，故障/检修时合母联 → 正常段带故障段负荷，停电范围=一段。</p></div>
+<div class="concept-card"><h5>避雷器 & 地线"分工"</h5><p>避雷器=装在变电站设备旁（拦截过电压入地）；架空地线=挂在线路上方（替导线挡雷）。</p></div>
+</div>
+</div>
+
+<div class="card" id="memory2">
+<h3>🔤 设备文字符号速查表（卷内出现的全部）</h3>
+<table class="tbl">
+<tr><th style="width:90px">符号</th><th>设备</th><th style="width:280px">记忆 / 考点关联</th></tr>
+<tr><td><b>QF</b></td><td>断路器</td><td>第 4 题。"Q=开启类，F=分断"。能带负荷开断 + 灭弧。</td></tr>
+<tr><td><b>QS</b></td><td>隔离开关</td><td>第 5 题。"S=分离"。只能空载拉合，断口可视化。</td></tr>
+<tr><td><b>QK</b></td><td>电抗器/限流</td><td>干扰项（第 4 题 C）。</td></tr>
+<tr><td><b>TA / CT</b></td><td>电流互感器</td><td>第 7 题、判断 1。二次严禁开路。</td></tr>
+<tr><td><b>TV / PT</b></td><td>电压互感器</td><td>第 8 题、判断 5。二次严禁短路。</td></tr>
+<tr><td><b>T</b></td><td>变压器</td><td>第 6 题（两相交圈=双绕组）。</td></tr>
+<tr><td><b>GE</b></td><td>避雷器</td><td>第 10 题。并联在设备与地之间，限制过电压。</td></tr>
+<tr><td><b>PE</b></td><td>保护接地线</td><td>第 19 题、判断 8。绿黄双色，TN-S 中独立敷设。</td></tr>
+<tr><td><b>N</b></td><td>工作零线（中性线）</td><td>蓝色，与工作电流相关。</td></tr>
+<tr><td><b>PV</b></td><td>光伏（组件/方阵）</td><td>填空 4。直流侧，串联提电压。</td></tr>
+<tr><td><b>ATS</b></td><td>双电源自动切换设备</td><td>第 22 题、填空 4。主备切换，保证重要负荷。</td></tr>
+<tr><td><b>PCS</b></td><td>储能变流器</td><td>第 15 题。双向 DC/AC，DC 侧=电池簇。</td></tr>
+<tr><td><b>YJV</b></td><td>交联聚乙烯绝缘 PVC 护套电缆</td><td>第 18 题、判断 4。</td></tr>
+<tr><td><b>LGJ</b></td><td>钢芯铝绞线</td><td>第 29 题。L 铝 + G 钢芯 + J 绞线。</td></tr>
+<tr><td><b>CT</b>（敷设）</td><td>电缆桥架</td><td>第 24 题。注意与"CT=电流互感器"区分（语境）。</td></tr>
+<tr><td><b>L1 L2 L3 / A B C</b></td><td>三相相序</td><td>第 20 题。颜色：黄绿红。</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>📐 整卷考点覆盖率自查表（做完考一遍）</h3>
+<table class="tbl">
+<tr><th style="width:180px">知识点</th><th>对应题号</th><th style="width:110px">掌握？</th></tr>
+<tr><td>国标 4728 / 14689 幅面</td><td>选择 1、2；填空 1、2；判断 9</td><td>☐</td></tr>
+<tr><td>母线 / 断路器 / 隔离开关</td><td>选择 3、4、5；判断 2；解析 2(1)</td><td>☐</td></tr>
+<tr><td>CT / TV "怕断/怕短"</td><td>选择 7、8；判断 1、5</td><td>☐</td></tr>
+<tr><td>接地 / 避雷器 / 架空地线</td><td>选择 9、10、28</td><td>☐</td></tr>
+<tr><td>光伏串并 / 组串 / 汇流箱 / 逆变器 / PCS</td><td>选择 11–15；填空 3；判断 3；解析 1</td><td>☐</td></tr>
+<tr><td>风电箱变 / 集电线路</td><td>选择 16、17；判断 10</td><td>☐</td></tr>
+<tr><td>电缆型号 YJV / LGJ</td><td>选择 18、29；判断 4</td><td>☐</td></tr>
+<tr><td>TN-S / 相序 / 双电源 ATS</td><td>选择 19、20、22；判断 8；解析 2(3)</td><td>☐</td></tr>
+<tr><td>单母线分段 / 母联 / 低压柜排列</td><td>选择 21、23；判断 6；解析 2(1)(2)</td><td>☐</td></tr>
+<tr><td>电缆敷设 CT / 图签</td><td>选择 24、30</td><td>☐</td></tr>
+<tr><td>档距 / 弧垂 / 悬垂绝缘子</td><td>选择 25、26、27；填空 5；判断 7</td><td>☐</td></tr>
+</table>
+<div class="tip ok">✅ 全部打钩 = 可以安心进考场。没打钩的 → 回去看对应题号 + 相关"通俗讲解"。</div>
+</div>
+
+<div class="card">
+<h3>📞 考场小贴士</h3>
+<ul style="margin-left:18px;font-size:14.5px;line-height:2">
+<li><b>选择题先易后难</b>：第 1–20 多为概念题（会就过），第 21–30 有陷阱（再想一步）。</li>
+<li><b>判断题"似是而非"句</b>：看到"越…越…"（如判断 7 弧垂越大小）或"允许/严禁"（如判断 1/5 互感器的"反义说法"）先怀疑。</li>
+<li><b>解析题按"分点答"</b>：阅卷按点给分，答案分点写（1/2/3…）不要连写，避免漏点。</li>
+<li><b>算题写过程</b>：45V×20=900V 必须写过程（"45V×20=900V"），只写结果不给分。</li>
+<li><b>时间分配</b>：选择 40min + 填空 10min + 判断 10min + 解析 30min + 检查 10min = 100min（若 90min 考试时间，压缩检查）。</li>
+</ul>
+</div>
+
+</section>
+</main>
+
+<button class="backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+<script>
+/* ============ 全局状态 ============ */
+const CORRECT = {"1":"D","2":"C","3":"B","4":"A","5":"B","6":"D","7":"A","8":"C","9":"A","10":"C","11":"B","12":"A","13":"D","14":"B","15":"D","16":"B","17":"C","18":"D","19":"A","20":"C","21":"D","22":"B","23":"C","24":"D","25":"A","26":"B","27":"D","28":"C","29":"B","30":"A"};
+const JUDGE = [false,true,true,true,false,true,false,true,true,true];
+const state = { answered: {} };  // qn -> {letter/true/false}
+
+/* ============ 进度条 ============ */
+function updateProgress(){
+  const h = document.documentElement;
+  const p = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+  document.getElementById('progressFill').style.width = p + '%';
+}
+window.addEventListener('scroll', updateProgress);
+
+/* ============ 全局显示/隐藏答案 ============ */
+const btnReveal = document.getElementById('btnGlobalReveal');
+btnReveal.addEventListener('click', () => {
+  const on = document.body.classList.toggle('reveal');
+  btnReveal.textContent = on ? '👁 隐藏全部答案与详解' : '👁 显示全部答案与详解';
+  btnReveal.classList.toggle('active', on);
+  // 若已全局显示，清除所有"只看本题答案"按钮的高亮
+  if (on) {
+    document.querySelectorAll('.q-actions .show-answer').forEach(b => b.classList.remove('active'));
+  }
+});
+
+/* ============ 逐题显示答案（不影响其他题；解析题卡片含多个小问的答案/详解，全部显示） ============ */
+function showCardAnswers(qcard){
+  qcard.querySelectorAll('.ansbox').forEach(el => el.style.display = 'block');
+  qcard.querySelectorAll('.explain').forEach(el => el.style.display = 'block');
+  qcard.querySelectorAll('details.fold').forEach(el => { el.open = true; });
+}
+function hideCardAnswers(qcard){
+  qcard.querySelectorAll('.ansbox').forEach(el => el.style.display = '');
+  qcard.querySelectorAll('.explain').forEach(el => el.style.display = '');
+  qcard.querySelectorAll('details.fold').forEach(el => { el.open = false; });
+}
+/* 单答案卡片的"只看本题答案"切换（ansbox 与 explain 联动） */
+function toggleCardAnswer(card, btn){
+  const ansbox = card.querySelector('.ansbox');
+  if (!ansbox) return;
+  const shown = ansbox.style.display === 'block';
+  const els = card.querySelectorAll('.ansbox,.explain');
+  els.forEach(el => el.style.display = shown ? '' : 'block');
+  btn.classList.toggle('active', !shown);
+}
+
+/* ============ 选择题交互 ============ */
+function setupChoice(card){
+  const opts = card.querySelectorAll('.opt.clickable');
+  const qn = card.querySelector('.opts').getAttribute('data-qn');
+  const actions = card.querySelector('.q-actions');
+  const correct = CORRECT[qn];
+  opts.forEach(o => {
+    o.addEventListener('click', () => {
+      if (card.classList.contains('judged')) return;
+      // 高亮选中
+      opts.forEach(x => x.classList.remove('user-picked'));
+      o.classList.add('user-picked');
+      state.answered['c'+qn] = o.getAttribute('data-letter');
+      updateScore();
+    });
+  });
+  // "重做本题"
+  actions.querySelector('.undo-q').addEventListener('click', () => {
+    opts.forEach(x => { x.classList.remove('user-picked','judged-correct','judged-wrong'); });
+    card.classList.remove('judged');
+    delete state.answered['c'+qn];
+    updateScore();
+    // 重新隐藏答案
+    hideCardAnswers(card);
+  });
+  // "查看完整解析"
+  actions.querySelector('.reveal-q').addEventListener('click', () => {
+    // 先判对错
+    judgeChoice(card, qn, correct);
+    showCardAnswers(card);
+    // 标记显示过
+    actions.querySelector('.reveal-q').textContent = '✅ 已显示解析';
+    actions.querySelector('.reveal-q').classList.add('done');
+  });
+  // "只看本题答案"
+  actions.querySelector('.show-answer').addEventListener('click', (e) => {
+    toggleCardAnswer(card, e.target);
+  });
+}
+function judgeChoice(card, qn, correct){
+  if (card.classList.contains('judged')) return;
+  const picked = state.answered['c'+qn];
+  if (!picked) { alert('请先点击一个选项再查看解析'); return; }
+  card.classList.add('judged');
+  const opts = card.querySelectorAll('.opt.clickable');
+  opts.forEach(o => {
+    const L = o.getAttribute('data-letter');
+    o.classList.remove('user-picked');
+    if (L === correct) o.classList.add('judged-correct');
+    else if (L === picked) o.classList.add('judged-wrong');
+  });
+  updateScore();
+}
+
+/* ============ 判断题交互 ============ */
+function setupJudge(card){
+  const panel = card.querySelector('.judge-panel');
+  const qn = panel.getAttribute('data-jn');
+  const answer = panel.getAttribute('data-answer') === 'true';
+  const result = card.querySelector('.judge-result');
+  const actions = card.querySelector('.q-actions');
+  const btns = panel.querySelectorAll('button');
+  btns.forEach(b => {
+    b.addEventListener('click', () => {
+      if (card.classList.contains('judged')) return;
+      const pick = b.getAttribute('data-pick') === 'true';
+      btns.forEach(x => x.classList.remove('j-pick'));
+      b.classList.add('j-pick');
+      state.answered['j'+qn] = pick;
+      // 判对错
+      card.classList.add('judged');
+      const ok = (pick === answer);
+      btns.forEach(x => {
+        const p = x.getAttribute('data-pick') === 'true';
+        x.classList.remove('j-correct','j-wrong','j-pick');
+        if (p === answer) x.classList.add('j-correct');
+        else if (p === pick && !ok) x.classList.add('j-wrong');
+      });
+      result.style.display = 'block';
+      if (ok) {
+        result.className = 'judge-result ok';
+        result.textContent = '✅ 正确！' + (answer ? '本题应打 √' : '本题应打 ×') + '，你的选择与参考答案一致。';
+      } else {
+        result.className = 'judge-result no';
+        result.textContent = '❌ 错误。正确答案：' + (answer ? '√' : '×') + '。点击下方"查看完整解析"看原因。';
+      }
+      updateScore();
+    });
+  });
+  actions.querySelector('.undo-q').addEventListener('click', () => {
+    card.classList.remove('judged');
+    btns.forEach(x => x.classList.remove('j-correct','j-wrong','j-pick'));
+    result.style.display = 'none';
+    delete state.answered['j'+qn];
+    hideCardAnswers(card);
+    actions.querySelector('.reveal-q').textContent = '📖 查看完整解析';
+    actions.querySelector('.reveal-q').classList.remove('done');
+    updateScore();
+  });
+  actions.querySelector('.reveal-q').addEventListener('click', () => {
+    showCardAnswers(card);
+    actions.querySelector('.reveal-q').textContent = '✅ 已显示解析';
+    actions.querySelector('.reveal-q').classList.add('done');
+  });
+  actions.querySelector('.show-answer').addEventListener('click', (e) => {
+    toggleCardAnswer(card, e.target);
+  });
+}
+
+/* ============ 得分统计 ============ */
+function updateScore(){
+  const total = 40;  // 30 选择 + 10 判断
+  let correct = 0, answered = 0;
+  for (let i = 1; i <= 30; i++) {
+    const a = state.answered['c'+i];
+    if (a) {
+      answered++;
+      if (a === CORRECT[i]) correct++;
+    }
+  }
+  for (let i = 1; i <= 10; i++) {
+    const a = state.answered['j'+i];
+    if (a !== undefined) {
+      answered++;
+      if (a === JUDGE[i-1]) correct++;
+    }
+  }
+  const el = document.getElementById('scoreText');
+  if (answered === 0) {
+    el.textContent = '未开始';
+  } else {
+    el.textContent = `${correct}/${total}（已答 ${answered} 题）`;
+  }
+}
+
+/* ============ 重置答题 ============ */
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!confirm('确定重置所有答题记录吗？')) return;
+  state.answered = {};
+  document.querySelectorAll('.qcard').forEach(c => {
+    c.classList.remove('judged');
+    c.querySelectorAll('.opt.clickable').forEach(o => o.classList.remove('user-picked','judged-correct','judged-wrong'));
+    c.querySelectorAll('.judge-panel button').forEach(b => b.classList.remove('j-correct','j-wrong','j-pick'));
+    const r = c.querySelector('.judge-result');
+    if (r) r.style.display = 'none';
+    hideCardAnswers(c);
+    c.querySelectorAll('.q-actions .reveal-q').forEach(b => { b.textContent = '📖 查看完整解析'; b.classList.remove('done'); });
+    c.querySelectorAll('.q-actions .show-answer').forEach(b => b.classList.remove('active'));
+  });
+  updateScore();
+});
+
+/* ============ 解析题 / 填空题 交互（只有 reveal-q / show-answer 按钮，无 undo） ============ */
+function setupSimple(card){
+  const actions = card.querySelector('.q-actions');
+  if (!actions) return;
+  const rq = actions.querySelector('.reveal-q');
+  if (rq) {
+    rq.addEventListener('click', () => {
+      showCardAnswers(card);
+      rq.textContent = '✅ 已显示解析';
+      rq.classList.add('done');
+    });
+  }
+  const sa = actions.querySelector('.show-answer');
+  if (sa) {
+    sa.addEventListener('click', (e) => {
+      const shown = card.querySelector('.ansbox') && card.querySelector('.ansbox').style.display === 'block';
+      card.querySelectorAll('.ansbox,.explain').forEach(el => el.style.display = shown ? '' : 'block');
+      e.target.classList.toggle('active', !shown);
+    });
+  }
+}
+
+/* ============ 初始化所有卡片 ============ */
+document.querySelectorAll('.qcard').forEach(c => {
+  if (c.querySelector('.opt.clickable')) setupChoice(c);
+  else if (c.querySelector('.judge-panel')) setupJudge(c);
+  else setupSimple(c);
+});
+
+/* ============ 左侧导航滚动联动高亮 ============ */
+function setupNavHighlight(){
+  const links = document.querySelectorAll('.nav a');
+  const targets = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  let lastActive = null;
+  function onScroll(){
+    let current = targets[0];
+    const y = window.scrollY + 140;  // 偏移工具栏高度
+    for (const t of targets) {
+      if (t.getBoundingClientRect().top + window.scrollY <= y) current = t;
+    }
+    // 滚到底时强制高亮最后一项
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 40) {
+      current = targets[targets.length - 1];
+    }
+    if (current !== lastActive) {
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+      const active = document.querySelector('.nav a.active');
+      if (active) active.scrollIntoView({ block: 'nearest' });
+      lastActive = current;
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+}
+setupNavHighlight();
+
+/* ============ 打印前展开所有折叠 ============ */
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('details.fold').forEach(d => d.open = true);
+});
+</script>
+</body>
+</html>

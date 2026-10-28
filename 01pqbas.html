@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电能质量基础培训课件</title>
+<style>
+  :root{
+    --primary:#0b6e8f; --primary-dark:#084e66; --accent:#f0a202; --accent2:#e05d2b;
+    --bg:#f4f7f9; --card:#ffffff; --text:#22313a; --muted:#6b7b85;
+    --line:#dde6ea; --code-bg:#eef4f7;
+    --sidebar-bg:#0e3a4a; --sidebar-text:#cfe6ee;
+    --quiz-bg:#fff8e6; --ans-bg:#eafaf1; --ans-border:#2ea86b;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif; background:var(--bg); color:var(--text); line-height:1.8; font-size:16px;}
+
+  /* ===== 布局 ===== */
+  .layout{display:flex; min-height:100vh;}
+  .sidebar{
+    width:300px; flex-shrink:0; background:var(--sidebar-bg); color:var(--sidebar-text);
+    position:sticky; top:0; height:100vh; overflow-y:auto; padding:18px 0 40px;
+    transition:transform .3s ease;
+    z-index:100;
+  }
+  .sidebar::-webkit-scrollbar{width:8px;}
+  .sidebar::-webkit-scrollbar-thumb{background:#2a5a6e; border-radius:4px;}
+  .brand{padding:6px 20px 14px; border-bottom:1px solid #1f4c5e; margin-bottom:12px;}
+  .brand .logo{font-size:20px; font-weight:700; color:#fff;}
+  .brand .sub{font-size:12px; color:#9fc3d0; margin-top:2px;}
+
+  .tree{list-style:none; padding:0 10px;}
+  .tree ul{list-style:none; padding-left:16px; display:none;}
+  .tree li{margin:1px 0;}
+  .tree a{
+    display:block; padding:8px 12px; border-radius:8px; text-decoration:none;
+    color:var(--sidebar-text); font-size:14px; cursor:pointer;
+    border-left:3px solid transparent;
+  }
+  .tree a:hover{background:#15506a;}
+  .tree a.active{background:#0f2f3d; color:#fff; border-left-color:var(--accent); font-weight:600;}
+  .tree .chapter{
+    font-weight:700; color:#fff; font-size:14.5px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .tree .chapter .arrow{font-size:11px; transition:transform .2s;}
+  .tree li.open>ul{display:block;}
+  .tree li.open>.chapter .arrow{transform:rotate(90deg);}
+  .tree .leaf{padding-left:22px;}
+
+  .main{flex:1; min-width:0;}
+  .topbar{
+    position:sticky; top:0; z-index:90; background:rgba(255,255,255,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line); padding:10px 22px; display:flex; align-items:center; gap:12px;
+  }
+  .burger{display:none; background:none; border:1px solid var(--line); border-radius:8px; padding:6px 10px; font-size:18px; cursor:pointer; color:var(--primary);}
+  .topbar .crumb{font-size:13px; color:var(--muted);}
+  .topbar .crumb b{color:var(--primary);}
+  .content{max-width:900px; margin:0 auto; padding:28px 24px 80px;}
+
+  /* ===== 页面 ===== */
+  .page{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:34px 36px; margin-bottom:34px; box-shadow:0 2px 10px rgba(14,58,74,.05);}
+  .page-head{display:flex; align-items:center; gap:12px; margin-bottom:6px;}
+  .page-num{
+    background:var(--primary); color:#fff; font-size:13px; font-weight:700;
+    padding:4px 12px; border-radius:20px; white-space:nowrap;
+  }
+  .page-chapter{font-size:12px; color:var(--accent2); font-weight:700; letter-spacing:1px; margin-bottom:4px;}
+  h1.page-title{font-size:26px; color:var(--primary-dark); margin-bottom:18px; line-height:1.4;}
+  .page h2{font-size:20px; color:var(--primary-dark); margin:26px 0 10px; border-left:4px solid var(--accent); padding-left:12px;}
+  .page h3{font-size:17px; color:var(--primary); margin:20px 0 8px;}
+  .page p{margin:10px 0;}
+  .page ul,.page ol{margin:10px 0 10px 26px;}
+  .page li{margin:6px 0;}
+  .page strong{color:var(--accent2);}
+  .page a.k-link{color:var(--primary); font-weight:600; text-decoration:none; border-bottom:1.5px dashed var(--primary);}
+  .page a.k-link:hover{background:#e6f2f7;}
+
+  .callout{border-radius:10px; padding:14px 18px; margin:16px 0; border-left:5px solid;}
+  .callout.info{background:#eef6fb; border-color:var(--primary);}
+  .callout.tip{background:#fff7e6; border-color:var(--accent);}
+  .callout.warn{background:#fdeee9; border-color:var(--accent2);}
+  .callout .ct{font-weight:700; display:block; margin-bottom:4px;}
+
+  .def{background:#eef6fb; border:1px solid #cfe4ef; border-radius:10px; padding:14px 18px; margin:16px 0;}
+  .def .dt{font-weight:700; color:var(--primary-dark);}
+
+  table{border-collapse:collapse; width:100%; margin:16px 0; font-size:14.5px;}
+  th,td{border:1px solid var(--line); padding:9px 12px; text-align:left;}
+  th{background:#e8f2f6; color:var(--primary-dark);}
+  tr:nth-child(even) td{background:#fafcfd;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+
+  .svg-box{text-align:center; margin:18px 0;}
+  .svg-box svg{max-width:100%; height:auto;}
+  .svg-cap{font-size:12.5px; color:var(--muted); margin-top:6px;}
+
+  /* ===== 练习 ===== */
+  .quiz{background:var(--quiz-bg); border:1px solid #f0d48a; border-radius:12px; padding:16px 18px; margin:18px 0;}
+  .quiz .qt{font-weight:700; color:#8a5a00; margin-bottom:8px; display:flex; gap:8px; align-items:flex-start;}
+  .quiz .qt .badge{background:var(--accent); color:#fff; font-size:12px; border-radius:5px; padding:1px 8px; flex-shrink:0;}
+  .quiz .opts{list-style:none; margin:8px 0 8px 0;}
+  .quiz .opts li{margin:5px 0; padding:8px 12px; background:#fff; border:1px solid #eee0b8; border-radius:8px; cursor:pointer; transition:all .15s;}
+  .quiz .opts li:hover{background:#fffdf3; border-color:var(--accent);}
+  .quiz .opts li.correct{background:#dff4e6; border-color:var(--ans-border); font-weight:600;}
+  .quiz .opts li.wrong{background:#fde6e0; border-color:#e05d2b;}
+  .quiz .btn-answer{display:inline-block; margin-top:6px; background:var(--primary); color:#fff; border:none; border-radius:8px; padding:7px 16px; font-size:14px; cursor:pointer;}
+  .quiz .btn-answer:hover{background:var(--primary-dark);}
+  .quiz .ans{display:none; margin-top:10px; background:var(--ans-bg); border:1px solid #b7e0c7; border-radius:8px; padding:12px 14px; font-size:14.5px;}
+  .quiz .ans.show{display:block; animation:fade .3s;}
+  .quiz .ans b{color:var(--ans-border);}
+  @keyframes fade{from{opacity:0; transform:translateY(-4px);} to{opacity:1; transform:none;}}
+
+  .progress-bar{position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--accent),var(--accent2)); width:0; z-index:200;}
+
+  /* ===== 移动端 ===== */
+  .scrim{position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:95; display:none;}
+  @media(max-width:900px){
+    .sidebar{position:fixed; left:0; top:0; transform:translateX(-100%); width:280px; height:100vh;}
+    .sidebar.open{transform:translateX(0);}
+    .burger{display:inline-block;}
+    .scrim.show{display:block;}
+    .page{padding:24px 18px;}
+    .content{padding:18px 12px 60px;}
+    h1.page-title{font-size:22px;}
+    .topbar .crumb{display:none;}
+  }
+
+  .footnote{color:var(--muted); font-size:12.5px; border-top:1px solid var(--line); margin-top:30px; padding-top:12px; text-align:center;}
+  .quiz a.k-link{border-bottom:1.5px dashed var(--accent2);}
+  kbd{background:var(--code-bg); border:1px solid var(--line); border-radius:4px; padding:1px 6px; font-size:13px;}
+</style>
+</head>
+<body>
+<div class="progress-bar" id="pbar"></div>
+<div class="scrim" id="scrim" onclick="toggleSidebar(false)"></div>
+
+<div class="layout">
+  <!-- ================= 左侧树形目录 ================= -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo">⚡ 电能质量基础培训</div>
+      <div class="sub">内部培训 · 第一期</div>
+    </div>
+    <ul class="tree" id="tree">
+      <li class="open">
+        <a class="chapter" href="#p1">一、概念与常识<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p1">1.1 什么是电能质量</a></li>
+          <li><a class="leaf" href="#p2">1.2 功率三角：S·P·Q</a></li>
+          <li><a class="leaf" href="#p3">1.3 频率、采样与RMS</a></li>
+          <li><a class="leaf" href="#p4">1.4 220V/380V 与接法</a></li>
+          <li><a class="leaf" href="#p5">1.5 常见干扰术语</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="chapter" href="#p6">二、谁关注电能质量<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p6">2.1 供电方与用户视角</a></li>
+          <li><a class="leaf" href="#p7">2.2 典型案例</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="chapter" href="#p8">三、电能质量行业概览<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p8">3.1 系统侧与用户侧</a></li>
+          <li><a class="leaf" href="#p9">3.2 监测与治理</a></li>
+          <li><a class="leaf" href="#p10">3.3 厂家与研究机构</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="chapter" href="#p11">四、常规指标<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p11">4.1 供电电压允许偏差</a></li>
+          <li><a class="leaf" href="#p12">4.2 频率偏差</a></li>
+          <li><a class="leaf" href="#p13">4.3 三相不平衡度</a></li>
+          <li><a class="leaf" href="#p14">4.4 电压波动与闪变</a></li>
+          <li><a class="leaf" href="#p15">4.5 暂态与瞬态过电压</a></li>
+          <li><a class="leaf" href="#p16">4.6 公用电网谐波</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="chapter" href="#p17">五、综合能源服务<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p17">5.1 角色与场景变化</a></li>
+          <li><a class="leaf" href="#p18">5.2 综合控制与供电质量</a></li>
+          <li><a class="leaf" href="#p19">5.3 责任界定与大数据</a></li>
+        </ul>
+      </li>
+      <li>
+        <a class="chapter" href="#p20">六、进阶知识点<span class="arrow">▶</span></a>
+        <ul>
+          <li><a class="leaf" href="#p20">6.1 谐波与间谐波</a></li>
+          <li><a class="leaf" href="#p21">6.2 暂态与稳态</a></li>
+          <li><a class="leaf" href="#p22">6.3 综合评估与高级应用</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- ================= 内容区 ================= -->
+  <div class="main">
+    <div class="topbar">
+      <button class="burger" onclick="toggleSidebar()" aria-label="菜单">☰</button>
+      <span class="crumb">当前位置：<b id="crumb">一、概念与常识</b></span>
+    </div>
+
+    <div class="content" id="content">
+
+      <!-- ========== 封面 ========== -->
+      <section class="page" id="p0" style="text-align:center;">
+        <div style="font-size:56px; margin:30px 0 10px;">⚡</div>
+        <h1 class="page-title" style="border:none; text-align:center;">电能质量基础培训</h1>
+        <p style="color:var(--muted);">内部培训 · 第一期 · 依据《培训材料-第一期：电能质量基础介绍》整理</p>
+        <p style="margin-top:26px;">本课件将 PPT 内容拆解为 <b>6 大章节、22 个知识点</b>，每个知识点配有 <b>通俗讲解、比喻举例、知识关联与练习自测</b>。</p>
+        <p style="color:var(--muted);">从左侧目录进入，或点击「下一页」开始学习 👇</p>
+        <a href="#p1" style="display:inline-block; margin:20px 6px; background:var(--primary); color:#fff; padding:12px 30px; border-radius:30px; text-decoration:none; font-weight:600;">开始学习 →</a>
+        <div class="footnote">学员对象：电能质量基础薄弱者 · 建议学习时长：约 60 分钟</div>
+      </section>
+
+      <!-- ========== 1.1 ========== -->
+      <section class="page" id="p1">
+        <div class="page-head"><span class="page-num">1.1</span><span class="page-chapter">第一章 · 概念与常识</span></div>
+        <h1 class="page-title">什么是电能质量？</h1>
+
+        <h2>1. 一个生活化的比喻：把电能当成"自来水"</h2>
+        <p>我们每天打开水龙头，很少会想"这次的水干不干净、压力稳不稳"。只有当水<b>浑浊、有异味、水压忽大忽小、甚至停水</b>时，我们才会意识到"水质、水压"出了问题。</p>
+        <p>电能也是一样。打开开关，灯亮了、机器转了，我们不会多想；但当<b>灯闪烁、电脑重启、电机跳闸、电费异常变高</b>时，问题的根源往往就是——<strong>电能质量</strong>。</p>
+        <div class="callout tip"><span class="ct">💡 一句话理解</span>电能质量，就是"电力这个特殊商品"的<b>质量好坏</b>。就像自来水有浊度、pH 值、大肠杆菌含量等指标，电能也有<b>电压、频率、谐波、三相不平衡</b>等指标；就像人有身高、血压、体重、乙肝抗体等健康指标一样，电网也有自己的"体检指标"。</div>
+
+        <h2>2. 几个权威定义</h2>
+        <div class="def"><span class="dt">IEEE 定义（从设备角度）</span><br>在供电过程中，导致电气设备出现<b>误动作</b>或<b>故障损坏</b>的任何异常现象，都属于电能质量问题。</div>
+        <div class="def"><span class="dt">IEC 定义（从系统角度）</span><br>电能质量是指供电系统在正常工作情况下<b>不中断</b>和<b>不干扰</b>用户使用电力的物理特性。</div>
+        <p>还有一种更概括的说法：<b>由于电压、电流或频率偏差引起的，用户设备工作异常或损坏的任何电力问题，都属于电能质量问题。</b>本课程讲到后面你会发现，所有电能质量指标（电压偏差、频率偏差、谐波、不平衡、闪变……）都可以归入这个总定义之中。</p>
+
+        <h2>3. 电能质量 = 电压 + 电流 + 频率 三兄弟</h2>
+        <p>电能要"好用"，三兄弟都得正常：</p>
+        <ul>
+          <li><strong>电压</strong>——要稳定、要正弦（决定设备能不能正常驱动）；</li>
+          <li><strong>电流</strong>——要波形干净、三相平衡（决定设备受不受"污染"）；</li>
+          <li><strong>频率</strong>——要恒定 50Hz（决定电机转速、时钟准不准）。</li>
+        </ul>
+        <p>后面的 <a class="k-link" href="#p13">三相不平衡</a>、<a class="k-link" href="#p16">谐波</a>、<a class="k-link" href="#p14">波动与闪变</a> 等概念，全都是围绕这三个方面展开的。</p>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>以下哪个说法最能概括"电能质量问题"的本质？</div>
+          <ul class="opts">
+            <li data-correct>A. 电压、电流或频率出现偏差，导致设备异常或损坏</li>
+            <li>B. 用户欠电费导致的停电</li>
+            <li>C. 家里电器太多导致电表跳闸</li>
+            <li>D. 电线太细发热</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：A。</b>解析：电能质量问题不是"用得多"或"没交钱"的问题，而是<b>电能本身的参数（电压、电流、频率）出现了偏差</b>，从而影响设备正常运行。B、C、D 都是使用端或管理端的问题，不属于电能质量范畴。</div>
+        </div>
+      </section>
+
+      <!-- ========== 1.2 功率三角 ========== -->
+      <section class="page" id="p2">
+        <div class="page-head"><span class="page-num">1.2</span><span class="page-chapter">第一章 · 概念与常识</span></div>
+        <h1 class="page-title">功率三角：S·P·Q（视在/有功/无功）</h1>
+
+        <h2>1. 先回答一个灵魂问题：无功功率是不是"无用"的？</h2>
+        <p>名字里有"无功"，很多新手以为它是垃圾、可以不要。其实大错特错！<strong>无功功率不仅不是无用的，反而是很多设备"能不能工作"的前提。</strong></p>
+
+        <h2>2. 比喻：搬砖工人的"两股劲"</h2>
+        <p>想象一个工人搬砖：</p>
+        <ul>
+          <li><strong>做功的力气（有功 P）</strong>——把砖从 A 搬到 B，真正"干了活"；</li>
+          <li><strong>站住脚/撑住的力气（无功 Q）</strong>——脚下必须踩稳、身体必须保持平衡，虽然没"移动砖"，但<b>没有这股劲，一块砖也搬不了</b>。</li>
+        </ul>
+        <p>在电学里，变压器、电动机等设备<b>依靠建立交变磁场</b>来完成能量转换。建立磁场本身需要"占住"一部分电能来回振荡，这股"维持磁场"的功率就叫<strong>无功功率 Q</strong>。它是设备工作的"地基"，绝不是垃圾。</p>
+
+        <h2>3. 三个功率的三角关系</h2>
+        <div class="svg-box">
+          <svg viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg" width="460" height="240">
+            <defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#0b6e8f"/></marker></defs>
+            <polygon points="60,200 420,200 60,30" fill="#e8f2f6" stroke="#0b6e8f" stroke-width="2"/>
+            <line x1="60" y1="200" x2="420" y2="200" stroke="#0b6e8f" stroke-width="2.5" marker-end="url(#ar)"/>
+            <line x1="60" y1="200" x2="60" y2="30" stroke="#e05d2b" stroke-width="2.5" marker-end="url(#ar)"/>
+            <line x1="60" y1="200" x2="420" y2="200" stroke="none"/>
+            <line x1="60" y1="200" x2="360" y2="38" stroke="#8a5a00" stroke-width="2.5" marker-end="url(#ar)"/>
+            <text x="230" y="225" fill="#0b6e8f" font-size="17" font-weight="bold">有功功率 P（kW）——真正干活的功率</text>
+            <text x="18" y="120" fill="#e05d2b" font-size="17" font-weight="bold" transform="rotate(-90,20,120)">无功功率 Q（kVar）</text>
+            <text x="285" y="90" fill="#8a5a00" font-size="17" font-weight="bold" transform="rotate(-32,300,95)">视在功率 S（kVA）</text>
+            <path d="M 120 200 A 60 60 0 0 0 106 166" fill="none" stroke="#6b7b85" stroke-width="1.5"/>
+            <text x="140" y="175" fill="#6b7b85" font-size="14">θ（功率因数角）</text>
+          </svg>
+          <div class="svg-cap">功率三角形：S² = P² + Q²，功率因数 cosθ = P / S</div>
+        </div>
+        <ul>
+          <li><strong>视在功率 S</strong>（kVA）：电网"账面"上要供应的总量，相当于工人<b>总共使出的力气</b>；</li>
+          <li><strong>有功功率 P</strong>（kW）：真正转化为光、热、机械能、做功的功率；</li>
+          <li><strong>无功功率 Q</strong>（kVar）：用于建立磁场、维持设备正常工作的功率。</li>
+        </ul>
+        <p>三者的关系是 <b>S² = P² + Q²</b>（勾股定理），而<b>功率因数 cosθ = P / S</b>。cosθ 越接近 1，说明"干的活占比越高"、越省电费。</p>
+
+        <h2>4. 为什么电网要关心无功？——无功补偿 SVC/SVG/STATCOM</h2>
+        <p>无功功率太多时，虽然没做功，却会<b>占用电网输送容量、增大线路电流和损耗、拉低电压</b>。所以电网要对无功进行"补偿"——就像给工人搭个平台，让他别光顾着维持平衡而浪费力气。</p>
+        <ul>
+          <li><strong>SVC</strong>（静止无功补偿器，如 TCR/TSC）；</li>
+          <li><strong>SVG</strong> / <strong>STATCOM</strong>（静止无功发生器，响应更快、补偿更精准）。</li>
+        </ul>
+        <p>这些装置布置在<b>供电侧就地治理、小区配变、企业配变</b>等位置。详见 <a class="k-link" href="#p9">3.2 监测与治理</a> 一节。</p>
+
+        <h2>5. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>一台设备的视在功率 S = 10kVA，有功功率 P = 8kW，则它的无功功率 Q 约为？</div>
+          <ul class="opts">
+            <li>A. 2kVar</li>
+            <li data-correct>B. 6kVar</li>
+            <li>C. 4kVar</li>
+            <li>D. 18kVar</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：由 S² = P² + Q² 得 Q = √(S² − P²) = √(100 − 64) = √36 = <b>6kVar</b>。同时功率因数 cosθ = P/S = 8/10 = 0.8。注意 <b>10 ≠ 8 + 2</b>，三个功率是"勾股关系"而不是"加减关系"。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>关于无功功率，下列说法正确的是？</div>
+          <ul class="opts">
+            <li>A. 无功功率是多余的功率，应当完全消除</li>
+            <li data-correct>B. 变压器、电动机依靠无功功率建立交变磁场来完成能量转换</li>
+            <li>C. 无功功率会直接转化为热能，不做任何有用功</li>
+            <li>D. 提高功率因数会降低设备使用效率</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：无功功率是建立交变磁场所必需的，是设备正常工作的"地基"（A 错）。它不直接转化为热，而是在电网与设备间往返交换（C 错）。提高功率因数（cosθ→1）反而能减少无功占用、降低线损（D 错）。</div>
+        </div>
+      </section>
+
+      <!-- ========== 1.3 频率采样RMS ========== -->
+      <section class="page" id="p3">
+        <div class="page-head"><span class="page-num">1.3</span><span class="page-chapter">第一章 · 概念与常识</span></div>
+        <h1 class="page-title">频率、采样与 RMS：读懂正弦波的"语言"</h1>
+
+        <h2>1. 交流电频率：中国 50Hz，美日 60Hz</h2>
+        <p><strong>频率</strong>就是电流方向每秒改变多少个来回。中国和欧洲是 <b>50Hz</b>，美国和日本是 <b>60Hz</b>。可以形象地理解为"电源的心跳频率"——中国电网每秒"心跳"50 次。</p>
+        <div class="callout info"><span class="ct">🔍 快速理解</span>用示波器看家用电，能看到<b>每秒 50 个正弦波</b>。每个正弦波叫一个<b>周波</b>，一个周波的时间 = 1/50 秒 = <b>20 毫秒</b>。有的资料写"周波（cs）"，指的就是一个完整波形。</div>
+
+        <h2>2. 为什么考试总考"电机 3000 转/分"？</h2>
+        <p>交流电机的转速与电源频率直接相关：<b>同步转速 n = 60 × 频率 / 磁极对数</b>。</p>
+        <p>对于最常见的<b>两极电机</b>（磁极对数 p = 1）：n = 60 × 50 / 1 = <b>3000 转/分</b>。这就是为什么题目常给"电机转速 3000 转/分"作为 50Hz 系统的一个隐含线索——它对应着工频 50Hz。</p>
+
+        <h2>3. 采样：怎么"看见"正弦波？</h2>
+        <p>电能质量监测装置要"看懂"波形，就要像摄像机逐帧拍摄一样，<b>对电压/电流信号周期性采样</b>。目前数字采样一般要求<b>每周波 ≥ 128 个采样点</b>——也就是每 20 毫秒要取 128 个点，采样率相当于 128 × 50 = <b>6400 点/秒</b>。</p>
+        <div class="callout tip"><span class="ct">💡 数据量有多大？</span>如果对一次电能质量事件做<b>全周波记录</b>（每个周波、所有相的所有采样点都完整保存），比如连续记录几秒甚至几分钟，数据量将是<b>巨大的</b>。这也是电能质量监测系统在设计时必须在"记录得够细"和"存储放得下"之间做权衡的原因。</div>
+
+        <h2>4. RMS：电压到底是哪个值？</h2>
+        <p>正弦波电压每时每刻都在变，那"220V"是怎么来的？答案是<b>均方根值 RMS（有效值）</b>——把每个瞬间的值取平方、求平均、再开根号，得到的就是等效发热效果的"有效值"。</p>
+        <div class="def"><span class="dt">RMS（Root Mean Square，均方根/有效值）</span><br>家用 220V 就是 RMS 值。正弦波情况下，峰值（振幅）约为有效值的 √2 倍：220V × 1.414 ≈ <b>311V</b>。也就是说，家里的电压在 +311V 到 −311V 之间来回摆动，但"有效做功"的效果相当于稳定的 220V 直流电。</div>
+
+        <h2>5. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>我国交流电频率为 50Hz，那么一个周波的持续时间是？</div>
+          <ul class="opts">
+            <li>A. 1 秒</li>
+            <li>B. 50 秒</li>
+            <li data-correct>C. 20 毫秒</li>
+            <li>D. 100 毫秒</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：频率 = 每秒的周波数，所以每个周波时间 = 1 / 50 秒 = 0.02 秒 = <b>20 毫秒</b>。1 秒内有 50 个完整正弦波。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>家中电压表显示 220V，下列说法正确的是？</div>
+          <ul class="opts">
+            <li>A. 220V 是电压的瞬时峰值</li>
+            <li data-correct>B. 220V 是电压的均方根值（RMS），其峰值约为 311V</li>
+            <li>C. 220V 是电压的平均值</li>
+            <li>D. 220V 是恒定不变的直流电压</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：交流电平时说的电压数值都是 RMS 有效值，家用 220V 对应峰值 220×√2≈<b>311V</b>。电压是在 ±311V 之间按正弦规律变化的，并不是恒定值（D 错），也不是平均值（C 错）。</div>
+        </div>
+      </section>
+
+      <!-- ========== 1.4 220V/380V 与接法 ========== -->
+      <section class="page" id="p4">
+        <div class="page-head"><span class="page-num">1.4</span><span class="page-chapter">第一章 · 概念与常识</span></div>
+        <h1 class="page-title">220V / 380V：星形与三角形接法</h1>
+
+        <h2>1. 为什么家里是 220V，工厂是 380V？</h2>
+        <p>我国居民家庭普遍使用<b>单相 220V</b>，三相系统则是 <b>380V</b>。美国佛罗里达州则是单相 110V、三相 200V。就像"鞋码"各国不同，电压等级也是各国历史形成的标准。</p>
+        <table>
+          <tr><th>地区</th><th>单相电压</th><th>三相电压</th></tr>
+          <tr><td>中国</td><td>220V</td><td>380V</td></tr>
+          <tr><td>美国佛罗里达州</td><td>110V</td><td>200V</td></tr>
+        </table>
+        <div class="callout tip"><span class="ct">💡 快速记忆</span>380 ÷ 220 = 1.732 ≈ √3。这正是<b>星形接法</b>下线电压与相电压的关系：<b>线电压 = √3 × 相电压</b>。</div>
+
+        <h2>2. 两种接法：星形（Y）与三角形（△）</h2>
+        <ul>
+          <li><strong>星形接法（Y）</strong>：三相绕组一端接在一起（中点），另一端接三相线。<b>线电压 = √3 × 相电压</b>，即 380 = √3 × 220。这种接法能同时提供 380V（线间）和 220V（相对中）两种电压。</li>
+          <li><strong>三角形接法（△）</strong>：三相绕组首尾相连。<b>线电压 = 相电压</b>，三个电压等级相同，没有 220V 可用。</li>
+        </ul>
+        <div class="svg-box">
+          <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" width="640" height="230">
+            <!-- 左：星形 -->
+            <text x="20" y="26" fill="#0b6e8f" font-size="16" font-weight="bold">星形接法（Y）</text>
+            <circle cx="80" cy="130" r="4" fill="#0b6e8f"/>
+            <text x="66" y="118" fill="#0b6e8f" font-size="11">O（中点）</text>
+            <line x1="80" y1="130" x2="200" y2="55" stroke="#0b6e8f" stroke-width="2.5"/>
+            <line x1="80" y1="130" x2="250" y2="150" stroke="#e05d2b" stroke-width="2.5"/>
+            <line x1="80" y1="130" x2="180" y2="200" stroke="#8a5a00" stroke-width="2.5"/>
+            <circle cx="200" cy="55" r="3" fill="#0b6e8f"/><text x="205" y="50" fill="#0b6e8f" font-size="13" font-weight="bold">A</text>
+            <circle cx="250" cy="150" r="3" fill="#e05d2b"/><text x="255" y="170" fill="#e05d2b" font-size="13" font-weight="bold">B</text>
+            <circle cx="180" cy="200" r="3" fill="#8a5a00"/><text x="185" y="220" fill="#8a5a00" font-size="13" font-weight="bold">C</text>
+            <text x="20" y="75" fill="#22313a" font-size="13">线电压 = √3 × 相电压</text>
+            <text x="20" y="95" fill="#22313a" font-size="13">380 ≈ √3 × 220</text>
+
+            <!-- 右：三角形 -->
+            <text x="350" y="26" fill="#0b6e8f" font-size="16" font-weight="bold">三角形接法（△）</text>
+            <polygon points="380,190 550,190 465,60" fill="#eef6fb" stroke="#0b6e8f" stroke-width="2.5"/>
+            <circle cx="380" cy="190" r="3" fill="#0b6e8f"/><text x="368" y="212" fill="#0b6e8f" font-size="13" font-weight="bold">A</text>
+            <circle cx="550" cy="190" r="3" fill="#e05d2b"/><text x="556" y="212" fill="#e05d2b" font-size="13" font-weight="bold">B</text>
+            <circle cx="465" cy="60" r="3" fill="#8a5a00"/><text x="470" y="52" fill="#8a5a00" font-size="13" font-weight="bold">C</text>
+            <text x="350" y="75" fill="#22313a" font-size="13">线电压 = 相电压</text>
+            <text x="350" y="95" fill="#22313a" font-size="13">三线电压相等</text>
+          </svg>
+          <div class="svg-cap">左：星形（Y）线电压 = √3 × 相电压（380 = √3 × 220）；右：三角形（△）线电压 = 相电压</div>
+        </div>
+
+        <h2>3. 电机怎么选接法？</h2>
+        <p>工程经验：<b>小功率电机（4kW 及以下）大部分采用星形接法</b>（启动电流小、绕组承受电压低），<b>大于 4kW 的采用三角形接法</b>（能输出更大功率）。这是设计上的常规选择。</p>
+
+        <h2>4. 思考题：小区配电是星形还是三角形？</h2>
+        <p>答案是<strong>星形接法（Y）</strong>。因为小区要同时给用户提供 220V（相电压）和三相动力 380V（线电压），只有星形接法的"三相四线制"（三根相线 + 一根中性线）能一举两得——这也正是我们家里插座有"火线、零线"的原因。</p>
+
+        <h2>5. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>某三相星形接法的系统中，相电压为 220V，则线电压约为？</div>
+          <ul class="opts">
+            <li>A. 220V</li>
+            <li data-correct>B. 380V</li>
+            <li>C. 440V</li>
+            <li>D. 311V</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：星形接法下线电压 = √3 × 相电压 = 1.732 × 220 ≈ <b>380V</b>。而三角形接法下线电压 = 相电压（220V）。小区配电用星形接法正是为了同时提供 220V 和 380V。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>关于电机接法，下列说法符合工程常规的是？</div>
+          <ul class="opts">
+            <li data-correct>A. 4kW 及以下小功率电机多采用星形接法</li>
+            <li>B. 大于 4kW 的电机多采用星形接法</li>
+            <li>C. 所有电机都采用三角形接法</li>
+            <li>D. 接法与功率大小无关</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：A。</b>解析：<b>4kW 及以下</b>多用星形接法（启动电流小、绕组耐压要求低），<b>大于 4kW</b> 多用三角形接法以输出更大功率。这是工程上的经验规则。</div>
+        </div>
+      </section>
+
+      <!-- ========== 1.5 干扰术语 ========== -->
+      <section class="page" id="p5">
+        <div class="page-head"><span class="page-num">1.5</span><span class="page-chapter">第一章 · 概念与常识</span></div>
+        <h1 class="page-title">常见的电能质量干扰术语</h1>
+
+        <p>PPT 列出了六大常见干扰术语。想象你在开车：车速忽快忽慢（波动）、突然爆胎没气（跌落）、彻底抛锚（中断）、猛地颠了一下（瞬变）、路面有个缺口（缺口）、路灯忽明忽暗（闪变）。下面逐一讲解。</p>
+
+        <table>
+          <tr><th>术语</th><th>英文</th><th>生活比喻</th><th>通俗解释</th></tr>
+          <tr><td><strong>电压跌落</strong></td><td>Voltage Sag</td><td>车突然没劲</td><td>电压短时间明显下降（降到 10%~90% 额定值，持续 0.5 周期~1 分钟），常由大电机启动、短路故障引起</td></tr>
+          <tr><td><strong>电压中断</strong></td><td>Interruption</td><td>车彻底抛锚</td><td>电压完全消失（降到 10% 以下），持续超过 1 分钟通常叫"持续中断"，即停电</td></tr>
+          <tr><td><strong>电压上升</strong></td><td>Swell</td><td>车猛地加速</td><td>电压短时间明显升高（超过 110% 额定值），常由大负载切除、雷击引起</td></tr>
+          <tr><td><strong>电压瞬变</strong></td><td>Transient</td><td>车身猛地颠一下</td><td>极短暂的尖峰或暂态过冲，纳秒~毫秒级，多由雷击、开关操作引起，破坏力很大</td></tr>
+          <tr><td><strong>电压缺口</strong></td><td>Notch</td><td>路面有个缺口</td><td>正弦波上出现周期性"咬掉一块"的缺口，多由整流换相引起</td></tr>
+          <tr><td><strong>电压波动和闪变</strong></td><td>Fluctuation &amp; Flicker</td><td>路灯忽明忽暗</td><td>电压方均根值连续波动，导致灯光照度不稳、人眼感觉"闪"，由电弧炉、轧机等波动负荷引起</td></tr>
+        </table>
+
+        <div class="callout info"><span class="ct">🔗 关联记忆</span>这些干扰大多对应着后面的<a class="k-link" href="#p13">常规指标</a>（电压偏差、波动闪变、谐波等）。比如：电压跌落 ≈ 电压偏差指标；波动闪变 ≈ <a class="k-link" href="#p14">4.4 节</a>；电压缺口与谐波密切相关，见 <a class="k-link" href="#p16">4.6 谐波</a>。</div>
+
+        <h2>小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>工厂里一台大功率电机启动时，旁边照明灯短时间变暗又恢复，最可能属于？</div>
+          <ul class="opts">
+            <li data-correct>A. 电压跌落（Sag）</li>
+            <li>B. 电压中断（Interruption）</li>
+            <li>C. 电压缺口（Notch）</li>
+            <li>D. 电压瞬变（Transient）</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：A。</b>解析：大电机启动瞬间会吸取很大电流，导致电压短时间下降，这就是典型的<b>电压跌落</b>。灯"变暗又恢复"说明电压只是短暂降低并未消失（不是 B 中断），且不是尖锐尖峰（D）或波形缺口（C）。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>电弧炉等波动性负荷引起的灯光忽明忽暗现象，属于哪种干扰？</div>
+          <ul class="opts">
+            <li>A. 电压中断</li>
+            <li data-correct>B. 电压波动与闪变（Fluctuation &amp; Flicker）</li>
+            <li>C. 电压上升</li>
+            <li>D. 电压缺口</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：电压<b>方均根值连续波动</b>导致灯光照度不稳、产生人眼可见的"闪"，就是<b>波动与闪变</b>。电弧炉、轧机、电弧焊机是典型波动负荷，详见 <a class="k-link" href="#p14">4.4 节</a>。</div>
+        </div>
+      </section>
+
+      <!-- ========== 2.1 ========== -->
+      <section class="page" id="p6">
+        <div class="page-head"><span class="page-num">2.1</span><span class="page-chapter">第二章 · 谁关注电能质量</span></div>
+        <h1 class="page-title">供电方与用户：两种视角</h1>
+
+        <h2>1. 两边关心的重点不一样</h2>
+        <div class="grid2">
+          <div class="callout info"><span class="ct">🏢 供电方（电网）关注</span>
+            <ul>
+              <li>多供电、少停电、不停电；</li>
+              <li>电压稳定、供电质量高；</li>
+              <li>达标率、可靠性指标。</li>
+            </ul>
+          </div>
+          <div class="callout tip"><span class="ct">🏠 用户关注</span>
+            <ul>
+              <li>为什么电费越来越高？</li>
+              <li>家里为什么经常跳闸？</li>
+              <li>灯光闪烁、偶尔停电；</li>
+              <li>设备能不能安全、稳定运行。</li>
+            </ul>
+          </div>
+        </div>
+        <p>可以看出，用户的"痛点"往往正是电能质量问题的具体表现：<b>电费高 ↔ 功率因数低（无功多）、谐波损耗</b>；<b>跳闸 ↔ 电压偏差、谐波过流</b>；<b>灯光闪烁 ↔ 波动与闪变</b>。</p>
+
+        <h2>2. 典型的"谁在关注"场景</h2>
+        <ul>
+          <li><strong>电气化铁路</strong>：大功率机车是典型的"污染源 + 敏感源"，需要专门的供电系统治理；</li>
+          <li><strong>敏感企业选址</strong>：会考察当地电能质量，甚至写入政府承诺；</li>
+          <li><strong>高耗能企业</strong>：面临罚款与改造（无功超标、谐波超标都会被考核）；</li>
+          <li><strong>政治商业中心</strong>：保电（重大活动供电保障），电能质量是硬指标。</li>
+        </ul>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>用户反映"电费越来越高且经常跳闸"，从电能质量角度最可能的原因组合是？</div>
+          <ul class="opts">
+            <li>A. 家里电压太高</li>
+            <li data-correct>B. 功率因数偏低（无功过多）导致多缴电费，谐波/电压偏差导致跳闸</li>
+            <li>C. 电表坏了</li>
+            <li>D. 电费涨价与电能质量无关</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：无功功率过多会拉低功率因数，电网考核后用户多缴费；谐波、电压偏差会导致保护误动、设备异常而跳闸。二者都是电能质量问题，详见 <a class="k-link" href="#p2">1.2 功率三角</a> 与 <a class="k-link" href="#p16">4.6 谐波</a>。</div>
+        </div>
+      </section>
+
+      <!-- ========== 2.2 案例 ========== -->
+      <section class="page" id="p7">
+        <div class="page-head"><span class="page-num">2.2</span><span class="page-chapter">第二章 · 谁关注电能质量</span></div>
+        <h1 class="page-title">典型案例：电能质量有多重要？</h1>
+
+        <h2>案例 1：电气化铁路把电容器"烧穿了"</h2>
+        <p>某 220kV 变电站装设了 40Mvar 电容器装置。电气化铁路通车后，仅一年半，电容器全部损坏或烧毁。原因：铁路机车产生的大量<strong>谐波</strong>进入电容器，导致电容器过载、发热、绝缘击穿。这充分说明——<strong>谐波不是小事，它能让电网设备"慢性死亡"</strong>。</p>
+
+        <h2>案例 2：英特尔选址，电能质量是"硬指标"</h2>
+        <ul>
+          <li>2002–2003 年，英特尔在中国建芯片封装测试中心，上海、苏州、深圳、西安、成都五大城市角逐；</li>
+          <li>电能质量指标是<b>硬指标之一</b>，由英特尔指定的中立电能质量公司（马来西亚）对五城专项测试；</li>
+          <li>英特尔在成都高新西区连续测试 100 多天，签约后第 3 天仍要求电力部门解释测试期间发生的<b>数次电压跌落</b>的原因；</li>
+          <li>英特尔称电能质量问题造成的损失：<b>1970 年代 1000 多万美元 → 1980 年代上亿美元 → 90 年代数十亿美元 → 2000 年百亿美元以上</b>。</li>
+        </ul>
+        <div class="callout warn"><span class="ct">⚠️ 说明</span>芯片制造对电能质量极其敏感，哪怕一次电压跌落都可能让整条产线报废。这也解释了为什么"电能质量是硬指标"。</div>
+
+        <h2>案例 3：一场电压跌落让火箭部件车间停电十几分钟</h2>
+        <p>四川航天工业公司长城机械厂生产战略火箭伺服系统，精密仪器在全封闭车间加工，用镝灯照明。曾发生<b>电压跌落导致整个车间照明失电十几分钟</b>。2002 年底某次停电后，厂方致函电力部门：再发生停电事故，将追究刑事责任。</p>
+
+        <h2>案例 4：电压跌落险些造成航班重大事故</h2>
+        <p>民航西南空中管制局牧马山导航雷达站，2002 年受电压跌落等供电质量影响，导致<b>北京—成都某航班偏离航向，险些造成重大事故</b>。四川电网谐波监测站查明原因：该线路上另带有<b>冶金负荷</b>（产生谐波并引起电压波动）。</p>
+
+        <div class="callout info"><span class="ct">🧠 案例带给我们的启示</span>这 4 个案例分别对应了：谐波（电容器烧毁）、电压跌落（芯片/照明/雷达）。它们都在反复说明同一个道理——<strong>电能质量直接影响生产、安全和巨额经济损失</strong>。这些干扰的具体概念请回看 <a class="k-link" href="#p5">1.5 干扰术语</a>。</div>
+
+        <h2>小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>某 220kV 变电站电容器在电气化铁路通车后一年半全部损坏，最直接的原因可能是？</div>
+          <ul class="opts">
+            <li>A. 电容器质量问题</li>
+            <li data-correct>B. 电气化铁路产生的谐波导致电容器过载、发热损坏</li>
+            <li>C. 天气太热</li>
+            <li>D. 电容器容量选小了</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：电气化铁路（大功率电力机车）是典型谐波源，谐波叠加在电容电流上使其长期过载发热、绝缘老化，最终损坏。这也说明治理谐波是电能质量的重要任务，见 <a class="k-link" href="#p16">4.6 谐波</a>。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>英特尔公司在华选址时把哪项列为"硬指标"之一？</div>
+          <ul class="opts">
+            <li>A. 劳动力成本</li>
+            <li>B. 交通便利度</li>
+            <li data-correct>C. 电能质量指标</li>
+            <li>D. 土地价格</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：芯片封装测试对供电连续性和电压稳定性极其敏感，一次电压跌落就可能造成巨大损失，因此<b>电能质量是硬指标</b>，由中立第三方专项测试。</div>
+        </div>
+      </section>
+
+      <!-- ========== 3.1 ========== -->
+      <section class="page" id="p8">
+        <div class="page-head"><span class="page-num">3.1</span><span class="page-chapter">第三章 · 电能质量行业概览</span></div>
+        <h1 class="page-title">系统侧与用户侧：行业两大板块</h1>
+
+        <h2>1. 行业整体地图</h2>
+        <div class="svg-box">
+          <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" width="640" height="240">
+            <rect x="10" y="30" width="300" height="90" rx="12" fill="#e8f2f6" stroke="#0b6e8f" stroke-width="2"/>
+            <text x="160" y="58" fill="#0b6e8f" font-size="16" font-weight="bold" text-anchor="middle">电力系统侧（电网）</text>
+            <text x="160" y="80" fill="#22313a" font-size="13" text-anchor="middle">关注：公共连接点指标</text>
+            <text x="160" y="100" fill="#22313a" font-size="13" text-anchor="middle">手段：监测 + 治理（SVG/SVC 等）</text>
+            <rect x="330" y="30" width="300" height="90" rx="12" fill="#fff7e6" stroke="#f0a202" stroke-width="2"/>
+            <text x="480" y="58" fill="#8a5a00" font-size="16" font-weight="bold" text-anchor="middle">用户侧（用电）</text>
+            <text x="480" y="80" fill="#22313a" font-size="13" text-anchor="middle">中小用户：被动监测、不太关注</text>
+            <text x="480" y="100" fill="#22313a" font-size="13" text-anchor="middle">敏感/新能源用户：主动监测</text>
+            <rect x="10" y="150" width="300" height="60" rx="12" fill="#eafaf1" stroke="#2ea86b" stroke-width="2"/>
+            <text x="160" y="176" fill="#1d7a4e" font-size="15" font-weight="bold" text-anchor="middle">监测（Measurement）</text>
+            <text x="160" y="196" fill="#22313a" font-size="12.5" text-anchor="middle">摸清底数、定位问题</text>
+            <rect x="330" y="150" width="300" height="60" rx="12" fill="#fdeee9" stroke="#e05d2b" stroke-width="2"/>
+            <text x="480" y="176" fill="#b23a10" font-size="15" font-weight="bold" text-anchor="middle">治理（Mitigation）</text>
+            <text x="480" y="196" fill="#22313a" font-size="12.5" text-anchor="middle">解决问题：SVG/SVC/APF/DVR/UPS</text>
+          </svg>
+          <div class="svg-cap">电能质量行业 = 系统侧 + 用户侧 ×（监测 + 治理）</div>
+        </div>
+
+        <h2>2. 系统侧的发展脉络（PPT 提到的时间线）</h2>
+        <ul>
+          <li><strong>2008 年开始</strong>：国网、南网、地电开始关注电能质量；</li>
+          <li><strong>2010–2014 年</strong>：各省、地市组织科研项目，建立电能质量平台；</li>
+          <li><strong>2015 年开始</strong>：国家电网公司组建统一监测平台。</li>
+        </ul>
+        <p>这条时间线说明：电能质量监测正从"零星试点"走向"统一平台、常态化管理"。</p>
+
+        <h2>3. 用户侧的分化</h2>
+        <ul>
+          <li><strong>中小用户</strong>：被动监测、不太关注（电费不敏感、设备不贵重）；</li>
+          <li><strong>敏感用户、新能源用户</strong>：主动监测（芯片厂、精密制造、光伏/储能/充电站等，受扰动影响大）。</li>
+        </ul>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>国家电网公司开始组建统一的电能质量监测平台是在哪一年？</div>
+          <ul class="opts">
+            <li>A. 2008 年</li>
+            <li>B. 2010 年</li>
+            <li data-correct>C. 2015 年</li>
+            <li>D. 2020 年</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：PPT 时间线——<b>2008</b> 年国网、南网、地电开始关注；<b>2010–2014</b> 各省建平台；<b>2015</b> 年国家电网组建统一监测平台。记忆口诀："关注 08，试点 10，统一 15"。</div>
+        </div>
+      </section>
+
+      <!-- ========== 3.2 监测与治理 ========== -->
+      <section class="page" id="p9">
+        <div class="page-head"><span class="page-num">3.2</span><span class="page-chapter">第三章 · 电能质量行业概览</span></div>
+        <h1 class="page-title">监测与治理：先诊断，再开药</h1>
+
+        <h2>1. 监测——先"摸清底数"</h2>
+        <p>就像看病先做检查，电能质量管理第一步是<strong>监测</strong>：在公共连接点、用户进线处安装电能质量监测装置，持续记录电压、电流、频率、谐波、不平衡度等数据，从而定位问题、为治理提供依据。</p>
+
+        <h2>2. 治理——对症下药</h2>
+        <table>
+          <tr><th>装置</th><th>中文名</th><th>主要用途</th><th>对应问题</th></tr>
+          <tr><td><strong>SVC</strong></td><td>静止无功补偿器</td><td>补偿无功、稳定电压</td><td><a class="k-link" href="#p2">无功过多、功率因数低</a></td></tr>
+          <tr><td><strong>SVG/STATCOM</strong></td><td>静止无功发生器</td><td>动态无功补偿（更快更准）</td><td>无功波动、电压波动</td></tr>
+          <tr><td><strong>APF</strong></td><td>有源电力滤波器</td><td>动态滤除谐波</td><td><a class="k-link" href="#p16">谐波</a></td></tr>
+          <tr><td><strong>UPS</strong></td><td>不间断电源</td><td>停电后备供电</td><td><a class="k-link" href="#p5">电压中断/停电</a></td></tr>
+          <tr><td><strong>DVR</strong></td><td>动态电压恢复器</td><td>毫秒级补足电压跌落</td><td><a class="k-link" href="#p5">电压跌落</a></td></tr>
+          <tr><td><strong>串联电容补偿</strong></td><td>—</td><td>补偿线路压降、稳定末端电压</td><td>电压偏差</td></tr>
+          <tr><td><strong>ASS</strong></td><td>自动转换开关</td><td>双电源快速切换</td><td>停电/中断</td></tr>
+        </table>
+        <div class="callout tip"><span class="ct">💡 一句话记忆</span>谐波找 <b>APF</b>，无功找 <b>SVG/SVC</b>，跌落找 <b>DVR</b>，停电找 <b>UPS/ASS</b>——先监测定位，再选装置治理。</div>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>某工厂谐波超标，最合适的治理装置是？</div>
+          <ul class="opts">
+            <li>A. UPS</li>
+            <li>B. SVC</li>
+            <li data-correct>C. APF（有源电力滤波器）</li>
+            <li>D. DVR</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：<b>APF 有源电力滤波器</b>专门用于动态滤除谐波。UPS 解决停电、SVC 解决无功、DVR 解决电压跌落，各自对症不同问题。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>对于电压跌落特别敏感的高端产线，最合适的治理装置是？</div>
+          <ul class="opts">
+            <li>A. 串联电容补偿</li>
+            <li data-correct>B. DVR（动态电压恢复器）</li>
+            <li>C. APF</li>
+            <li>D. SVG</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：DVR 能在<b>毫秒级</b>时间内把跌落的电压"补回来"，是应对电压跌落最直接的装置（比如芯片厂、精密制造）。</div>
+        </div>
+      </section>
+
+      <!-- ========== 3.3 厂家与机构 ========== -->
+      <section class="page" id="p10">
+        <div class="page-head"><span class="page-num">3.3</span><span class="page-chapter">第三章 · 电能质量行业概览</span></div>
+        <h1 class="page-title">主要厂家与研究机构</h1>
+
+        <h2>1. 监测厂家</h2>
+        <ul>
+          <li>国内监测厂家预计<b>超过 50 家</b>，包括上市公司、电力系统三产、高校企业；</li>
+          <li>国外品牌：电力士（美国 Dranetz）、福禄克（Fluke）、日本日置（Hioki）、以色列等。</li>
+        </ul>
+
+        <h2>2. 治理厂家</h2>
+        <p>根据不同产品（SVG/SVC/APF/DVR/UPS 等），治理厂家至少<b>上百家</b>。随着电力电子技术发展，电能质量治理与监测精度不断提高，例如<b>光储充微网</b>、<b>零秒切换</b>、<b>毫秒级切换</b>等新技术不断涌现。</p>
+
+        <h2>3. 研究机构</h2>
+        <ul>
+          <li><strong>高校</strong>：武汉大学、华北电力大学、四川大学、福州大学、华中科技大学等电气院系；</li>
+          <li><strong>科研机构</strong>：中国电科院、各省电科院。</li>
+        </ul>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>关于电能质量行业，下列说法正确的是？</div>
+          <ul class="opts">
+            <li>A. 国内监测厂家只有 5 家</li>
+            <li data-correct>B. 监测厂家国内预计超 50 家，治理厂家因产品多样至少上百家</li>
+            <li>C. 电能质量技术与电力电子技术无关</li>
+            <li>D. 高校不参与电能质量研究</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：国内监测厂家预计超过 50 家；治理产品种类多、厂家至少上百家（A 错）。治理与监测精度的提升正是依托<b>电力电子技术</b>发展（C 错）。武大、华电、川大、福大、华中科大等高校均有研究（D 错）。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.1 电压偏差 ========== -->
+      <section class="page" id="p11">
+        <div class="page-head"><span class="page-num">4.1</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">供电电压允许偏差</h1>
+
+        <h2>1. 什么是电压偏差？</h2>
+        <p><strong>电压偏差</strong>指实际电压与额定电压的差异（运行中持续存在，区别于"跌落/上升"这类短时事件）。国标对其给出了允许范围。</p>
+        <table>
+          <tr><th>供电情况</th><th>允许偏差范围</th></tr>
+          <tr><td>35kV 及以上（高压电网）</td><td>正负偏差绝对值之和<b>不超过 10%</b></td></tr>
+          <tr><td>10kV 及以下高压供电、低压电力用户</td><td><b>+7% ～ −7%</b></td></tr>
+          <tr><td>220V 单相供电</td><td><b>+7% ～ −10%</b>（负偏差更宽松）</td></tr>
+        </table>
+        <div class="callout info"><span class="ct">🔗 关联</span>电压偏差与<a class="k-link" href="#p5">电压跌落/上升</a>不同：偏差是<b>持续稳态</b>的偏差，跌落/上升是<b>短时暂态</b>事件。二者都会影响设备。</div>
+
+        <h2>2. 为什么要限制电压偏差？</h2>
+        <p>电压过高烧设备、过低设备启动困难甚至停转。就像人血压太高太低都不行——电网也要"降压药/升压药"（有载调压、无功补偿、串联电容补偿等）来把电压维持在允许范围。</p>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>按国标，10kV 及以下低压电力用户的电压允许偏差为？</div>
+          <ul class="opts">
+            <li>A. ±5%</li>
+            <li data-correct>B. +7% ～ −7%</li>
+            <li>C. +10% ～ −10%</li>
+            <li>D. +7% ～ −10%</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：10kV 及以下高压供电和低压电力用户为<b>+7%～−7%</b>；220V 单相供电为 <b>+7%～−10%</b>；35kV 及以上为正负偏差绝对值之和不超过 <b>10%</b>。注意别把三档记混。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>35kV 及以上供电电压的允许偏差要求是？</div>
+          <ul class="opts">
+            <li data-correct>A. 正负偏差绝对值之和不超过 10%</li>
+            <li>B. +7% ～ −7%</li>
+            <li>C. ±2%</li>
+            <li>D. 无要求</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：A。</b>解析：35kV 及以上高压电网的考核方式是"正负偏差<b>绝对值之和</b>不超过 10%"，即两边加起来不能超 10 个百分点，例如 +6% 与 −4% 和仍为 10%，勉强达标。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.2 频率偏差 ========== -->
+      <section class="page" id="p12">
+        <div class="page-head"><span class="page-num">4.2</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">频率偏差</h1>
+
+        <h2>1. 定义与限值</h2>
+        <p>电力系统频率偏差允许值为 <b>±0.2Hz</b>。也就是系统频率要在 49.8Hz ~ 50.2Hz 之间（正常运行时）。</p>
+        <div class="callout info"><span class="ct">🔗 关联</span>频率与电机转速直接相关（见 <a class="k-link" href="#p3">1.3 节</a>：n = 60f/p）。频率偏差会直接导致电机转速偏差、时钟不准、对频率敏感的加工质量下降。</div>
+
+        <h2>2. 为什么频率会偏差？</h2>
+        <p>频率与<b>发电与用电的平衡</b>有关：发电多了频率偏高，用电多了频率偏低。所以电网要时刻"削峰填谷"，保持频率稳定——这是调度部门的核心任务之一。</p>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>我国电力系统频率偏差允许值为？</div>
+          <ul class="opts">
+            <li>A. ±0.5Hz</li>
+            <li data-correct>B. ±0.2Hz</li>
+            <li>C. ±1Hz</li>
+            <li>D. ±2Hz</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：我国电力系统频率偏差允许值为 <b>±0.2Hz</b>（即 49.8~50.2Hz）。频率过偏说明发电用电失衡，会影响电机转速与计时精度。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.3 三相不平衡 ========== -->
+      <section class="page" id="p13">
+        <div class="page-head"><span class="page-num">4.3</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">三相不平衡度</h1>
+
+        <h2>1. 什么是三相不平衡？</h2>
+        <p>三相系统有三条相线（A/B/C），理想情况下三相电压大小相等、相位差 120°。如果三相负载分配不均（比如大量单相负载只接某一相）、或存在单相大负荷，就会导致三相电压/电流<b>大小不等</b>，这就是<strong>三相不平衡</strong>。</p>
+
+        <h2>2. 比喻：三条腿的凳子</h2>
+        <p>想象一个三条腿的凳子，三条腿一样长才坐得稳。如果一条腿特别长、一条特别短，凳子就<strong>歪斜不稳</strong>。三相不平衡就像"长短腿"，会让变压器、电机发热、出力下降，甚至烧毁。</p>
+
+        <h2>3. 允许值</h2>
+        <ul>
+          <li>电力系统公共连接点<b>正常运行方式</b>下不平衡度允许值：<b>2%</b>；</li>
+          <li><b>短时间</b>不得超过 <b>4%</b>。</li>
+        </ul>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>电力系统公共连接点正常运行方式下，三相不平衡度允许值为？</div>
+          <ul class="opts">
+            <li data-correct>A. 2%</li>
+            <li>B. 4%</li>
+            <li>C. 5%</li>
+            <li>D. 10%</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：A。</b>解析：正常运行方式下允许 <b>2%</b>，<b>短时</b>不超过 <b>4%</b>。可以记忆为"平时 2，短时 4"。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>三相不平衡最可能导致以下哪种后果？</div>
+          <ul class="opts">
+            <li>A. 频率升高</li>
+            <li data-correct>B. 变压器、电机发热增加甚至损坏</li>
+            <li>C. 电压完全消失</li>
+            <li>D. 功率因数自动变好</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：三相不平衡会使负序电流增大，导致设备局部过热、出力下降、寿命缩短——就像"三条腿的凳子坐不稳"，长时间会损坏设备。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.4 波动与闪变 ========== -->
+      <section class="page" id="p14">
+        <div class="page-head"><span class="page-num">4.4</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">电压波动与闪变</h1>
+
+        <h2>1. 两个概念</h2>
+        <ul>
+          <li><strong>电压波动（Fluctuation）</strong>：电压方均根值一系列的变动或连续的改变；</li>
+          <li><strong>闪变（Flicker）</strong>：灯光照度不稳定造成的视感，即人眼能感觉到的"灯闪"。</li>
+        </ul>
+        <p>二者常连在一起说："波动"是客观现象，"闪变"是主观感觉（灯光对眼睛的刺激）。</p>
+
+        <h2>2. 谁会引起？</h2>
+        <p>典型的<strong>波动负荷</strong>包括：<b>电弧炉、轧机、电弧焊机</b>等。它们工作时功率剧烈起伏，拉得电网电压一上一下，旁边的人就看见灯在闪。</p>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>关于电压波动与闪变，下列说法正确的是？</div>
+          <ul class="opts">
+            <li>A. 电压波动指电压完全中断</li>
+            <li data-correct>B. 电压波动是电压方均根值连续变动，闪变是灯光照度不稳引起的人眼视感</li>
+            <li>C. 只有家庭小电器才会引起闪变</li>
+            <li>D. 闪变与电弧炉等波动负荷无关</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：<b>波动</b>指电压方均根值连续改变，<b>闪变</b>是人眼对灯光照度不稳的感觉。典型波动负荷是<b>电弧炉、轧机、电弧焊机</b>（D 错），它们功率大、波动剧烈。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>下列哪个设备最容易引起电压波动与闪变？</div>
+          <ul class="opts">
+            <li>A. 普通白炽灯</li>
+            <li data-correct>B. 电弧炉</li>
+            <li>C. 电阻加热器</li>
+            <li>D. 冰箱压缩机</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：<b>电弧炉</b>是典型的波动负荷，工作电流剧烈波动，会引起显著的电压波动与闪变。轧机、电弧焊机同理。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.5 暂态与瞬态过电压 ========== -->
+      <section class="page" id="p15">
+        <div class="page-head"><span class="page-num">4.5</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">暂态与瞬态过电压</h1>
+
+        <h2>1. 什么是暂态/瞬态过电压？</h2>
+        <p>指在极短时间（毫秒~微秒级甚至纳秒级）内出现的<b>电压尖峰或过冲</b>。最常见来源是<b>雷击</b>和<b>开关操作</b>（投切大容量设备、变压器等）。</p>
+
+        <h2>2. 比喻：走路突然被绊了一下</h2>
+        <p>正常走路（稳态）很平稳，但突然被绊一下（暂态），人会猛地震动一下再恢复。瞬态过电压就像这"猛地震动"——持续时间极短，但瞬时幅值可能很高，直接威胁设备绝缘。</p>
+
+        <h2>3. 危害与防护</h2>
+        <ul>
+          <li>危害：击穿设备绝缘、损坏电子元件、引发保护误动；</li>
+          <li>防护：避雷器、浪涌保护器（SPD）、氧化锌避雷器（MOA）等。</li>
+        </ul>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>雷击引起的极短暂电压尖峰，属于哪类问题？</div>
+          <ul class="opts">
+            <li>A. 稳态电压偏差</li>
+            <li data-correct>B. 暂态/瞬态过电压</li>
+            <li>C. 频率偏差</li>
+            <li>D. 三相不平衡</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：雷击产生的是<b>毫秒/微秒/纳秒级</b>的瞬态电压尖峰，属于暂态/瞬态过电压。防护措施为避雷器、浪涌保护器等。</div>
+        </div>
+      </section>
+
+      <!-- ========== 4.6 谐波 ========== -->
+      <section class="page" id="p16">
+        <div class="page-head"><span class="page-num">4.6</span><span class="page-chapter">第四章 · 常规指标</span></div>
+        <h1 class="page-title">公用电网谐波</h1>
+
+        <h2>1. 什么是谐波？</h2>
+        <p><strong>谐波</strong>是频率为电源基波频率<b>整数倍</b>的正弦电压或电流。基波 50Hz 的 2 倍是 100Hz（2 次谐波）、3 倍是 150Hz（3 次谐波）……谐波叠加在基波上，使波形变得"畸形"。</p>
+        <div class="def"><span class="dt">成因</span>电力系统中的装置和负载具有<b>非线性特性</b>（如整流器、变频器、开关电源、电弧炉），导致波形畸变；畸变波形可分解为<b>基波 + 各次谐波之和</b>（傅里叶分解）。</div>
+
+        <h2>2. 比喻：合唱团里有人走调</h2>
+        <p>想象一个合唱团齐唱主旋律（基波 50Hz）。如果混进几个"走调"的成员（谐波），整体声音就变得难听、刺耳（波形畸形）。谐波越多越乱，电网和设备的"听觉"就越差。</p>
+
+        <h2>3. 谐波的危害（回看案例）</h2>
+        <ul>
+          <li>使电容器过载发热、烧毁（见 <a class="k-link" href="#p7">案例 1</a>）；</li>
+          <li>使电机、变压器附加发热、振动、噪声；</li>
+          <li>干扰继电保护、计量、通信；</li>
+          <li>降低功率因数、增加线损。</li>
+        </ul>
+
+        <h2>4. 治理</h2>
+        <p>有源电力滤波器（<b>APF</b>）动态滤除谐波，无源滤波（LC 调谐）针对特定次谐波；从源头看，非线性设备尽量加装谐波抑制措施。详见 <a class="k-link" href="#p9">3.2 监测与治理</a>。</p>
+
+        <h2>5. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>基波为 50Hz，则 3 次谐波的频率是？</div>
+          <ul class="opts">
+            <li>A. 50Hz</li>
+            <li>B. 100Hz</li>
+            <li data-correct>C. 150Hz</li>
+            <li>D. 250Hz</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：谐波频率 = 基波频率 × 次数，3 次谐波 = 50 × 3 = <b>150Hz</b>。2 次为 100Hz，5 次为 250Hz。</div>
+        </div>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>谐波通常由下列哪种设备引起？</div>
+          <ul class="opts">
+            <li>A. 纯电阻电炉</li>
+            <li data-correct>B. 变频器、整流器等非线性设备</li>
+            <li>C. 普通白炽灯</li>
+            <li>D. 纯电容负载</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：<b>非线性设备</b>（变频器、整流器、开关电源等）电流与电压不成正比，会向电网注入谐波，使波形畸变。纯电阻、纯电容等线性设备不会主动产生谐波。</div>
+        </div>
+      </section>
+
+      <!-- ========== 5.1 ========== -->
+      <section class="page" id="p17">
+        <div class="page-head"><span class="page-num">5.1</span><span class="page-chapter">第五章 · 电能质量与综合能源服务</span></div>
+        <h1 class="page-title">角色与场景的变化</h1>
+
+        <h2>1. 传统模式被颠覆</h2>
+        <p>传统上"供电公司→用户"是<b>单向</b>的：电网发电、配电，用户用电。而在综合能源时代，这个单一关系被颠覆：</p>
+        <ul>
+          <li>角色变成<b>既是电源方又是负荷方</b>：用户自己装上光伏、储能后，白天发电卖给电网（电源方），晚上又买电（负荷方）；</li>
+          <li>出现<b>点对点服务</b>：用户与用户之间、用户与电网之间的能量交易更灵活。</li>
+        </ul>
+
+        <h2>2. 新场景带来的新问题</h2>
+        <ul>
+          <li><b>光伏接入、储能接入、风电接入、充电站</b>不断增多；</li>
+          <li>如何<b>综合控制、平滑过渡、柔性供电</b>？</li>
+          <li>如何保证<b>恒压恒频稳定运行</b>？如何衡量<b>新能源供电质量</b>与<b>用户用电质量</b>？</li>
+        </ul>
+        <div class="callout warn"><span class="ct">⚠️ 为什么变难了？</span>光伏、风电的输出随天气波动（"看天吃饭"），大量接入后，电网的电压、频率更容易波动，电能质量问题比传统时代更突出、更复杂。这正是综合能源服务必须解决的核心课题。</div>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>在综合能源时代，用户角色的新特点是？</div>
+          <ul class="opts">
+            <li>A. 永远是纯粹的用电方</li>
+            <li data-correct>B. 既是电源方又是负荷方，并可能参与点对点服务</li>
+            <li>C. 不再需要电网供电</li>
+            <li>D. 只能单向买电</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：装设光伏、储能后，用户白天可发电上网（电源方）、晚间购电（负荷方），并可参与<b>点对点</b>能量交易。传统"电网→用户"的单向关系被颠覆。</div>
+        </div>
+      </section>
+
+      <!-- ========== 5.2 ========== -->
+      <section class="page" id="p18">
+        <div class="page-head"><span class="page-num">5.2</span><span class="page-chapter">第五章 · 电能质量与综合能源服务</span></div>
+        <h1 class="page-title">综合控制与供电质量</h1>
+
+        <h2>1. 如何保证恒压恒频？</h2>
+        <p>光伏、风电出力波动大，需要靠<b>储能 + 灵活控制</b>来"削峰填谷"，平滑新能源的波动，从而维持电压稳定、频率恒定。这就是"综合控制、平滑过渡、柔性供电"的含义——让不稳定的电源，变成稳定的供电。</p>
+
+        <h2>2. 衡量标准</h2>
+        <ul>
+          <li>衡量<b>新能源供电质量</b>：电压、频率、谐波、三相不平衡等（就是第四章讲的<a class="k-link" href="#p11">常规指标</a>）；</li>
+          <li>衡量<b>用户用电质量</b>：供用电合同的约定、电能质量考核点。</li>
+        </ul>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>光伏发电出力受天气影响剧烈波动，综合能源系统通常用什么手段来平滑、维持恒压恒频？</div>
+          <ul class="opts">
+            <li>A. 增加线损</li>
+            <li data-correct>B. 储能 + 灵活的综合控制</li>
+            <li>C. 关闭电网</li>
+            <li>D. 只依赖新能源自身</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：通过<b>储能</b>和综合控制"削峰填谷"，把波动的新能源出力平滑为稳定供电，才能维持<b>恒压恒频</b>。这也是"柔性供电"的含义。</div>
+        </div>
+      </section>
+
+      <!-- ========== 5.3 ========== -->
+      <section class="page" id="p19">
+        <div class="page-head"><span class="page-num">5.3</span><span class="page-chapter">第五章 · 电能质量与综合能源服务</span></div>
+        <h1 class="page-title">责任界定与电能质量大数据</h1>
+
+        <h2>1. 责任界定：出了事算谁的？</h2>
+        <p>在<b>无大电网支撑</b>（如微电网、孤岛运行）或分布式电源大量接入的情况下，电能质量事故的责任鉴定变得复杂：</p>
+        <ul>
+          <li>电能质量<b>事故责任鉴定</b>、<b>事故记录查询</b>、<b>责任划分</b>；</li>
+          <li>代维过程、供用电过程中产生的责任事故，责任如何划分、界定。</li>
+        </ul>
+        <div class="callout tip"><span class="ct">💡 关键</span>正因为责任难界定，所以<b>监测数据</b>就是"黑匣子"——谁污染、谁受害，都要靠电能质量监测记录来还原现场、划分责任。</div>
+
+        <h2>2. 电能质量大数据</h2>
+        <p>海量监测数据汇聚成"电能质量大数据"，可用于：</p>
+        <ul>
+          <li>治理设备厂商<b>电力保障大数据</b>；</li>
+          <li>停电事故大数据；</li>
+          <li>供电事故大数据；</li>
+          <li>保障过程大数据、事故追溯大数据。</li>
+        </ul>
+        <p>这些大数据既能辅助管理，也是新能源时代"责任界定 + 运维优化"的基础。</p>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>在分布式电源接入、责任难界定的情况下，划分电能质量事故责任最依赖什么？</div>
+          <ul class="opts">
+            <li>A. 双方口头约定</li>
+            <li data-correct>B. 电能质量监测记录数据（"黑匣子"）</li>
+            <li>C. 电压等级判断</li>
+            <li>D. 电费账单</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：B。</b>解析：电能质量<b>监测数据</b>能还原事故现场、追溯过程，是责任鉴定与划分最客观的依据，相当于"黑匣子"。</div>
+        </div>
+      </section>
+
+      <!-- ========== 6.1 ========== -->
+      <section class="page" id="p20">
+        <div class="page-head"><span class="page-num">6.1</span><span class="page-chapter">第六章 · 进阶知识点</span></div>
+        <h1 class="page-title">谐波、高次谐波与间谐波</h1>
+
+        <h2>1. 谐波回顾</h2>
+        <p>谐波是基波（50Hz）<b>整数倍</b>频率的成分（见 <a class="k-link" href="#p16">4.6 谐波</a>）。在此基础上，进阶概念包括：</p>
+        <ul>
+          <li><strong>高次谐波</strong>：次数较高的谐波（如 13、17、19 次等），频率高、波形尖锐，常由电力电子装置产生；</li>
+          <li><strong>间谐波</strong>：频率<b>不是</b>基波整数倍的成分（如 25Hz、75Hz 等），可来自变频调速、电弧炉等，比整数次谐波更难分析和治理。</li>
+        </ul>
+
+        <h2>2. 比喻：主旋律之外还有"怪音"</h2>
+        <p>如果把电网波形比作合唱：基波是主旋律，整数次谐波是"走调但成调"的声音（高次谐波是跑得更高的音），间谐波则像"莫名其妙的怪音"——不成调、难归类，耳朵（分析算法）很难受。</p>
+
+        <h2>3. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>频率为 25Hz（基波 50Hz 的非整数倍）的电流成分，属于？</div>
+          <ul class="opts">
+            <li>A. 基波</li>
+            <li>B. 高次谐波</li>
+            <li data-correct>C. 间谐波</li>
+            <li>D. 直流分量</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：<b>间谐波</b>是频率为非整数倍（如 0.5 次=25Hz）的成分，区别于整数次谐波；高次谐波仍是整数倍（如 13、17 次）。</div>
+        </div>
+      </section>
+
+      <!-- ========== 6.2 ========== -->
+      <section class="page" id="p21">
+        <div class="page-head"><span class="page-num">6.2</span><span class="page-chapter">第六章 · 进阶知识点</span></div>
+        <h1 class="page-title">暂态与稳态：两个时间尺度</h1>
+
+        <h2>1. 稳态问题 vs 暂态问题</h2>
+        <table>
+          <tr><th></th><th>稳态（持续）</th><th>暂态/瞬态（短时）</th></tr>
+          <tr><td>时间</td><td>持续存在（秒级以上）</td><td>毫秒、微秒甚至纳秒级</td></tr>
+          <tr><td>例子</td><td>电压偏差、频率偏差、谐波、三相不平衡</td><td>电压跌落、上升、瞬变、中断</td></tr>
+          <tr><td>监测方式</td><td>统计有效值/指标越限率</td><td>触发式捕捉波形、记录事件</td></tr>
+        </table>
+        <div class="callout info"><span class="ct">🔗 回顾</span>"稳态"对应第四章的<a class="k-link" href="#p11">常规指标</a>（长期监测、考核达标）；"暂态"对应 1.5 节的<a class="k-link" href="#p5">干扰术语</a>（触发事件、波形捕捉）。二者是电能质量分析的两大时间尺度。</div>
+
+        <h2>2. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>下列哪项属于"暂态/事件型"问题？</div>
+          <ul class="opts">
+            <li>A. 长期电压偏低 3%</li>
+            <li>B. 持续谐波超标</li>
+            <li data-correct>C. 一次电压跌落</li>
+            <li>D. 三相不平衡长期 1.5%</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：电压跌落是<b>短时暂态事件</b>，通过触发捕捉记录；A、B、D 都是长期持续的<b>稳态指标</b>，靠统计考核。</div>
+        </div>
+      </section>
+
+      <!-- ========== 6.3 ========== -->
+      <section class="page" id="p22">
+        <div class="page-head"><span class="page-num">6.3</span><span class="page-chapter">第六章 · 进阶知识点</span></div>
+        <h1 class="page-title">综合评估、治理算法与职业方向</h1>
+
+        <h2>1. 综合评估：多指标打总分</h2>
+        <p>电能质量有多个指标（电压偏差、频率偏差、不平衡、谐波、闪变、暂态……），<strong>综合评估</strong>就是把它们综合起来，给出一个整体"健康评分"。就像体检报告：单项指标都看，还要看总体状况和趋势。</p>
+
+        <h2>2. 治理算法与高级应用</h2>
+        <ul>
+          <li><strong>算法</strong>：谐波分析（FFT 等）、电能质量事件分类识别、数据挖掘与预测；</li>
+          <li><strong>高级应用</strong>：电能质量治理（APF/SVG/DVR 的智能控制）、综合能源调度、故障诊断与预警；</li>
+          <li><strong>方向</strong>：电气化全学科——电能质量横跨电力系统、电力电子、信号处理、控制、大数据等多个学科，是一个"上接电网、下连用户"的综合领域。</li>
+        </ul>
+
+        <h2>3. 学习地图（串起全部知识点）</h2>
+        <p>从<a class="k-link" href="#p1">电能质量概念</a> → <a class="k-link" href="#p2">功率基础</a> → <a class="k-link" href="#p5">干扰识别</a> → <a class="k-link" href="#p8">行业格局</a> → <a class="k-link" href="#p11">常规指标</a> → <a class="k-link" href="#p17">综合能源</a> → 进阶（谐波/暂态/综合评估），这条路正是从"认识问题"到"解决问题"再到"面向未来"的完整进阶路径。</p>
+
+        <h2>4. 小练习</h2>
+        <div class="quiz">
+          <div class="qt"><span class="badge">练习</span>电能质量的"综合评估"指的是？</div>
+          <ul class="opts">
+            <li>A. 只看电压是否达标</li>
+            <li>B. 只统计停电次数</li>
+            <li data-correct>C. 将电压、频率、谐波、不平衡等多个指标综合打分，评估整体电能质量</li>
+            <li>D. 只看功率因数</li>
+          </ul>
+          <button class="btn-answer" onclick="showAns(this)">查看答案与解析</button>
+          <div class="ans"><b>答案：C。</b>解析：电能质量问题多维、复杂，需要把<b>多项指标综合</b>起来评估整体水平，并借助算法做分类、预测等高级应用。</div>
+        </div>
+      </section>
+
+      <!-- ========== 结语 ========== -->
+      <section class="page" id="p23">
+        <div class="page-head"><span class="page-num">完</span><span class="page-chapter">结语</span></div>
+        <h1 class="page-title">课程总结</h1>
+        <ul>
+          <li><b>电能质量</b> = 电能这个"商品"的质量，本质是电压/电流/频率偏差引起的问题；</li>
+          <li>基础：<b>功率三角</b>（S/P/Q）、<b>频率</b>、<b>RMS</b>、<b>星/三角接法</b>；</li>
+          <li>识别：<b>六大干扰术语</b>（跌落/中断/上升/瞬变/缺口/波动闪变）；</li>
+          <li>格局：系统侧 + 用户侧，<b>监测 + 治理</b>（SVG/SVC/APF/DVR/UPS）；</li>
+          <li>指标：<b>六大常规指标</b>（电压偏差、频率偏差、不平衡、波动闪变、暂态过电压、谐波）；</li>
+          <li>未来：<b>综合能源服务</b>角色转变、责任界定与大数据，进阶到谐波/间谐波、暂态/稳态、综合评估与治理算法。</li>
+        </ul>
+        <div style="text-align:center; margin-top:26px; font-size:30px;">⚡ ✅ 🏁</div>
+        <p style="text-align:center; color:var(--muted);">恭喜完成本课程学习！建议结合第四章的指标数据反复记忆，并回看案例加深印象。</p>
+        <div class="footnote">本课件依据内部培训 PPT《培训材料-第一期：电能质量基础介绍》整理扩展，仅供内部学习使用。</div>
+      </section>
+
+      <div class="footnote">电能质量基础培训课件 · 共 6 章 22 节 + 总结页 · 建议用电脑或手机全屏观看</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== 侧边栏（移动端） =====
+  function toggleSidebar(force){
+    var sb = document.getElementById('sidebar');
+    var sc = document.getElementById('scrim');
+    var open = typeof force === 'boolean' ? force : !sb.classList.contains('open');
+    sb.classList.toggle('open', open);
+    sc.classList.toggle('show', open);
+  }
+
+  // ===== 目录树展开/收起 + 点击高亮 =====
+  document.querySelectorAll('.tree .chapter').forEach(function(ch){
+    ch.addEventListener('click', function(e){
+      var li = ch.parentElement;
+      li.classList.toggle('open');
+      // 允许链接默认跳转
+      if(window.innerWidth <= 900) toggleSidebar(false);
+    });
+  });
+  document.querySelectorAll('.tree a.leaf').forEach(function(a){
+    a.addEventListener('click', function(){ if(window.innerWidth <= 900) toggleSidebar(false); });
+  });
+
+  // ===== 练习答案 =====
+  function showAns(btn){
+    var ans = btn.nextElementSibling;
+    if(ans && ans.classList.contains('ans')) ans.classList.toggle('show');
+  }
+
+  // ===== 选项点击：判断对错 =====
+  document.querySelectorAll('.quiz').forEach(function(quiz){
+    quiz.querySelectorAll('.opts li').forEach(function(li){
+      li.addEventListener('click', function(){
+        // 已选过则忽略
+        if(quiz.dataset.done) return;
+        quiz.dataset.done = '1';
+        li.classList.add(li.hasAttribute('data-correct') ? 'correct' : 'wrong');
+        // 若选错，标出正确项
+        if(!li.hasAttribute('data-correct')){
+          quiz.querySelectorAll('li[data-correct]').forEach(function(c){ c.classList.add('correct'); });
+        }
+      });
+    });
+  });
+
+  // ===== 滚动监听：目录高亮 + 进度条 + 面包屑 =====
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var navs = document.querySelectorAll('.tree a');
+  var pbar = document.getElementById('pbar');
+  var crumb = document.getElementById('crumb');
+  var lastId = '';
+
+  function currentIndex(){
+    var pos = window.scrollY + 90;
+    var idx = 0;
+    for(var i=0;i<pages.length;i++){
+      if(pages[i].offsetTop <= pos) idx = i;
+      else break;
+    }
+    return idx;
+  }
+
+  function updateNav(){
+    var idx = currentIndex();
+    var cur = pages[idx];
+    var id = cur ? cur.id : '';
+    if(id !== lastId){
+      lastId = id;
+      navs.forEach(function(a){
+        if(a.getAttribute('href') === '#'+id){
+          a.classList.add('active');
+          // 展开所在章节
+          var li = a.closest('li');
+          var top = li ? li.closest('.tree > li') : null;
+          if(top) top.classList.add('open');
+          // 面包屑
+          var chapter = cur.querySelector('.page-chapter');
+          crumb.textContent = chapter ? chapter.textContent : '';
+        } else {
+          a.classList.remove('active');
+        }
+      });
+      // 保证激活项在侧栏中可见
+      var active = document.querySelector('.tree a.active');
+      if(active){
+        var sb = document.getElementById('sidebar');
+        if(active.offsetTop < sb.scrollTop || active.offsetTop > sb.scrollTop + sb.clientHeight - 60){
+          sb.scrollTop = active.offsetTop - 120;
+        }
+      }
+    }
+    // 进度条
+    var doc = document.documentElement;
+    var max = doc.scrollHeight - window.innerHeight;
+    pbar.style.width = (max > 0 ? (window.scrollY / max * 100) : 0) + '%';
+  }
+
+  window.addEventListener('scroll', updateNav, {passive:true});
+  window.addEventListener('resize', updateNav);
+  updateNav();
+
+  // 打开时默认展开第一章
+  document.querySelectorAll('.tree > li').forEach(function(li, i){ if(i<1) li.classList.add('open'); });
+</script>
+</body>
+</html>
