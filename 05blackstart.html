@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#12509e">
+<title>黑启动入门 · 从一根火柴到点亮一座城</title>
+<style>
+:root{
+  --bg:#f5f7fa;
+  --panel:#ffffff;
+  --ink:#16202c;
+  --ink2:#2c3a4c;
+  --muted:#5c6d82;
+  --line:#e4eaf2;
+  --line2:#eef2f8;
+  --brand:#12509e;
+  --brand-d:#0d3f7e;
+  --brand-soft:#e9f1fc;
+  --teal:#0d8f86;
+  --teal-soft:#e6f5f3;
+  --orange:#c2410c;
+  --orange-soft:#fdf1e9;
+  --gold:#96700a;
+  --gold-soft:#fdf7e3;
+  --good:#16794a;
+  --good-soft:#e8f6ee;
+  --bad:#b42318;
+  --bad-soft:#fdecea;
+  --sidebar-w:306px;
+  --radius:14px;
+  --shadow-s:0 1px 2px rgba(16,32,56,.05),0 4px 14px rgba(16,32,56,.05);
+  --shadow-m:0 2px 6px rgba(16,32,56,.06),0 14px 34px rgba(16,32,56,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:24px;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.85 "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:#cfe1fa}
+
+/* ---------- 进度条 ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;z-index:120;
+  background:linear-gradient(90deg,#12509e,#0d8f86);transition:width .1s linear}
+
+/* ---------- 侧边栏 ---------- */
+#sidebar{
+  position:fixed;left:0;top:0;bottom:0;width:var(--sidebar-w);
+  background:var(--panel);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;z-index:80;
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+}
+.sb-head{padding:18px 18px 14px;border-bottom:1px solid var(--line2);flex:0 0 auto}
+.sb-kicker{font-size:11px;letter-spacing:.18em;color:#9aabc0;font-weight:600}
+.sb-title{font-size:15.5px;font-weight:700;line-height:1.45;margin-top:5px;color:#16202c}
+.sb-title span{color:var(--brand)}
+.sb-meta{font-size:11.5px;color:var(--muted);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+.sb-meta i{font-style:normal;background:#f2f6fb;border-radius:5px;padding:1px 6px}
+.sb-search{margin:12px 14px 4px;position:relative;flex:0 0 auto}
+.sb-search input{
+  width:100%;height:34px;border:1px solid var(--line);border-radius:9px;
+  padding:0 30px 0 31px;font-size:13px;background:#f8fafc;outline:none;
+  color:var(--ink);font-family:inherit;transition:.2s;
+}
+.sb-search input:focus{background:#fff;border-color:#b9d0ee;box-shadow:0 0 0 3px rgba(18,80,158,.08)}
+.sb-search .ico{position:absolute;left:9px;top:9px;opacity:.4;pointer-events:none}
+.sb-search .clr{position:absolute;right:6px;top:6px;width:22px;height:22px;border:0;background:none;
+  cursor:pointer;color:#9aabc0;font-size:15px;line-height:1;display:none;border-radius:5px}
+.sb-search .clr:hover{background:#eef3f9;color:#5c6d82}
+#toc{overflow-y:auto;padding:8px 10px 48px;flex:1 1 auto;scrollbar-width:thin;scrollbar-color:#d7e0ec transparent;overscroll-behavior:contain}
+#toc::-webkit-scrollbar{width:7px}
+#toc::-webkit-scrollbar-thumb{background:#d7e0ec;border-radius:4px}
+.toc-group{margin-bottom:1px}
+.toc-chapter{
+  display:flex;gap:7px;align-items:flex-start;width:100%;background:none;border:0;
+  padding:8px 8px;border-radius:8px;cursor:pointer;text-align:left;font-family:inherit;
+  font-size:13.2px;font-weight:600;color:#263547;line-height:1.5;transition:.15s;
+}
+.toc-chapter:hover{background:#f3f7fc}
+.toc-chapter.active{background:var(--brand-soft);color:var(--brand-d)}
+.toc-chapter.current{color:var(--brand-d);font-weight:700;background:#f6f9fe}
+.toc-chapter.current .num{color:#5b86c4}
+.toc-chapter .tt{flex:1 1 auto;min-width:0}
+.toc-chapter .num{font:600 10.5px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#a3b4c8;min-width:17px;flex:0 0 auto}
+.toc-chapter.active .num{color:#5b86c4}
+.toc-chapter .caret{color:#a9b8ca;font-size:9px;line-height:1.9;flex:0 0 auto;transition:transform .2s;width:8px}
+.toc-chapter[aria-expanded="true"] .caret{transform:rotate(90deg)}
+.toc-sub{list-style:none;margin:0 0 6px;padding:0;margin-left:15px;border-left:1px solid var(--line2)}
+.toc-sub li{position:relative}
+.toc-sub li a{
+  display:block;padding:5px 8px 5px 12px;margin-left:-1px;border-left:2px solid transparent;
+  font-size:12.6px;color:#57697f;text-decoration:none;line-height:1.55;border-radius:0 7px 7px 0;transition:.14s;
+}
+.toc-sub li a:hover{background:#f4f8fd;color:var(--brand)}
+.toc-sub li a.active{
+  background:linear-gradient(90deg,#e9f1fc,#f4f9ff);color:var(--brand-d);
+  font-weight:600;border-left-color:var(--brand);
+}
+.toc-sub li.hide,.toc-group.hide{display:none}
+.sb-foot{flex:0 0 auto;padding:9px 16px;border-top:1px solid var(--line2);font-size:11px;color:#9aabc0;display:flex;justify-content:space-between}
+
+/* ---------- 遮罩 & 移动端顶栏 ---------- */
+#overlay{position:fixed;inset:0;background:rgba(14,26,42,.42);backdrop-filter:blur(2px);
+  opacity:0;pointer-events:none;transition:opacity .25s;z-index:70}
+#topbar{
+  display:none;position:sticky;top:0;z-index:60;height:54px;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);align-items:center;gap:10px;padding:0 12px;margin:0 -16px 0;
+}
+#menuBtn{width:38px;height:38px;border:1px solid var(--line);background:#fff;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+#menuBtn:active{background:#eef3f9}
+#topbar .tb-title{font-size:13.5px;font-weight:600;color:#263547;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- 主体 ---------- */
+#main{margin-left:var(--sidebar-w);padding:0 30px 100px;min-height:100vh}
+.wrap{max-width:900px;margin:0 auto}
+
+/* ---------- 封面 ---------- */
+.hero{padding:54px 0 30px;border-bottom:1px solid var(--line)}
+.hero .kick{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;
+  letter-spacing:.06em;color:var(--brand);background:var(--brand-soft);border-radius:20px;padding:4px 12px}
+.hero h1{font-size:35px;line-height:1.32;margin:16px 0 10px;letter-spacing:-.015em;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero .sub{font-size:16px;color:var(--muted);margin:0 0 20px;max-width:640px}
+.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12.5px;color:#3d4f65;background:#fff;border:1px solid var(--line);
+  border-radius:9px;padding:5px 11px;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow-s)}
+.chip b{color:var(--brand);font-weight:700}
+.note-mini{margin-top:22px;font-size:12.5px;color:#8494a8;line-height:1.7;background:#fbfcfe;
+  border:1px dashed var(--line);border-radius:10px;padding:11px 14px}
+
+/* ---------- 章节 ---------- */
+.chapter{padding-top:40px}
+.chapter>h2{
+  font-size:24px;line-height:1.45;margin:0 0 8px;padding-left:15px;
+  border-left:5px solid var(--brand);letter-spacing:-.01em;
+}
+.chapter>h2 .cnum{display:block;font:700 11px/1 ui-monospace,monospace;letter-spacing:.16em;color:#9aabc0;margin-bottom:6px}
+.ch-lead{color:var(--muted);font-size:14.5px;margin:0 0 8px;padding-left:20px;max-width:760px}
+
+.sec{padding:26px 0 4px}
+.sec+.sec{border-top:1px solid var(--line2)}
+.sec>h3{font-size:19px;line-height:1.5;margin:0 0 12px;scroll-margin-top:20px;font-weight:700;letter-spacing:-.005em}
+.sec>h3 .hn{color:#b6c4d4;font-weight:700;margin-right:8px;font-size:17px}
+p{margin:0 0 13px;text-align:justify;color:var(--ink2)}
+strong{color:#0f1a26;font-weight:700}
+em.hl{font-style:normal;background:linear-gradient(180deg,transparent 58%,#fde9b8 58%);padding:0 2px}
+a.xref{color:var(--brand);text-decoration:none;border-bottom:1px dashed #a9c5e8;padding-bottom:.5px;
+  cursor:pointer;font-weight:500;transition:.15s}
+a.xref:hover{background:var(--brand-soft);border-bottom-color:var(--brand)}
+a.xref::after{content:"↗";font-size:.72em;vertical-align:super;opacity:.55;margin-left:1px}
+abbr[title]{text-decoration:none;border-bottom:1px dotted #9fb2c8;cursor:help;font-weight:600;color:#22364c}
+ul.pt,ol.pt{margin:0 0 14px;padding-left:22px;color:var(--ink2)}
+ul.pt li,ol.pt li{margin-bottom:7px}
+ul.pt li::marker{color:#9db6d2}
+
+/* ---------- 提示框 ---------- */
+.box{border-radius:12px;padding:14px 16px 14px 17px;margin:16px 0;border:1px solid;border-left-width:4px;font-size:14.8px;line-height:1.8}
+.box p:last-child{margin-bottom:0}
+.box .bt{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13px;margin-bottom:6px;letter-spacing:.02em}
+.box .bt .dot{width:7px;height:7px;border-radius:50%}
+.note{background:#f4f8fe;border-color:#d6e4f6;border-left-color:#4a86d4}
+.note .bt{color:#1d5aa8}.note .bt .dot{background:#4a86d4}
+.key{background:#eef8f4;border-color:#cfe8dd;border-left-color:#12a06b}
+.key .bt{color:#0f7a52}.key .bt .dot{background:#12a06b}
+.warn{background:#fdf4ef;border-color:#f6ddcc;border-left-color:#dd6b20}
+.warn .bt{color:#b45309}.warn .bt .dot{background:#dd6b20}
+.tip{background:#fdfaef;border-color:#f0e4c0;border-left-color:#c9a227}
+.tip .bt{color:#8a6b0a}.tip .bt .dot{background:#c9a227}
+
+/* ---------- 表格 ---------- */
+.tw{overflow-x:auto;margin:16px 0;border-radius:11px;border:1px solid var(--line);
+  box-shadow:var(--shadow-s);background:#fff;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+thead th{background:#f4f7fb;color:#33465c;font-weight:700;font-size:13px;text-align:left;
+  padding:11px 13px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--line2);color:var(--ink2);line-height:1.65;vertical-align:top}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:#fafcfe}
+td .y{color:var(--good);font-weight:600}
+td .n{color:var(--bad);font-weight:600}
+td .m{color:var(--gold);font-weight:600}
+.tc-c{text-align:center}
+table.compact{font-size:13.4px}
+table.compact td,table.compact th{padding:8px 11px}
+
+/* ---------- 图 ---------- */
+.fig{margin:18px 0;background:#fff;border:1px solid var(--line);border-radius:13px;
+  padding:16px 14px 10px;box-shadow:var(--shadow-s)}
+.fig .svgwrap{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.fig svg{width:100%;height:auto;display:block}
+.fig figcaption{font-size:12.4px;color:#8494a8;text-align:center;margin-top:9px;line-height:1.6}
+.swipe-hint{font-size:11.5px;color:#9aabc0;text-align:right;margin-top:6px;letter-spacing:.02em}
+
+/* ---------- 关键数字 ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin:16px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px;box-shadow:var(--shadow-s)}
+.stat .v{font-size:23px;font-weight:800;color:var(--brand);line-height:1.25;letter-spacing:-.02em}
+.stat .v small{font-size:12px;font-weight:600;color:var(--muted);margin-left:2px}
+.stat .k{font-size:12.3px;color:var(--muted);margin-top:3px;line-height:1.55}
+
+/* ---------- 练习 ---------- */
+.quiz{margin:20px 0;background:#fff;border:1px solid var(--line);border-radius:13px;
+  padding:16px 17px 14px;box-shadow:var(--shadow-s);position:relative;overflow:hidden}
+.quiz::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#c9d8ea}
+.quiz.solved::before{background:#12a06b}
+.quiz .qh{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;
+  letter-spacing:.06em;color:#8fa3bd;margin-bottom:8px}
+.quiz .qn{background:#eef3fa;color:#4a6b94;border-radius:5px;padding:1px 7px;font-family:ui-monospace,monospace;font-size:10.5px}
+.quiz .qtag{background:var(--teal-soft);color:#0d7a72;border-radius:5px;padding:1px 7px;font-size:10.5px}
+.quiz .q{font-weight:600;font-size:15.4px;line-height:1.7;margin:0 0 11px;color:#16202c}
+.opts{display:flex;flex-direction:column;gap:7px;margin-bottom:11px}
+.opt{display:flex;gap:9px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);
+  border-radius:9px;cursor:pointer;font-size:14.4px;line-height:1.65;color:#2c3a4c;transition:.14s;background:#fcfdfe}
+.opt:hover{border-color:#bcd3ee;background:#f7fbff}
+.opt input{margin:6px 0 0 0;accent-color:var(--brand);flex:0 0 auto;width:15px;height:15px;cursor:pointer}
+.opt .lb{font-weight:700;color:#5c7590;margin-right:2px;min-width:14px;flex:0 0 auto}
+.opt .lt{flex:1 1 auto}
+.opt.pick{border-color:#a9c5e8;background:#f2f8ff}
+.opt.right{border-color:#8fd3b4;background:var(--good-soft)}
+.opt.right .lb,.opt.right .lt{color:var(--good)}
+.opt.wrong{border-color:#f0b4ad;background:var(--bad-soft)}
+.opt.wrong .lb,.opt.wrong .lt{color:var(--bad)}
+.qacts{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.btn{font-family:inherit;font-size:13.4px;font-weight:600;border-radius:8px;padding:7px 15px;
+  cursor:pointer;border:1px solid transparent;transition:.15s;line-height:1.4}
+.btn-p{background:var(--brand);color:#fff}
+.btn-p:hover{background:var(--brand-d)}
+.btn-p:disabled{background:#c3d2e4;cursor:not-allowed}
+.btn-g{background:#fff;border-color:var(--line);color:#3d5876}
+.btn-g:hover{background:#f4f8fd;border-color:#c9daee}
+.qres{display:none;margin-top:11px;font-size:14px;font-weight:600;border-radius:9px;padding:8px 12px}
+.qres.show{display:block}
+.qres.ok{background:var(--good-soft);color:var(--good)}
+.qres.no{background:var(--bad-soft);color:var(--bad)}
+.qexp{display:none;margin-top:11px;padding:13px 15px;background:#f8fafd;border:1px solid var(--line2);
+  border-radius:10px;font-size:14.2px;line-height:1.82;color:#2c3a4c}
+.qexp.show{display:block}
+.qexp .ans{font-weight:700;color:var(--brand-d);margin-bottom:6px;display:flex;gap:7px;align-items:center}
+.qexp .ans .tag{background:var(--brand-soft);color:var(--brand);border-radius:5px;padding:1px 7px;font-size:11px;letter-spacing:.04em}
+.qexp p{margin:0 0 8px;font-size:14.2px}
+.qexp p:last-child{margin-bottom:0}
+
+/* ---------- 术语 / 卡片 ---------- */
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:11px;margin:16px 0}
+.term-c{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px 14px;box-shadow:var(--shadow-s)}
+.term-c .t{font-weight:700;font-size:14px;color:#16202c;display:flex;gap:6px;align-items:baseline}
+.term-c .t span{font-size:11px;color:#9aabc0;font-weight:500}
+.term-c .d{font-size:13.2px;color:var(--muted);margin-top:4px;line-height:1.7}
+.steps{counter-reset:st;margin:16px 0;padding:0;list-style:none}
+.steps li{counter-increment:st;position:relative;padding:0 0 14px 40px;border-left:2px solid #e2ebf6;margin-left:12px}
+.steps li:last-child{border-left-color:transparent;padding-bottom:0}
+.steps li::before{content:counter(st);position:absolute;left:-14px;top:0;width:26px;height:26px;
+  background:#fff;border:2px solid #b7cfea;color:var(--brand);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:12.5px;font-weight:700}
+.steps li b{display:block;font-size:15px;margin-bottom:2px;color:#16202c}
+.steps li span{font-size:14.2px;color:var(--muted);line-height:1.75}
+
+.sep-h{display:flex;align-items:center;gap:12px;margin:26px 0 4px;color:#9aabc0;font-size:11.5px;letter-spacing:.1em}
+.sep-h::before,.sep-h::after{content:"";height:1px;background:var(--line);flex:1}
+.rel{margin:18px 0 6px;padding:9px 13px;background:#f8fafd;border:1px dashed var(--line);
+  border-radius:9px;font-size:13px;color:#6b7f95;line-height:2}
+.rel .lb{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;color:#9aabc0;
+  background:#eef3fa;border-radius:5px;padding:1px 7px;margin-right:9px;vertical-align:1px}
+
+#toTop{position:fixed;right:20px;bottom:26px;width:42px;height:42px;border-radius:50%;
+  background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-m);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;z-index:50;opacity:0;pointer-events:none;transition:.25s}
+#toTop.on{opacity:1;pointer-events:auto}
+#toTop:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+#toTop svg{stroke:currentColor}
+
+/* ---------- 响应式 ---------- */
+@media (max-width:980px){
+  #sidebar{width:308px;transform:translateX(-100%);box-shadow:0 0 50px rgba(10,20,35,.22)}
+  body.nav-open #sidebar{transform:none}
+  body.nav-open #overlay{opacity:1;pointer-events:auto}
+  body.nav-open{overflow:hidden}
+  #main{margin-left:0;padding:0 16px 84px}
+  #topbar{display:flex}
+  html{scroll-padding-top:66px}
+  .hero{padding:26px 0 20px}
+  .hero h1{font-size:25px;line-height:1.38}
+  .hero .sub{font-size:14.5px}
+  .chapter{padding-top:28px}
+  .chapter>h2{font-size:20px;padding-left:12px;border-left-width:4px}
+  .ch-lead{font-size:13.6px;padding-left:16px}
+  .sec{padding:20px 0 2px}
+  .sec>h3{font-size:17px}
+  body{font-size:15.4px}
+  p{line-height:1.82}
+  .box{font-size:14.2px;padding:12px 13px}
+  .quiz{padding:14px 14px 12px}
+  .quiz .q{font-size:14.6px}
+  .opt{font-size:13.9px;padding:8px 10px}
+  #toTop{right:14px;bottom:18px;width:38px;height:38px}
+  table{min-width:480px;font-size:13.2px}
+  .stat .v{font-size:20px}
+  .fig{padding:12px 8px 8px}
+  .fig .svgwrap svg{min-width:600px;width:600px}
+}
+@media (max-width:420px){
+  .hero h1{font-size:22px}
+  .chips .chip{font-size:11.5px;padding:4px 9px}
+  .qacts .btn{flex:1 1 auto;text-align:center}
+}
+@media print{
+  #sidebar,#topbar,#toTop,#progress,#overlay{display:none!important}
+  #main{margin:0;padding:0}
+  .quiz .qexp,.quiz .qres{display:block!important}
+  .chapter{page-break-before:always}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="overlay"></div>
+
+<aside id="sidebar">
+  <div class="sb-head">
+    <div class="sb-kicker">JRS · 内部培训</div>
+    <div class="sb-title">黑启动入门<br><span>从一根火柴到点亮一座城</span></div>
+    <div class="sb-meta"><i>10 章</i><i>47 节</i><i>16 练</i></div>
+  </div>
+  <div class="sb-search">
+    <svg class="ico" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#5c6d82" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+    <input id="searchInput" type="search" placeholder="搜索知识点…" autocomplete="off" aria-label="搜索目录">
+    <button class="clr" id="searchClear" aria-label="清除搜索">×</button>
+  </div>
+  <nav id="toc" aria-label="课件目录"></nav>
+  <div class="sb-foot"><span>v1.0 · 2026-11</span><span id="sbPct">0%</span></div>
+</aside>
+
+<div id="main">
+  <div id="topbar">
+    <button id="menuBtn" aria-label="打开目录">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#263547" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+    </button>
+    <div class="tb-title">黑启动入门 · 从一根火柴到点亮一座城</div>
+  </div>
+
+  <div class="wrap">
+
+    <header class="hero">
+      <div class="kick">⚡ 电力系统安全防御 · 最后一课</div>
+      <h1>黑启动入门<br><em>从一根火柴到点亮一座城</em></h1>
+      <p class="sub">
+        一座城市在几分钟内陷入黑暗，而重新点亮它，可能要从"连自己都点不着"的困境开始。
+        这门课把这件事拆成 <b>10 章 47 节</b>：先补电网基础，再讲黑启动是什么、为什么难，
+        最后讲清构网型储能这条新路径到底新在哪、还差在哪。
+      </p>
+      <div class="chips">
+        <span class="chip"><b>10</b> 章 · 系统编排</span>
+        <span class="chip"><b>9</b> 张示意图</span>
+        <span class="chip"><b>16</b> 道自测</span>
+        <span class="chip"><b>30+</b> 术语逐个解释</span>
+        <span class="chip">PC / 手机自适应</span>
+      </div>
+      <div class="note-mini">
+        <b>写在前面：</b>本课件以《什么是黑启动？》PPT 提供的内容范围为线索重新编排，
+        对其中表述不严谨、数据易被误读之处做了修正与补充。涉及示范工程的数据均来自公开报道，
+        用于教学说明，<b>不替代项目实测与标准正文</b>；具体指标请以 GB/T 43462—2023 等标准原文及项目验收报告为准。
+      </div>
+    </header>
+
+
+    <!-- ============ 第 0 章 ============ -->
+    <section class="chapter" id="ch0" data-num="00" data-title="导学：从全黑到复电，中间隔着什么">
+      <h2><span class="cnum">CHAPTER 00</span>导学：从全黑到复电，中间隔着什么</h2>
+      <p class="ch-lead">先别急着背定义。我们把镜头拉到一次真实的停电现场，看看"没电"这件事到底卡在哪一步——理解了这道坎，黑启动就不用背了。</p>
+
+      <section class="sec" id="s0-1">
+        <h3><span class="hn">0.1</span>一个场景：城市黑了，然后呢？</h3>
+        <p>暴雨夜，一座城市的 220 千伏变电站进水跳闸，连锁反应之下，区域内十几座电厂接连停机。监控大屏上，一条条线路由绿转灰，最后整片区域变成黑色。这就是调度术语里的<strong>"全黑"（Blackout）</strong>。</p>
+        <p>此时，控制室里灯还亮着——因为<abbr title="Uninterruptible Power Supply 不间断电源">UPS</abbr>还能撑一两个小时。但真正的问题是：<em class="hl">怎么把电送回去？</em></p>
+        <p>直觉答案是"重新启动发电厂"。可发电厂说：我要先有厂用电才能启动锅炉、给水泵、风机、励磁装置。厂用电从哪来？从电网来。电网说：我要先有电厂发电才能有电。</p>
+        <p>这是一个死循环。<strong>黑启动，就是专门用来打破这个死循环的一套办法。</strong></p>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>一群人被困在电梯里，电梯要有电才能开门，而恢复供电又得靠电梯里的人爬出去合闸。听起来荒谬，但 2003 年美加大停电、2025 年伊比利亚半岛大停电，电网面对的正是这种局面。打破僵局的办法只有一个：<b>留一个"不用电也能自己动起来"的东西</b>——黑启动电源。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s0-2">
+        <h3><span class="hn">0.2</span>这门课怎么走：四条主线</h3>
+        <p>很多人学黑启动，一上来就记"三步走""VSG""零起升压"，结果概念是散的。这门课按四条主线串起来，前后互为因果：</p>
+        <div class="stats">
+          <div class="stat"><div class="v">① 为什么难</div><div class="k">电网靠什么维持稳定？全黑为什么可怕？<br>→ 第 1、2 章</div></div>
+          <div class="stat"><div class="v">② 靠什么救</div><div class="k">水电、燃机各有什么本事和软肋？<br>→ 第 3、4 章</div></div>
+          <div class="stat"><div class="v">③ 新在哪</div><div class="k">构网型储能凭什么能当"火种"？<br>→ 第 5、6 章</div></div>
+          <div class="stat"><div class="v">④ 怎么验</div><div class="k">标准怎么规定？未来怎么走？<br>→ 第 7、8、9 章</div></div>
+        </div>
+        <p>每一章后面都有自测题。<strong>题目先不给答案</strong>，你先选，提交后立刻看到对错和解析；实在想不出来，也可以直接点"显示答案"——但那样学到的会少一半。</p>
+      </section>
+
+      <section class="sec" id="s0-3">
+        <h3><span class="hn">0.3</span>开场先记住三个词</h3>
+        <p>后面会反复出现这三个词，现在混个脸熟就行，不用抠细节：</p>
+        <div class="terms">
+          <div class="term-c"><div class="t">全黑 <span>Blackout</span></div><div class="d">电网大面积、非计划地失去全部电源，连自家人身安全用电都难以保障的状态。注意：<b>"全黑"不等于"全停"</b>，一些保安负荷、直流系统还在。</div></div>
+          <div class="term-c"><div class="t">黑启动 <span>Black Start</span></div><div class="d">不依赖外部电网，靠本地具备自启动能力的电源先把一小片电网"点亮"，再像滚雪球一样把电送到全网。</div></div>
+          <div class="term-c"><div class="t">构网型 <span>Grid-Forming</span></div><div class="d">一种控制方式：设备自己"造"出电压和频率，像发电机一样当"领舞"；与之相对的是跟网型，只能跟着电网的节奏走。</div></div>
+        </div>
+        <div class="tip">
+          <div class="bt"><span class="dot"></span>学习建议</div>
+          <p>如果你只有 20 分钟：读第 2 章（定义与三步走）+ 第 5 章（构网型储能）+ 第 9 章（易错点）。这三块是"能拿去讲给别人听"的最小闭环。要应付技术交流或方案评审，再补第 6 章（VSG、涌流、同期）和第 7 章（标准）。</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 1 章 ============ -->
+    <section class="chapter" id="ch1" data-num="01" data-title="预备知识：电网是怎么“活着”的">
+      <h2><span class="cnum">CHAPTER 01</span>预备知识：电网是怎么"活着"的</h2>
+      <p class="ch-lead">不理解"电网平时靠什么保持稳定"，就理解不了"全黑后为什么这么难恢复"。这一章是全课的地基，四个概念：<b>频率、电压、惯量、短路比</b>。</p>
+
+      <section class="sec" id="s1-1">
+        <h3><span class="hn">1.1</span>一条电力的高速公路：从锅炉到你家插座</h3>
+        <p>电力系统说复杂很复杂，说简单就五个环节：<strong>发电 → 升压 → 输电 → 降压配电 → 用电</strong>。中间那根线，就是电网。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 168" role="img" aria-label="电力系统五个环节示意图">
+            <defs>
+              <marker id="ar1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8aa6c6"/>
+              </marker>
+            </defs>
+            <rect x="8" y="34" width="118" height="58" rx="9" fill="#eaf2fd" stroke="#c2d8f2"/>
+            <text x="67" y="58" font-size="13" fill="#12509e" text-anchor="middle" font-weight="700">发电厂</text>
+            <text x="67" y="77" font-size="11" fill="#5c6d82" text-anchor="middle">10~20 kV</text>
+
+            <rect x="152" y="34" width="118" height="58" rx="9" fill="#e9f7f4" stroke="#bfe3da"/>
+            <text x="211" y="58" font-size="13" fill="#0d7a72" text-anchor="middle" font-weight="700">升压变</text>
+            <text x="211" y="77" font-size="11" fill="#5c6d82" text-anchor="middle">→ 220/500 kV</text>
+
+            <rect x="296" y="34" width="128" height="58" rx="9" fill="#eef1f7" stroke="#ccd7e6"/>
+            <text x="360" y="58" font-size="13" fill="#31465e" text-anchor="middle" font-weight="700">输电线路</text>
+            <text x="360" y="77" font-size="11" fill="#5c6d82" text-anchor="middle">几百上千公里</text>
+
+            <rect x="450" y="34" width="118" height="58" rx="9" fill="#e9f7f4" stroke="#bfe3da"/>
+            <text x="509" y="58" font-size="13" fill="#0d7a72" text-anchor="middle" font-weight="700">降压变</text>
+            <text x="509" y="77" font-size="11" fill="#5c6d82" text-anchor="middle">→ 10 kV</text>
+
+            <rect x="594" y="34" width="118" height="58" rx="9" fill="#eaf2fd" stroke="#c2d8f2"/>
+            <text x="653" y="58" font-size="13" fill="#12509e" text-anchor="middle" font-weight="700">配电 / 用户</text>
+            <text x="653" y="77" font-size="11" fill="#5c6d82" text-anchor="middle">380/220 V</text>
+
+            <line x1="126" y1="63" x2="148" y2="63" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar1)"/>
+            <line x1="270" y1="63" x2="292" y2="63" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar1)"/>
+            <line x1="424" y1="63" x2="446" y2="63" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar1)"/>
+            <line x1="568" y1="63" x2="590" y2="63" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar1)"/>
+
+            <rect x="8" y="112" width="704" height="34" rx="8" fill="#f8fafd" stroke="#e4eaf2" stroke-dasharray="4 3"/>
+            <text x="360" y="134" font-size="11.5" fill="#5c6d82" text-anchor="middle">全过程由调度中心（<tspan fill="#12509e" font-weight="700">AGC / AVC</tspan>）统一指挥：谁来发、发多少、电压多高</text>
+            <text x="67" y="26" font-size="11" fill="#8494a8" text-anchor="middle">电从哪来</text>
+            <text x="653" y="26" font-size="11" fill="#8494a8" text-anchor="middle">电到哪去</text>
+          </svg>
+          <figcaption>图 1-1　电力的"高速公路"。电压等级越高，输送损耗越小、距离越远——这也是为什么升压、降压各来一次。</figcaption>
+        </figure>
+        <p>关键在于：这张网是<strong>同步</strong>连在一起的。全国（准确说，每一个同步电网）里成千上万台发电机，转子的转速必须严格一致——对应 50 Hz。就像一支几千人的合唱团，所有人必须踩同一个拍子，谁快谁慢都会毁掉整首歌。</p>
+        <p>一旦某个环节崩了，崩的不是"一条线"，而是这张网上所有"同拍"的机器。这就是大停电为什么传播得那么快。</p>
+      </section>
+
+      <section class="sec" id="s1-2">
+        <h3><span class="hn">1.2</span>三个生命体征：电压、频率、相角</h3>
+        <p>医生看病人量血压、测心率。电网也有三个"生命体征"，黑启动要恢复的，本质上就是这三样东西。</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>体征</th><th>通俗理解</th><th>范围</th><th>偏离正常会怎样</th></tr></thead>
+            <tbody>
+              <tr><td><b>电压</b>（kV）</td><td>水管里的<b>水压</b>。压太低灯不亮、电机发热；压太高绝缘击穿、设备烧毁</td><td>局部指标，各点不同。<br>10 kV 及以下三相供电一般允许 ±7%</td><td>欠压→设备跳闸、电机堵转；过压→绝缘老化击穿</td></tr>
+              <tr><td><b>频率</b>（Hz）</td><td>整个电网的<b>心跳</b>。全网只有一个值（50 Hz），反映"发"和"用"是否平衡</td><td>正常 <b>50 ± 0.2 Hz</b>；小电网可放宽到 ±0.5 Hz</td><td>偏低→电机转速下降、<b>低频减载</b>切负荷；继续跌→机组自身保护跳闸，雪崩</td></tr>
+              <tr><td><b>相角</b>（°）</td><td>两台机"踩拍子"的<b>时间差</b>。差得越多，功率越想从一台涌向另一台</td><td>两点间相角差决定有功潮流大小与方向</td><td>相角差过大→失步、振荡、保护解列；并网瞬间差太多→巨大冲击电流</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>必须记住</div>
+          <p><b>频率是全网的，电压是局部的。</b>频率只有一个数，因为它由所有同步机的转速共同决定；电压到处都不一样，因为它和线路阻抗、负荷大小有关。黑启动时，"建压"和"建频"是两件事，但通常同时完成——因为一台构网型电源同时给出两者的参考。</p>
+        </div>
+        <p>顺便解释两个缩写，后面一直要用：</p>
+        <ul class="pt">
+          <li><strong><abbr title="Automatic Generation Control 自动发电控制">AGC</abbr></strong>：自动发电控制，调度端的"油门"。它根据频率偏差和联络线功率，算出各电厂该多发还是少发，分钟级地把频率拉回 50 Hz。</li>
+          <li><strong><abbr title="Automatic Voltage Control 自动电压控制">AVC</abbr></strong>：自动电压控制，调度端的"调压阀"。通过调发电机励磁、投切电容电抗器，把各点电压维持在规定范围。</li>
+        </ul>
+        <p>这两个系统平时在后台默默工作，全黑时它们的"手脚"（电厂和变电站）都瘫了——所以黑启动阶段只能靠人一步一步操作，这也是恢复慢的原因之一，详见 <a class="xref" href="#s2-6">2.6 黑启动为什么快不起来</a>。</p>
+      </section>
+
+      <section class="sec" id="s1-3">
+        <h3><span class="hn">1.3</span>功率平衡：发电必须"秒级"追上用电</h3>
+        <p>电有一个要命的物理特性：<strong>用多少，就得立刻发多少</strong>。它不像粮食可以堆在仓库里，目前大电网的储存能力（抽蓄、电化学储能）占比还很小。</p>
+        <p>所以电网每时每刻都在做一道动态平衡题。平衡靠三层机制，时间尺度完全不同：</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>层级</th><th>时间尺度</th><th>谁在干活</th><th>作用</th></tr></thead>
+            <tbody>
+              <tr><td>惯量响应</td><td>毫秒 ~ 秒</td><td>同步发电机的转子（物理惯性）</td><td>功率缺额瞬间，转子"交出"储存的动能，先把频率的下跌速度拖慢</td></tr>
+              <tr><td>一次调频</td><td>秒 ~ 几十秒</td><td>调速器、新能源的一次调频功能</td><td>频率一偏，机组自动增/减出力，把频率"顶住"</td></tr>
+              <tr><td>二次调频（AGC）</td><td>分钟级</td><td>调度 + 调频机组</td><td>把频率无差地拉回 50 Hz，顺便把联络线功率调回计划值</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>骑自行车上坡。坡度突然变陡（负荷突增），你的车速（频率）会往下掉。<b>惯量</b>就是车子和你的质量——车越重，掉速越慢，给你反应时间；<b>一次调频</b>是你下意识多蹬的那几脚；<b>二次调频</b>是你抬头看了看坡还有多长，决定换个更省力的档位。</p>
+          <p>现在把自行车的质量换轻了（新能源替代火电，惯量下降），同样的坡，掉速会快得多——你可能还没来得及蹬就已经摔了。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s1-4">
+        <h3><span class="hn">1.4</span>惯量：电网的"体重"，为什么新能源让它变轻了</h3>
+        <p><strong>惯量（Inertia）</strong>是理解新型电力系统一切问题的钥匙，值得多花点时间。</p>
+        <p>火电、水电、核电机组里都有一个几十吨到上百吨重的转子，以 3000 r/min（两对极）或 1500 r/min 高速旋转。这个转子里存着巨大的动能。当负荷突然增加、发的电不够用时，转子会"自愿"减速，把动能释放出来补上缺口。</p>
+        <p>工程上用<strong>惯性时间常数 H</strong> 来衡量这个能力：<em class="hl">H 的物理含义是——如果只靠转子储存的动能，机组能维持额定功率输出多少秒</em>。单位是秒（s）。</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>类型</th><th>典型 H 值</th><th>说明</th></tr></thead>
+            <tbody>
+              <tr><td>火电（汽轮机组）</td><td>4 ~ 8 s</td><td>转子重、转速高，惯量大</td></tr>
+              <tr><td>水电</td><td>2 ~ 4 s</td><td>转速低，但转子直径大、质量大</td></tr>
+              <tr><td>燃气轮机</td><td>3 ~ 6 s</td><td>单轴机组偏低</td></tr>
+              <tr><td>双馈/直驱风机</td><td>0（对电网而言）</td><td>转子被变流器"隔开"，转速与电网频率解耦，<b>不天然提供惯量</b>；可加"虚拟惯量"控制</td></tr>
+              <tr><td>光伏逆变器</td><td>0</td><td>没有旋转部件，纯电力电子，不提供惯量</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>惯量小了会怎样？用一条简化公式就能看明白（标幺值下）：</p>
+        <p style="text-align:center;background:#f8fafd;border:1px solid var(--line2);border-radius:10px;padding:12px;font-family:ui-monospace,monospace;font-size:15px;color:#0d3f7e">
+          Δf / Δt ≈ ΔP / (2H)
+        </p>
+        <p>意思是：<strong>同样缺 5% 的功率，H 越小，频率跌得越快。</strong></p>
+        <ul class="pt">
+          <li>H = 5 s 时：Δf/Δt = 0.05 ÷ 10 = 0.005 标幺/秒，折算 <strong>0.25 Hz/s</strong>；</li>
+          <li>H = 2 s 时：Δf/Δt = 0.05 ÷ 4 = 0.0125 标幺/秒，折算 <strong>0.625 Hz/s</strong>。</li>
+        </ul>
+        <p>只是把 H 从 5 s 降到 2 s，<em class="hl">频率下跌的速度就快了 2.5 倍</em>。而低频减载装置的动作、机组保护的延时都是按"秒"设计的——频率跌得太快，它们可能来不及救场。2019 年 8 月英国大停电（约百万人受影响），事后分析就指向了惯量不足下频率跌落过快、<abbr title="Rate of Change of Frequency 频率变化率">RoCoF</abbr> 保护误动这一链条。</p>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>易错点</div>
+          <p>"新能源不提供惯量"这句话，严格说应该是<b>"不天然提供惯量"</b>。通过控制策略（虚拟惯量、VSG、构网型控制），风机和储能是可以"造"出惯量来的——这正是第 6 章要讲的 <a class="xref" href="#s6-1">VSG 虚拟同步发电机</a>。</p>
+        </div>
+      </section>
+
+
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s6-1">VSG：给逆变器装一个虚拟转子</a> · <a class="xref" href="#s5-1">跟网型与构网型</a></div>
+      <section class="sec" id="s1-5">
+        <h3><span class="hn">1.5</span>短路比：电网的"力气"有多大</h3>
+        <p>还有一个常被忽略但极其关键的概念：<strong>短路比（<abbr title="Short Circuit Ratio 短路比">SCR</abbr>）</strong>。</p>
+        <p>定义很直白：<strong>电网在这一点上"扛短路"的能力，除以接入设备的容量</strong>。</p>
+        <p style="text-align:center;background:#f8fafd;border:1px solid var(--line2);border-radius:10px;padding:12px;font-family:ui-monospace,monospace;font-size:15px;color:#0d3f7e">
+          SCR = 并网点短路容量 S<sub>sc</sub> ÷ 设备额定容量 S<sub>n</sub>
+        </p>
+        <p>SCR 大，说明电网"底子厚"——像一个大湖，你往里扔块石头，水位几乎不动。SCR 小，说明是"小水坑"，扔块石头水位就剧烈波动。<strong>SCR 小的地方，电压特别容易被"带跑"</strong>，设备一动作就振荡，这叫<strong>弱电网</strong>。</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>SCR 范围</th><th>电网性质</th><th>典型场景</th><th>对设备意味着什么</th></tr></thead>
+            <tbody>
+              <tr><td>&gt; 3</td><td>强电网</td><td>东部负荷中心、主网架附近</td><td>跟网型设备也能稳定运行</td></tr>
+              <tr><td>2 ~ 3</td><td>弱电网</td><td>新能源基地、省级电网末端</td><td>跟网型易失稳，需要额外支撑</td></tr>
+              <tr><td>&lt; 2</td><td>极弱电网</td><td>高原末端、海岛、偏远牧区</td><td>基本必须用构网型，否则并不了机</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>为什么黑启动要讲这个？因为<strong>黑启动过程本身就是一个"极弱电网"工况</strong>——一开始整个系统只有一台储能或一台水电机在支撑，短路容量极小，任何一台变压器合闸、任何一台大电机启动，都会让电压剧烈波动。所以黑启动对控制的要求，比正常并网高一个量级。</p>
+      </section>
+
+      <section class="sec" id="s1-6">
+        <h3><span class="hn">1.6</span>"双高"新型电力系统：电网为什么变"轻"了</h3>
+        <p>行业里天天说"双高"，指的是<strong>高比例可再生能源</strong> + <strong>高比例电力电子设备</strong>。它带来四个连锁变化，可以用"三低一高"来记：</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>变化</th><th>怎么来的</th><th>后果</th></tr></thead>
+            <tbody>
+              <tr><td><b>低惯量</b></td><td>旋转的同步机被逆变器替代</td><td>频率跌得快，RoCoF 增大，更容易触发连锁跳机</td></tr>
+              <tr><td><b>低短路比</b></td><td>电力电子设备故障电流被限制在 1.1~1.5 倍额定</td><td>电网"变软"，电压敏感，宽频振荡风险上升</td></tr>
+              <tr><td><b>低抗扰</b></td><td>逆变器过载能力弱、控制耦合强</td><td>一次扰动可能引发多台设备同时脱网（连锁脱网）</td></tr>
+              <tr><td><b>高波动</b></td><td>风光出力靠天吃饭，预测有误差</td><td>功率缺额更频繁，调峰调频压力大</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>请注意这四条的<strong>反面</strong>：低惯量、低短路比、弱抗扰，这些恰恰是黑启动最怕的工况。所以 PPT 里那句"双高特征下发生全黑事故的风险反而增大"，方向是对的——但它还有另一半意思：<em class="hl">新能源既是风险的来源，也可能是解药</em>。构网型储能之所以重要，就是把"问题制造者"变成了"问题解决者"。</p>
+      </section>
+
+      <section class="sec" id="s1-7">
+        <h3><span class="hn">1.7</span>三道防线：黑启动为什么是"最后一道"</h3>
+        <p>我国《电力系统安全稳定导则》（<strong>GB 38755—2019</strong>）把电网的安全防御分成三道防线。理解这三道，你就明白黑启动在体系里的位置了。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 226" role="img" aria-label="电力系统三道防线示意图">
+            <rect x="8" y="14" width="704" height="58" rx="10" fill="#eef5fd" stroke="#c9dcf3"/>
+            <rect x="8" y="14" width="6" height="58" rx="3" fill="#4a86d4"/>
+            <text x="28" y="40" font-size="13.5" font-weight="700" fill="#1d5aa8">第一道防线</text>
+            <text x="28" y="60" font-size="11.5" fill="#5c6d82">快速继电保护 + 预防性控制</text>
+            <text x="200" y="40" font-size="12.5" fill="#2c3a4c">目标：故障设备快速切除，<tspan font-weight="700">不影响其余部分正常运行</tspan></text>
+            <text x="200" y="60" font-size="11.5" fill="#8494a8">例：线路短路，0.1 秒内保护动作跳开断路器</text>
+            <text x="640" y="47" font-size="11.5" fill="#4a86d4" font-weight="700" text-anchor="middle">保持稳定</text>
+
+            <rect x="8" y="84" width="704" height="58" rx="10" fill="#eef9f5" stroke="#c6e6da"/>
+            <rect x="8" y="84" width="6" height="58" rx="3" fill="#12a06b"/>
+            <text x="28" y="110" font-size="13.5" font-weight="700" fill="#0f7a52">第二道防线</text>
+            <text x="28" y="130" font-size="11.5" fill="#5c6d82">安全稳定控制装置（安控）</text>
+            <text x="200" y="110" font-size="12.5" fill="#2c3a4c">目标：故障较严重时，<tspan font-weight="700">切机、切负荷</tspan>保住主网</text>
+            <text x="200" y="130" font-size="11.5" fill="#8494a8">例：直流闭锁，安控切除部分机组和可中断负荷</text>
+            <text x="640" y="117" font-size="11.5" fill="#12a06b" font-weight="700" text-anchor="middle">避免扩大</text>
+
+            <rect x="8" y="154" width="704" height="62" rx="10" fill="#fdf4ef" stroke="#f4dbc9"/>
+            <rect x="8" y="154" width="6" height="62" rx="3" fill="#dd6b20"/>
+            <text x="28" y="180" font-size="13.5" font-weight="700" fill="#b45309">第三道防线</text>
+            <text x="28" y="200" font-size="11.5" fill="#5c6d82">失步解列 · 低频减载 · <tspan font-weight="700" fill="#c2410c">黑启动</tspan></text>
+            <text x="200" y="180" font-size="12.5" fill="#2c3a4c">目标：实在保不住时，<tspan font-weight="700">主动"切块"防止全网崩溃</tspan>，并尽快复电</text>
+            <text x="200" y="200" font-size="11.5" fill="#8494a8">例：解列成若干孤网各自运行；黑启动点亮第一片区域</text>
+            <text x="640" y="187" font-size="11.5" fill="#dd6b20" font-weight="700" text-anchor="middle">兜底 + 复活</text>
+          </svg>
+          <figcaption>图 1-2　三道防线。前两道在"防"，第三道在"兜"——黑启动是最后一步，也是唯一一步"从零开始"。</figcaption>
+        </figure>
+        <p>为什么说它是"最后一道"？因为前两道防线的存在，意味着<strong>黑启动平时几乎用不到</strong>。这带来一个现实问题：一个十几年没真正用过的能力，怎么保证它有效？答案是<strong>定期演练 + 试验验证</strong>（第 7 章细讲）。</p>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>必须记住</div>
+          <p>黑启动不是"备用电源"的同义词，它是<b>系统级</b>的能力：目标是恢复整个电网，不是保住某一栋楼。这个区分在 <a class="xref" href="#s2-5">2.5 五个容易混的概念</a> 里会展开。</p>
+        </div>
+
+        <div class="quiz" data-answer="C">
+          <div class="qh"><span class="qn">练习 01</span><span class="qtag">单选</span><span>第 1 章 · 频率</span></div>
+          <p class="q">某区域电网频率从 50.00 Hz 掉到 49.85 Hz，最直接说明下面哪件事正在发生？</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q01" value="A"><span class="lb">A</span><span class="lt">某条线路发生了短路故障</span></label>
+            <label class="opt"><input type="radio" name="q01" value="B"><span class="lb">B</span><span class="lt">某台变压器的分接头位置不对</span></label>
+            <label class="opt"><input type="radio" name="q01" value="C"><span class="lb">C</span><span class="lt">全网有功功率出现缺口，发电跟不上用电</span></label>
+            <label class="opt"><input type="radio" name="q01" value="D"><span class="lb">D</span><span class="lt">某片区无功不足，电压偏低</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>C</div>
+            <p>频率是<b>全网有功功率平衡</b>的指示器。发电小于用电，转子被"拖慢"，频率下降；反之上升。所以频率异常先查有功。</p>
+            <p>选项 A 是故障，主要影响电压和电流，靠继电保护处理；B 影响的是电压和无功分布；D 是电压/无功问题，对应的是 AVC、电容器、SVG 这些手段。<b>口诀：频率看有功，电压看无功。</b></p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 02</span><span class="qtag">单选</span><span>第 1 章 · 惯量</span></div>
+          <p class="q">某电网因新能源替代，等效惯性时间常数 H 由 6 s 降到 3 s。若发生同样的功率缺额，频率变化率（RoCoF）大约会：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q02" value="A"><span class="lb">A</span><span class="lt">减半</span></label>
+            <label class="opt"><input type="radio" name="q02" value="B"><span class="lb">B</span><span class="lt">增大到原来的 2 倍</span></label>
+            <label class="opt"><input type="radio" name="q02" value="C"><span class="lb">C</span><span class="lt">不变，只是频率最终值更低</span></label>
+            <label class="opt"><input type="radio" name="q02" value="D"><span class="lb">D</span><span class="lt">无法判断，取决于负荷类型</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>由 Δf/Δt ≈ ΔP/(2H) 可知，RoCoF 与 H 成反比。H 从 6 s 降到 3 s，分母减半，所以 RoCoF 增大到 2 倍。</p>
+            <p>这正是高比例新能源电网最危险的地方：<b>留给保护动作和人工处置的时间窗口被压缩了一半</b>。要注意的是，惯量只影响"跌得多快"，不影响"最终跌到多低"——最终稳态频率由一次调频的有功增量决定。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="D">
+          <div class="qh"><span class="qn">练习 03</span><span class="qtag">单选</span><span>第 1 章 · 三道防线</span></div>
+          <p class="q">按照 GB 38755 的三道防线划分，下列哪项措施属于第三道防线？</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q03" value="A"><span class="lb">A</span><span class="lt">线路距离保护在 0.08 s 内切除故障线路</span></label>
+            <label class="opt"><input type="radio" name="q03" value="B"><span class="lb">B</span><span class="lt">安控装置在直流闭锁后切除送端 2 台机组</span></label>
+            <label class="opt"><input type="radio" name="q03" value="C"><span class="lb">C</span><span class="lt">电厂励磁系统自动增加无功以维持机端电压</span></label>
+            <label class="opt"><input type="radio" name="q03" value="D"><span class="lb">D</span><span class="lt">系统失步后解列成孤网，并启动黑启动电源恢复供电</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>D</div>
+            <p>A 是第一道防线（继电保护）；B 是第二道防线（安控切机切负荷）；C 属于正常的励磁调节，连"防线"都算不上，是日常控制。</p>
+            <p>D 里的"解列"和"黑启动"都属于第三道防线：解列是"防止崩溃"，黑启动是"崩溃后复活"。两者经常配合使用——把大电网切成几个孤网，各自保住一部分负荷，再由黑启动电源逐步把孤网连起来，这是实际调度中常见的恢复策略。</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 2 章 ============ -->
+    <section class="chapter" id="ch2" data-num="02" data-title="什么是黑启动：一根火柴的学问">
+      <h2><span class="cnum">CHAPTER 02</span>什么是黑启动：一根火柴的学问</h2>
+      <p class="ch-lead">定义只有一句话，但每个词都是门槛。"不依赖外部电源""自启动能力""逐步恢复"——少一个都不算黑启动。</p>
+
+      <section class="sec" id="s2-1">
+        <h3><span class="hn">2.1</span>定义：四个关键词，缺一不可</h3>
+        <p>先给标准表述：</p>
+        <div class="box key">
+          <div class="bt"><span class="dot"></span>黑启动（Black Start）</div>
+          <p>电力系统因故障全部或大面积停运（全黑）后，<b>不依赖外部电网供电</b>，通过系统内<b>具备自启动能力</b>的电源启动，<b>逐步</b>恢复系统供电的过程。</p>
+        </div>
+        <p>把它拆成四个关键词，你就知道为什么很多"看起来很厉害"的方案其实不算黑启动：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>关键词</th><th>含义</th><th>不满足会怎样</th></tr></thead>
+            <tbody>
+              <tr><td><b>全黑</b></td><td>系统确实失去了全部正常电源，不是"某条线路跳了"</td><td>普通倒闸操作、备用电源切换，都不是黑启动</td></tr>
+              <tr><td><b>不依赖外部</b></td><td>不能靠相邻电网送电、不能靠外部柴油车、不能靠还没恢复的电网</td><td>靠外部送电叫"支援供电"，不叫黑启动</td></tr>
+              <tr><td><b>自启动能力</b></td><td>启动过程本身不需要电网提供厂用电/励磁电源</td><td>火电厂自己起不来，必须先由别人给它送厂用电</td></tr>
+              <tr><td><b>逐步恢复</b></td><td>一块一块地建压、带负荷、并网，最后连成全网</td><td>不存在"一键全网复电"，那是电影情节</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>易错点</div>
+          <p>PPT 里"它是电力系统安全防御的最后一道防线"这句话是对的，但要补一句：<b>黑启动是第三道防线里的"复活"环节，不是"防御"环节</b>。防御是让事故不发生、不扩大；黑启动是事故已经发生后，把系统从零救回来。用医学打比方：前两道是疫苗和急诊，黑启动是心肺复苏。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s2-2">
+        <h3><span class="hn">2.2</span>"全黑"到底有多可怕：一个死锁</h3>
+        <p>很多人以为停电就是"灯灭了，等来电"。但对电力系统来说，全黑意味着<strong>整个系统的"启动能力"同时归零</strong>。</p>
+        <p>来看看一台常规火电厂的启动清单：</p>
+        <ul class="pt">
+          <li><strong>厂用电</strong>：给水泵、送风机、引风机、磨煤机、循环水泵——全是几千千瓦的大电机，要电才能转；</li>
+          <li><strong>控制系统</strong>：<abbr title="Distributed Control System 分散控制系统">DCS</abbr>、保护装置、执行机构——要电；</li>
+          <li><strong>励磁系统</strong>：建立发电机磁场——起励电源要电；</li>
+          <li><strong>直流系统</strong>：蓄电池能撑几小时，但只够照明、控制、断路器操作，带不动大电机；</li>
+          <li><strong>辅助系统</strong>：化学水处理、输煤、除灰、冷却——都要电。</li>
+        </ul>
+        <p>而电网要送电，又必须有一台机组先并网发电。于是形成死锁：</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 176" role="img" aria-label="全黑死锁示意图">
+            <rect x="86" y="18" width="200" height="56" rx="10" fill="#eaf2fd" stroke="#c2d8f2"/>
+            <text x="186" y="42" font-size="13.5" fill="#12509e" text-anchor="middle" font-weight="700">电厂要发电</text>
+            <text x="186" y="61" font-size="11.5" fill="#5c6d82" text-anchor="middle">但辅机需要厂用电</text>
+
+            <rect x="434" y="18" width="200" height="56" rx="10" fill="#eaf2fd" stroke="#c2d8f2"/>
+            <text x="534" y="42" font-size="13.5" fill="#12509e" text-anchor="middle" font-weight="700">电网要送电</text>
+            <text x="534" y="61" font-size="11.5" fill="#5c6d82" text-anchor="middle">但需要有机组并网发电</text>
+
+            <path d="M292 34 Q360 34 428 34" fill="none" stroke="#dd6b20" stroke-width="2" marker-end="url(#ar2)"/>
+            <path d="M428 58 Q360 58 292 58" fill="none" stroke="#dd6b20" stroke-width="2" marker-end="url(#ar2)"/>
+            <defs>
+              <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#dd6b20"/>
+              </marker>
+            </defs>
+            <text x="360" y="26" font-size="11" fill="#c2410c" text-anchor="middle">需要</text>
+            <text x="360" y="76" font-size="11" fill="#c2410c" text-anchor="middle">需要</text>
+
+            <rect x="86" y="104" width="548" height="56" rx="10" fill="#fdf4ef" stroke="#f4dbc9" stroke-dasharray="5 4"/>
+            <text x="360" y="127" font-size="13" fill="#b45309" text-anchor="middle" font-weight="700">死锁：谁也起不来</text>
+            <text x="360" y="147" font-size="11.5" fill="#8a6b52" text-anchor="middle">破解办法只有一个 —— 找一个"不需要电也能自己动"的东西，先把一小片电网点亮</text>
+          </svg>
+          <figcaption>图 2-1　全黑死锁。这个死锁是黑启动存在的全部理由。</figcaption>
+        </figure>
+        <p>这就是为什么水电机组在传统方案里如此重要：水轮机启动只需要打开导叶让水流冲转，<strong>不需要锅炉、磨煤机这些耗电大户</strong>；它的辅机很少，一点点直流电源加一台小柴油机就能满足起励和调速器油压需求。它是天然的"火柴"。</p>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>想象一个村子，唯一的抽水机要靠电驱动，而发电要靠抽水机供冷却水。停一次电，全村就卡死。老人们的办法是：留一口手压井。手压井不用电，压几下出水，先给发电机冷却，发电机转起来，电来了，电动抽水机再接管。<b>黑启动电源就是那口手压井。</b></p>
+        </div>
+      </section>
+
+      <section class="sec" id="s2-3">
+        <h3><span class="hn">2.3</span>三步走：点火、续火、燎原</h3>
+        <p>黑启动的过程，行业里通常概括成三步。这三步的本质是<strong>"先造一个小系统，再把它慢慢长大"</strong>。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 210" role="img" aria-label="黑启动三步走示意图">
+            <defs>
+              <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8aa6c6"/>
+              </marker>
+            </defs>
+            <rect x="6" y="24" width="212" height="96" rx="11" fill="#fdf4ef" stroke="#f4dbc9"/>
+            <circle cx="30" cy="48" r="11" fill="#dd6b20"/>
+            <text x="30" y="52.5" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">1</text>
+            <text x="50" y="53" font-size="13.5" fill="#b45309" font-weight="700">点火：建立电压频率</text>
+            <text x="22" y="78" font-size="11.5" fill="#5c6d82">黑启动电源自启动，</text>
+            <text x="22" y="95" font-size="11.5" fill="#5c6d82">给一小片电网"通电"，</text>
+            <text x="22" y="112" font-size="11.5" fill="#5c6d82">形成初始孤网（小岛）</text>
+
+            <rect x="252" y="24" width="212" height="96" rx="11" fill="#fdfaef" stroke="#f0e4c0"/>
+            <circle cx="276" cy="48" r="11" fill="#c9a227"/>
+            <text x="276" y="52.5" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">2</text>
+            <text x="296" y="53" font-size="13.5" fill="#8a6b0a" font-weight="700">续火：带动机组启动</text>
+            <text x="268" y="78" font-size="11.5" fill="#5c6d82">通过输电线路把厂用电</text>
+            <text x="268" y="95" font-size="11.5" fill="#5c6d82">送给火电/水电机组，</text>
+            <text x="268" y="112" font-size="11.5" fill="#5c6d82">让它们启动、并网</text>
+
+            <rect x="498" y="24" width="212" height="96" rx="11" fill="#eef9f5" stroke="#c6e6da"/>
+            <circle cx="522" cy="48" r="11" fill="#12a06b"/>
+            <text x="522" y="52.5" font-size="11" fill="#fff" text-anchor="middle" font-weight="700">3</text>
+            <text x="542" y="53" font-size="13.5" fill="#0f7a52" font-weight="700">燎原：分区恢复负荷</text>
+            <text x="514" y="78" font-size="11.5" fill="#5c6d82">分区域、分片扩大供电，</text>
+            <text x="514" y="95" font-size="11.5" fill="#5c6d82">同期并列，先保重要负荷，</text>
+            <text x="514" y="112" font-size="11.5" fill="#5c6d82">最终全网复电</text>
+
+            <line x1="222" y1="72" x2="246" y2="72" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar3)"/>
+            <line x1="468" y1="72" x2="492" y2="72" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar3)"/>
+
+            <text x="6" y="152" font-size="11.5" fill="#8494a8">时间尺度</text>
+            <line x1="86" y1="148" x2="704" y2="148" stroke="#dbe4ef" stroke-width="2"/>
+            <circle cx="110" cy="148" r="4" fill="#dd6b20"/><text x="110" y="168" font-size="11" fill="#c2410c" text-anchor="middle">秒级</text>
+            <circle cx="330" cy="148" r="4" fill="#c9a227"/><text x="330" y="168" font-size="11" fill="#8a6b0a" text-anchor="middle">分钟 ~ 小时级</text>
+            <circle cx="600" cy="148" r="4" fill="#12a06b"/><text x="600" y="168" font-size="11" fill="#0f7a52" text-anchor="middle">小时 ~ 天级</text>
+            <text x="360" y="196" font-size="11" fill="#a9b8ca" text-anchor="middle">注意：越往后越慢。第一步可以做到 33 秒，第三步往往要按小时甚至按天算。</text>
+          </svg>
+          <figcaption>图 2-2　黑启动三步走。记住"点火—续火—燎原"，比记三条编号更容易想起来。</figcaption>
+        </figure>
+        <p>再补充两点实际调度中的细节，这两点是 PPT 没提、但现场一定会遇到的：</p>
+        <ol class="pt">
+          <li><strong>恢复是有"路线图"的。</strong>电网公司会预先编制《黑启动方案》，把哪台机组先起、走哪条线路、先带哪几个变电站、先恢复哪些负荷，编成一张明确的顺序表，甚至连变压器合闸的先后都要规定。这张表就是"点火顺序"。</li>
+          <li><strong>负荷恢复要"小步快走"。</strong>不能一次投入一个大负荷，否则电压会被拉垮、频率会掉、甚至导致刚建起来的孤网崩溃。实操中是按 5%、10% 一档一档地加，每加一次观察几分钟。重要负荷（医院、水厂、通信、交通信号、地铁）优先，一般工业负荷靠后。</li>
+        </ol>
+      </section>
+
+      <section class="sec" id="s2-4">
+        <h3><span class="hn">2.4</span>什么样的电源，才配当"火柴"</h3>
+        <p>不是随便一台发电机都能做黑启动电源。业内通常看五条：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>条件</th><th>为什么</th><th>典型体现</th></tr></thead>
+            <tbody>
+              <tr><td><b>自启动</b></td><td>启动全过程不需要外部电源</td><td>水电靠水流+直流起励；储能靠电池+自供电控制回路</td></tr>
+              <tr><td><b>容量够</b></td><td>要能带得动被启动机组的辅机（几千千瓦级）和变压器励磁涌流</td><td>一般要求容量有一定裕度，构网型储能常需超配 2~3 倍</td></tr>
+              <tr><td><b>能建压建频</b></td><td>要能给出稳定的电压、频率参考，而不是"跟着别人走"</td><td>必须是构网型（电压源）特性，跟网型做不到</td></tr>
+              <tr><td><b>能量可持续</b></td><td>恢复过程可能持续数小时，不能"点火三分钟就没了"</td><td>水库蓄水、燃气供应、电池 <abbr title="State of Charge 荷电状态">SOC</abbr> 预留</td></tr>
+              <tr><td><b>平时可靠</b></td><td>可能十年不用，但用的时候必须一次成功</td><td>定期演练、定期试验、设备状态在线监测</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>第五条最容易被忽视。<strong>黑启动能力是一种"平时看不见、用时输不起"的能力</strong>。这也是为什么标准和监管越来越强调"要试验、要出报告"，而不是"设计上有就行"，详见 <a class="xref" href="#s7-3">7.3 怎么验证黑启动能力</a>。</p>
+      </section>
+
+      <section class="sec" id="s2-5">
+        <h3><span class="hn">2.5</span>五个容易混的概念</h3>
+        <p>这一节建议慢读。很多方案讨论吵起来，就是因为把这几个词混着用。</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>概念</th><th>服务对象</th><th>能撑多久</th><th>和黑启动的关系</th></tr></thead>
+            <tbody>
+              <tr><td><b>备用电源</b><br><span style="font-size:12px;color:#8494a8">双电源、柴油发电机</span></td><td>单个用户或单个设备</td><td>分钟 ~ 天</td><td>只保局部负荷，<b>不建立系统电压频率</b>，一般不参与全网恢复</td></tr>
+              <tr><td><b>UPS</b><br><span style="font-size:12px;color:#8494a8">不间断电源</span></td><td>服务器、DCS、保护装置</td><td>分钟 ~ 小时</td><td>保"大脑"不失电，但带不动"肌肉"。它的价值是让你还能操作设备</td></tr>
+              <tr><td><b>微电网</b></td><td>园区、岛屿、牧区</td><td>小时 ~ 数天（可长期孤网）</td><td>是黑启动的"细胞"：微电网的构网型电源可以当黑启动电源用，但微电网本身有计划的孤岛切换，<b>不等于黑启动</b></td></tr>
+              <tr><td><b>孤网运行</b></td><td>局部电网</td><td>分钟 ~ 数天</td><td>是一种<b>运行状态</b>，不是一种能力。黑启动过程中必然经历孤网阶段；事故解列后也会形成孤网</td></tr>
+              <tr><td><b>构网型储能</b></td><td>系统 / 场站</td><td>受 SOC 限制，通常小时级</td><td>是<b>一种黑启动电源</b>。它有构网能力，所以能当"火柴"；但"能构网"不等于"做过黑启动试验"</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>一句话辨析</div>
+          <p><b>UPS 保设备，备用电源保用户，微电网保区域，黑启动保系统。</b>四者可以叠加使用，但不能相互替代。一个园区装了 2 兆瓦时储能 + UPS，不代表它能承担城市级黑启动。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s2-6">
+        <h3><span class="hn">2.6</span>为什么快不起来：33 秒 ≠ 全城复电</h3>
+        <p>这是本课件最想纠正的一个误解。PPT 里写"构网型储能 33 秒恢复"，很多人读完的印象是"33 秒全城来电"。<strong>不是的。</strong></p>
+        <p>根据公开报道，2026 年 6 月青海果洛 110 千伏骅麦光储电站的那次试验，完整表述是两句：</p>
+        <div class="box warn">
+          <div class="bt"><span class="dot"></span>把数字读全</div>
+          <p>「从<b>设备启动</b>至<b>完成电网黑启动</b>仅用时 <b>33 秒</b>；从局部电网<b>全域失电</b>，到成功实现<b>负荷带电</b>，全程耗时约 <b>2 小时</b>。」</p>
+          <p style="margin-top:8px">33 秒指的是"建压 + 带动站内光伏 + 建立起末端孤网"这一段；2 小时才是"从黑到亮"的全流程。两个数字都对，但含义完全不同。</p>
+        </div>
+        <p>为什么后面的步骤那么慢？至少五个原因：</p>
+        <ol class="pt">
+          <li><strong>火电机组冷态启动本身就要几小时。</strong>锅炉点火、升温升压、暖管、汽轮机冲转、暖机、并网，每一步都有温度变化率的限制，急了会伤设备（汽缸变形、转子弯曲）。</li>
+          <li><strong>每次合闸都有风险。</strong>变压器空载合闸会产生<strong>励磁涌流</strong>，可达额定电流的 6~8 倍；空载长线路合闸会有<strong>电容效应</strong>，末端电压可能升高 10%~20%。每一次操作都要先算、再干、再确认。</li>
+          <li><strong>保护要临时"改脾气"。</strong>黑启动时短路电流很小（只有构网型电源在撑），传统过流保护可能根本不动作，需要启用专门的黑启动保护定值区。</li>
+          <li><strong>通信、监控、直流系统也要恢复。</strong>没有通信，调度员就是"瞎子"，不敢操作。</li>
+          <li><strong>规程要求"一步一确认"。</strong>黑启动操作票往往有几十上百步，每步都要两人复核、记录、汇报。</li>
+        </ol>
+        <p>所以更准确的说法是：<em class="hl">构网型储能把"第一把火"从几十分钟压缩到了几十秒，但"把火烧遍全城"仍然是小时级的工程</em>。这个区分在对外汇报时特别重要——说错了，会被专家当场问住。</p>
+
+        <div class="quiz" data-answer="C">
+          <div class="qh"><span class="qn">练习 04</span><span class="qtag">单选</span><span>第 2 章 · 定义</span></div>
+          <p class="q">下列哪种情形<b>不构成</b>黑启动？</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q04" value="A"><span class="lb">A</span><span class="lt">水电机组在无外部电源条件下自启动，给附近变电站充电</span></label>
+            <label class="opt"><input type="radio" name="q04" value="B"><span class="lb">B</span><span class="lt">构网型储能零起升压，带动站内光伏建立孤网</span></label>
+            <label class="opt"><input type="radio" name="q04" value="C"><span class="lb">C</span><span class="lt">本区域全停后，由相邻未停电的省级电网通过联络线送电恢复</span></label>
+            <label class="opt"><input type="radio" name="q04" value="D"><span class="lb">D</span><span class="lt">柴油发电机组启动后给火电厂送厂用电，使其并网</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>C</div>
+            <p>黑启动的核心前提是<b>"不依赖外部电源"</b>。C 选项靠相邻电网送电，这叫"支援供电"或"外部电源恢复"，是常规复电手段，不属于黑启动。</p>
+            <p>A、B 都是典型的自启动建压；D 是"柴油机 + 火电"的传统组合，虽然柴油机本身要靠油，但它在系统内部、不依赖外部电网，属于黑启动范畴（业内常称"柴油机黑启动方案"）。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 05</span><span class="qtag">单选</span><span>第 2 章 · 死锁</span></div>
+          <p class="q">全黑之后，一台常规燃煤机组无法自行启动，最根本的原因是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q05" value="A"><span class="lb">A</span><span class="lt">煤仓里的煤已经用完，没有燃料</span></label>
+            <label class="opt"><input type="radio" name="q05" value="B"><span class="lb">B</span><span class="lt">给水泵、风机等厂用辅机需要厂用电，而厂用电来自电网</span></label>
+            <label class="opt"><input type="radio" name="q05" value="C"><span class="lb">C</span><span class="lt">汽轮机转子太重，无法被拖动</span></label>
+            <label class="opt"><input type="radio" name="q05" value="D"><span class="lb">D</span><span class="lt">发电机励磁绕组已经损坏</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>这就是"厂用电死锁"：火电厂是<b>高自用电</b>的电源，厂用电率通常在 5%~8%，这些辅机功率动辄几千千瓦，蓄电池根本带不动。所以要让它起来，必须先有人给它送厂用电——这正是黑启动第二步"续火"要干的事。</p>
+            <p>A 在真实场景里确实可能发生（比如长期停运），但不是<b>根本</b>原因；C 说法不成立，汽轮机有盘车和冲转手段；D 是无依据的假设。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="ACD">
+          <div class="qh"><span class="qn">练习 06</span><span class="qtag">多选</span><span>第 2 章 · 概念辨析</span></div>
+          <p class="q">关于"微电网"和"黑启动"的关系，下列说法正确的有（多选）：</p>
+          <div class="opts">
+            <label class="opt"><input type="checkbox" name="q06" value="A"><span class="lb">A</span><span class="lt">微电网里的构网型储能，可以作为黑启动电源使用</span></label>
+            <label class="opt"><input type="checkbox" name="q06" value="B"><span class="lb">B</span><span class="lt">只要建成了微电网，就等于具备了黑启动能力</span></label>
+            <label class="opt"><input type="checkbox" name="q06" value="C"><span class="lb">C</span><span class="lt">微电网的"计划孤岛"运行，与黑启动的"无计划全黑恢复"是两回事</span></label>
+            <label class="opt"><input type="checkbox" name="q06" value="D"><span class="lb">D</span><span class="lt">黑启动过程中会形成一个个"孤网小岛"，可以理解为临时微电网</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>A、C、D</div>
+            <p>B 错在"等于"两个字。微电网具备<b>孤岛运行能力</b>，但黑启动要求的是<b>无外部电源、从零建压、并带动其他机组和网架恢复</b>，还需要容量、能量、试验验证等条件。很多微电网计划孤岛时是"有电可用"的平滑切换，和"从零开始"完全不同的工况。</p>
+            <p>D 的说法在工程上很贴切：黑启动第三阶段本质就是"用多个孤网小岛逐步合并成大网"，这也是为什么"多机并联""同期并列"这些微电网技术会直接用到黑启动里（见 <a class="xref" href="#s6-5">6.5 同期并列</a>）。</p>
+          </div>
+        </div>
+      </section>
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s6-4">零起升压与励磁涌流</a> · <a class="xref" href="#s6-5">同期并列</a> · <a class="xref" href="#s5-2">构网型储能四步走</a></div>
+    </section>
+
+    <!-- ============ 第 3 章 ============ -->
+    <section class="chapter" id="ch3" data-num="03" data-title="为什么非做不可：低概率，高后果">
+      <h2><span class="cnum">CHAPTER 03</span>为什么非做不可：低概率，高后果</h2>
+      <p class="ch-lead">大停电的概率很低，但代价极高。这类事情不能用"发生频率"算账，只能用"最坏情况"准备——和消防一样。</p>
+
+      <section class="sec" id="s3-1">
+        <h3><span class="hn">3.1</span>先把账算清楚：一次大停电值多少钱</h3>
+        <p>讨论"要不要投黑启动"，绕不开经济性。这里有个思维陷阱：<strong>用年平均损失去算，结论一定是"不划算"</strong>，因为几十年才发生一次。但这类风险的决策逻辑不是期望值，而是<em class="hl">可承受性</em>。</p>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>你不会因为"今年大概率不会着火"，就不装消防喷淋。因为一旦着火，损失的不是"一年的营业额"，而是整栋楼。黑启动就是电网的消防系统：平时零收益，关键时刻决定生死。</p>
+        </div>
+        <p>大停电的代价至少包括四块：直接经济损失（停产、商业停业）、社会成本（交通、通信、供水中断）、次生灾害（医院、矿井、化工装置的安全风险）、以及恢复期的持续损失。这也是为什么各国监管都把"黑启动能力"写进强制要求，而不是让企业自愿选择。</p>
+      </section>
+
+      <section class="sec" id="s3-2">
+        <h3><span class="hn">3.2</span>四个真实案例：失败从来不是单点</h3>
+        <p>PPT 提到了 2008 年冰灾、2021 年郑州暴雨，但只给了结论。我们把这几个案例拆开看，会发现它们的共性：<strong>不是某一个设备坏了，而是多个"平时不相关"的环节同时失效</strong>。</p>
+
+        <div class="tw">
+          <table>
+            <thead><tr><th>事件</th><th>发生了什么</th><th>暴露的问题</th><th>对黑启动的启示</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>2008 年南方冰灾</b><br><span style="font-size:12px;color:#8494a8">湖南、贵州、江西等</span></td>
+                <td>持续低温雨雪，输电线路大量覆冰、倒塔，交通中断；贵州电网与主网解列，部分地区停电以周计</td>
+                <td>网架物理损毁；抢修通道被断；通信中断</td>
+                <td>黑启动不能只靠"电源"，<b>通道和通信同样是前提</b>；孤网运行能力救了命</td>
+              </tr>
+              <tr>
+                <td><b>2021 年郑州"7·20"</b><br><span style="font-size:12px;color:#8494a8">特大暴雨</span></td>
+                <td>大量变电站、开闭所、小区配电房进水，数百个小区停电，恢复以天计</td>
+                <td>配电设施防水等级不足；排水与抢修能力受限</td>
+                <td>城市电网的"最后一公里"极其脆弱，<b>黑启动恢复不了被水淹的配电房</b>——硬件抢修无法跳过</td>
+              </tr>
+              <tr>
+                <td><b>2019 年英国"8·9"</b><br><span style="font-size:12px;color:#8494a8">约百万人受影响</span></td>
+                <td>海上风电场与一座燃气电站几乎同时跳闸，频率最低跌至约 48.8 Hz，低频减载动作切除部分负荷；地铁、机场受影响</td>
+                <td>低惯量下频率跌落过快；分布式电源的 RoCoF 保护整定不当，二次脱网</td>
+                <td><b>低惯量是新型电力系统的新病</b>，黑启动方案必须考虑"恢复过程中再次崩溃"的可能</td>
+              </tr>
+              <tr>
+                <td><b>2025 年伊比利亚半岛</b><br><span style="font-size:12px;color:#8494a8">西班牙、葡萄牙</span></td>
+                <td>4 月 28 日大面积停电，波及数千万人，交通、通信、支付受影响，恢复耗时近一天</td>
+                <td>据事后公开调查信息，与无功电压控制失效、机组连锁跳闸的演化过程相关</td>
+                <td>高比例新能源电网的<b>电压稳定问题</b>被长期低估；恢复过程需要"会建电压"的电源</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>四个案例串起来看，可以得到一个很重要的判断：<strong>现代大停电的典型路径是"故障 → 电压/频率恶化 → 连锁脱网 → 全黑"</strong>，而不是"一台设备炸了、全城黑了"。这意味着恢复阶段同样要防"二次崩溃"，对电源的<strong>电压支撑能力</strong>要求远高于普通的备用电源。</p>
+      </section>
+
+      <section class="sec" id="s3-3">
+        <h3><span class="hn">3.3</span>双高电网：全黑风险为什么反而变大了</h3>
+        <p>直觉上，新能源多了、火电少了，好像"更清洁更先进"。但从稳定角度看，情况更复杂。第 1 章讲过的"三低一高"，在这里会具体转化成四类黑启动难题：</p>
+        <ol class="pt">
+          <li><strong>频率更容易"失控"。</strong>惯量低，同样缺额下跌更快；而新能源的频率支撑能力依赖控制策略和预留备用，不像同步机那样"天生就有"。</li>
+          <li><strong>电压更容易"塌"。</strong>短路比低，电压对扰动敏感；风电光伏的故障电流被限制在 1.1~1.5 倍额定，传统保护"看不见"故障，可能延迟切除，导致范围扩大。</li>
+          <li><strong>连锁脱网风险上升。</strong>一台逆变器因电压扰动脱网，会减少功率注入、进一步拉低电压，诱发更多逆变器脱网——这是"正反馈"，比同步机的失步更难阻断。</li>
+          <li><strong>恢复期的"小系统"更难稳。</strong>黑启动初期只有一台或几台电源，短路比极低，任何冲击都可能振荡。构网型控制就是为解决这个问题而生的（见 <a class="xref" href="#s5-1">5.1 跟网型与构网型</a>）。</li>
+        </ol>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>必须记住</div>
+          <p>新能源不是"黑启动的敌人"。它带来风险，但同时也<b>把黑启动资源从"必须靠水"变成了"哪里都能放"</b>。这句转折，是理解后面所有技术内容的钥匙。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s3-4">
+        <h3><span class="hn">3.4</span>地理错配：火柴放在离柴堆很远的地方</h3>
+        <p>传统黑启动最大的现实困境，不是技术不行，而是<strong>位置不对</strong>。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 190" role="img" aria-label="黑启动资源与负荷中心地理错配示意图">
+            <rect x="8" y="14" width="330" height="160" rx="12" fill="#f7fbfa" stroke="#d8ebe5"/>
+            <text x="173" y="38" font-size="13" font-weight="700" fill="#0d7a72" text-anchor="middle">西南 / 山区：电源多</text>
+            <path d="M55 118 L105 78 L150 108 L200 66 L245 104 L290 82" fill="none" stroke="#9ecfc4" stroke-width="2.5"/>
+            <circle cx="105" cy="78" r="6" fill="#12a06b"/><circle cx="200" cy="66" r="6" fill="#12a06b"/><circle cx="245" cy="104" r="6" fill="#12a06b"/>
+            <text x="92" y="140" font-size="11" fill="#0d7a72" text-anchor="middle">大型水电</text>
+            <text x="185" y="140" font-size="11" fill="#0d7a72" text-anchor="middle">梯级电站</text>
+            <text x="282" y="140" font-size="11" fill="#0d7a72" text-anchor="middle">抽水蓄能</text>
+            <text x="173" y="163" font-size="11" fill="#8494a8" text-anchor="middle">黑启动资源充足，但本地负荷小</text>
+
+            <rect x="382" y="14" width="330" height="160" rx="12" fill="#fdf9f7" stroke="#f2ddd2"/>
+            <text x="547" y="38" font-size="13" font-weight="700" fill="#b45309" text-anchor="middle">东部城市：负荷多</text>
+            <rect x="420" y="62" width="26" height="62" fill="#f3d9cb"/>
+            <rect x="452" y="48" width="26" height="76" fill="#efcdbb"/>
+            <rect x="484" y="72" width="26" height="52" fill="#f3d9cb"/>
+            <rect x="516" y="42" width="26" height="82" fill="#efcdbb"/>
+            <rect x="548" y="60" width="26" height="64" fill="#f3d9cb"/>
+            <rect x="580" y="52" width="26" height="72" fill="#efcdbb"/>
+            <rect x="612" y="74" width="26" height="50" fill="#f3d9cb"/>
+            <text x="547" y="140" font-size="11" fill="#b45309" text-anchor="middle">几乎没有大型水电</text>
+            <text x="547" y="163" font-size="11" fill="#8494a8" text-anchor="middle">土地紧张，燃气管道有限，建不了大电厂</text>
+
+            <line x1="342" y1="94" x2="376" y2="94" stroke="#dd6b20" stroke-width="2" stroke-dasharray="6 5"/>
+            <text x="360" y="84" font-size="18" fill="#dd6b20" text-anchor="middle">?</text>
+            <text x="360" y="118" font-size="10.5" fill="#c2410c" text-anchor="middle">通道</text>
+          </svg>
+          <figcaption>图 3-1　资源与负荷的地理错配。2008 年冰灾就是"有电源、有通道，但通道被冰压断"的极端版本。</figcaption>
+        </figure>
+        <p>把这件事说透：</p>
+        <ul class="pt">
+          <li><strong>水电</strong>依赖落差，只能在西南、华中部分山区。<strong>上海、苏州、郑州这些负荷中心，附近根本没有水电。</strong></li>
+          <li><strong>燃机</strong>理论上可以建在城市边上（热电厂、分布式能源站），但依赖天然气管网，且运维贵、有碳排。</li>
+          <li><strong>输电通道本身也是脆弱环节。</strong>就算 300 公里外有水电站，覆冰、地震、山火都可能把通道切断。</li>
+        </ul>
+        <p>于是需求就很清楚了：<em class="hl">我们需要一种能"搬进城市"的黑启动电源——占地小、建设快、不用水、不用气、随时待命。</em>这正是储能被寄予厚望的原因，而"构网型"则决定了它到底能不能当这根火柴。</p>
+
+        <div class="quiz" data-answer="D">
+          <div class="qh"><span class="qn">练习 07</span><span class="qtag">单选</span><span>第 3 章 · 双高挑战</span></div>
+          <p class="q">2019 年英国"8·9"大停电中，频率跌落速度明显快于传统经验，导致低频减载动作、部分分布式电源二次脱网。造成"跌得快"的主要原因是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q07" value="A"><span class="lb">A</span><span class="lt">英国电网的装机容量不足</span></label>
+            <label class="opt"><input type="radio" name="q07" value="B"><span class="lb">B</span><span class="lt">低频减载装置的整定值设得太高</span></label>
+            <label class="opt"><input type="radio" name="q07" value="C"><span class="lb">C</span><span class="lt">故障点距离负荷中心太远</span></label>
+            <label class="opt"><input type="radio" name="q07" value="D"><span class="lb">D</span><span class="lt">系统惯量偏低，同样功率缺额下 RoCoF 更大</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>D</div>
+            <p>英国电网当时新能源占比已较高，同步机惯量下降。两台大电源（海上风电 + 燃气电站）同时失去，缺额很大而系统"体重"很轻，于是频率以远高于历史经验的速率下跌，部分按旧标准整定的 RoCoF 保护误判为"孤岛"而跳闸，形成二次损失。</p>
+            <p>A 不成立（装机是充裕的，问题是动态支撑能力）；B 是"保护动作了"的事实描述，不是原因；C 与频率变化率无直接关系。这题的关键是把"惯量 → RoCoF → 保护动作 → 更大缺额"这条链走通，它也解释了为什么黑启动资源需要具备<b>电压/频率主动支撑</b>能力。</p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 4 章 ============ -->
+    <section class="chapter" id="ch4" data-num="04" data-title="传统方案：水电与燃机的能与不能">
+      <h2><span class="cnum">CHAPTER 04</span>传统方案：水电与燃机的能与不能</h2>
+      <p class="ch-lead">水电机组是天生适合当"火柴"的，燃机是"快但贵"的。把它们的本事和软肋都看清，才知道储能补的是哪块短板。</p>
+
+      <section class="sec" id="s4-1">
+        <h3><span class="hn">4.1</span>水电机组：为什么它天生适合</h3>
+        <p>水电机组之所以是传统黑启动的主力，原因很"物理"：它把水的势能直接变成旋转，中间没有锅炉、没有磨煤机、没有庞大的风烟系统。</p>
+        <p>一台水电机组的黑启动流程大致是这样：</p>
+        <ol class="steps">
+          <li><b>建立油压与操作电源</b><span>调速器油压系统、蝶阀/球阀操作、励磁起励，都靠厂内直流系统或一台小容量柴油机供电。这套负荷通常只有几十到几百千瓦，蓄电池+小柴发可以覆盖。</span></li>
+          <li><b>开导叶，水流冲转</b><span>导叶打开，水流推动转轮，转速从零升到额定（如 1500 r/min 需数分钟）。这一步不需要任何电气电源，纯水力。</span></li>
+          <li><b>起励建压</b><span>转速到位后投入励磁，机端电压从零升到额定。可以用"残压起励"（利用剩磁）或直流起励。此时它已经能给一小片电网提供电压和频率。</span></li>
+          <li><b>给线路充电、带厂用电</b><span>合上主变、送出线路，给邻近变电站充电，形成孤网；再把厂用电切回自供，甩掉柴油机。</span></li>
+          <li><b>带负荷、并网</b><span>逐步带负荷，或与另一孤网/主网同期并列，进入正常发电。</span></li>
+        </ol>
+        <p>它的优势可以总结成四条：<strong>启停灵活、厂用电少、带负荷快、能量储备足</strong>（水库就是"燃料仓"）。而且水电机组还能"调相运行"，只发无功支撑电压，这在黑启动初期极其有用。</p>
+        <p>抽水蓄能电站更特殊：它本来就要频繁启停，机组设计上就考虑了快速启动和黑启动，很多抽蓄电站直接承担电网的黑启动电源角色。</p>
+      </section>
+
+      <section class="sec" id="s4-2">
+        <h3><span class="hn">4.2</span>水电的软肋：不是技术不行，是条件不允许</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>限制</th><th>具体表现</th><th>影响</th></tr></thead>
+            <tbody>
+              <tr><td><b>地理依赖</b></td><td>必须有落差和水源，只能在特定河流上</td><td>负荷中心（东部平原城市）基本无解</td></tr>
+              <tr><td><b>水位与来水</b></td><td>枯水期水位低、水头不足，出力受限；极端干旱年份可能停机</td><td>一年中并非任何时候都能满功率黑启动</td></tr>
+              <tr><td><b>启动仍需辅机</b></td><td>油压、冷却水、励磁都要电源；大型机组往往还要专门的黑启动柴油机</td><td>"自启动"是相对的，要靠本地小电源配合</td></tr>
+              <tr><td><b>通道依赖</b></td><td>电发出来了，还要送得出去</td><td>2008 年冰灾中，正是通道被毁导致恢复极慢</td></tr>
+              <tr><td><b>机组容量匹配</b></td><td>小机组带不动大系统的辅机；大机组启动慢</td><td>需要预先计算"谁带谁"，不能随便配</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>PPT 里给了"启动时长 30 min ~ 2 h"这个区间。这个数字是合理的经验值，但要注意它<strong>只是机组从静止到并网的时间</strong>，不含后续带动其他机组、逐段恢复网架的时间——那部分才是大头（见 <a class="xref" href="#s2-6">2.6</a>）。</p>
+      </section>
+
+      <section class="sec" id="s4-3">
+        <h3><span class="hn">4.3</span>燃气轮机与柴油机：快，但被燃料拴着</h3>
+        <p><strong>燃机</strong>的黑启动能力来自它的启动方式：用柴油机或静态变频装置（<abbr title="Static Frequency Converter 静态变频装置">SFC</abbr>）把转子盘转到点火转速，点火燃烧后自行升速到额定，再并网。整个过程 10~30 分钟，比水电快，而且<strong>可以建在城市热电厂里</strong>，靠近负荷中心。</p>
+        <p>但它的"命门"也很清楚：</p>
+        <ul class="pt">
+          <li><strong>燃料必须持续供应。</strong>天然气管道压力不足、调压站失电、管道受损，燃机就成摆设。所以很多燃机电厂配置双燃料（天然气 + 柴油），柴油储罐一般只够几天。</li>
+          <li><strong>启动电源也是外部依赖。</strong>柴油机要油，SFC 要电。所谓"自启动"，本质是"依赖本地小电源"。</li>
+          <li><strong>运维成本高。</strong>PPT 说"每台每年数百万元"，这个量级在重型燃机的检修+备件+人工范围内是可能的，但差异很大（机组型号、运行小时、检修协议都影响），<b>不宜作为通用结论引用</b>。</li>
+          <li><strong>有碳排放。</strong>在"零碳园区""绿色供应链"这类场景里，这是一个实质性减分项。</li>
+        </ul>
+        <p><strong>柴油发电机组</strong>则是另一个角色：它容量小（几百千瓦到几兆瓦），单独带不起一座城市，但非常适合做"启动电源"——给水电站的油压系统、给火电厂的厂用母线送电。所以它常常是黑启动方案里的"配角"，而不是主角。</p>
+      </section>
+
+      <section class="sec" id="s4-4">
+        <h3><span class="hn">4.4</span>四类方案摆在一起看</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>维度</th><th>水电 / 抽蓄</th><th>燃机</th><th>柴油机组</th><th>构网型储能</th></tr></thead>
+            <tbody>
+              <tr><td>启动到建压</td><td class="m">数分钟 ~ 数十分钟</td><td class="m">10 ~ 30 分钟</td><td class="y">数十秒</td><td class="y">秒级（示范工程 33 s 级）</td></tr>
+              <tr><td>地理限制</td><td class="n">强（需落差水源）</td><td class="m">中（需管网/储罐）</td><td class="y">弱</td><td class="y">很弱（集装箱式，可进城）</td></tr>
+              <tr><td>建设周期</td><td class="n">3 ~ 5 年</td><td class="m">1 ~ 2 年</td><td class="y">数月</td><td class="y">3 ~ 6 个月</td></tr>
+              <tr><td>能量持续</td><td class="y">取决于水库，可很长</td><td class="y">取决于燃料储备</td><td class="y">取决于油罐</td><td class="m">受 SOC 限制，通常小时级</td></tr>
+              <tr><td>过载能力</td><td class="y">强（同步机，可数倍短时过载）</td><td class="y">较强</td><td class="y">强</td><td class="m">较弱，需超配 2~3 倍</td></tr>
+              <tr><td>碳排放</td><td class="y">零碳</td><td class="n">有</td><td class="n">有</td><td class="y">零碳（运行阶段）</td></tr>
+              <tr><td>运维成本</td><td class="y">低</td><td class="n">高</td><td class="m">中（要定期试机、换油）</td><td class="y">低（免维护程度高）</td></tr>
+              <tr><td>典型定位</td><td>主力黑启动电源</td><td>城市型黑启动电源</td><td>启动电源 / 局部保供</td><td>新型黑启动电源 + 电压支撑</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>别被"全面碾压"的说法带跑</div>
+          <p>这张表很容易被读成"储能全面胜出"。但请特别注意<b>"能量持续"和"过载能力"两行</b>——这两项恰恰是同步机的看家本领。真实工程里，构网型储能更适合承担<b>启动阶段</b>（建压、带光伏、带变电站），长时恢复仍需要水电、火电这些"大块头"接续。<b>不是替代，是接力。</b></p>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 08</span><span class="qtag">单选</span><span>第 4 章 · 传统方案</span></div>
+          <p class="q">某东部沿海城市想在市区内建设黑启动电源，附近无水电资源、天然气管网覆盖不足。从"可行性"角度，最合适的方案是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q08" value="A"><span class="lb">A</span><span class="lt">在市中心新建一座大型水电站</span></label>
+            <label class="opt"><input type="radio" name="q08" value="B"><span class="lb">B</span><span class="lt">建设构网型储能电站，并配套黑启动试验验证</span></label>
+            <label class="opt"><input type="radio" name="q08" value="C"><span class="lb">C</span><span class="lt">依靠现有 UPS 机房作为黑启动电源</span></label>
+            <label class="opt"><input type="radio" name="q08" value="D"><span class="lb">D</span><span class="lt">等相邻城市电网恢复后送电进来</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>A 在地理上不可能（平原城市没有落差）；C 的容量差了三个数量级，UPS 只能保控制设备；D 恰恰是黑启动要摆脱的"外部依赖"，而且相邻电网可能同样全停。</p>
+            <p>B 是当前工程上最现实的选择，但请留意"<b>并配套黑启动试验验证</b>"这几个字——装了构网型储能不等于具备黑启动能力，必须通过零起升压、带负荷、孤网/并网切换等试验（见 <a class="xref" href="#s7-3">7.3</a>）。这也是很多项目验收时被卡住的地方。</p>
+          </div>
+        </div>
+      </section>
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s5-1">跟网型与构网型</a> · <a class="xref" href="#s5-5">构网型储能的五个局限</a> · <a class="xref" href="#s9-2">十个容易说错的地方</a></div>
+    </section>
+
+    <!-- ============ 第 5 章 ============ -->
+    <section class="chapter" id="ch5" data-num="05" data-title="构网型储能：把“充电宝”改造成“发电机”">
+      <h2><span class="cnum">CHAPTER 05</span>构网型储能：把"充电宝"改造成"发电机"</h2>
+      <p class="ch-lead">这一章是全课的重点。核心只有一句话：<b>决定能不能黑启动的，不是电池多大，而是控制策略是"跟"还是"构"。</b></p>
+
+      <section class="sec" id="s5-1">
+        <h3><span class="hn">5.1</span>跟网型 vs 构网型：伴舞与领舞</h3>
+        <p>储能电站里，电池只是"油箱"，真正和电网打交道的是<strong>储能变流器（<abbr title="Power Conversion System 储能变流器">PCS</abbr>）</strong>。同样一套电池 + 同样一台 PCS，写进去的控制程序不同，它在电网里的"身份"就完全不同。</p>
+        <p>先讲<strong>跟网型（Grid-Following，简称 GFL）</strong>，这是过去绝大多数储能和光伏逆变器的工作方式：</p>
+        <ul class="pt">
+          <li>它把自己当成一个<strong>电流源</strong>——我只管往电网里"灌"指定大小的电流，电压由电网决定；</li>
+          <li>为了知道"什么时候灌、往哪个方向灌"，它必须先用<strong>锁相环（<abbr title="Phase Locked Loop 锁相环">PLL</abbr>）</strong>测出电网电压的相位；</li>
+          <li>所以它<strong>必须有一个"活着"的电网</strong>做参考。电网一旦消失，PLL 失去参考，它会在几毫秒内判定"孤岛"并停机。</li>
+        </ul>
+        <p><strong>构网型（Grid-Forming，简称 GFM）</strong>则反过来：</p>
+        <ul class="pt">
+          <li>它把自己当成一个<strong>电压源</strong>——我自己输出额定电压、额定频率，谁想用电就来取；</li>
+          <li>它<strong>不需要</strong>靠 PLL 去"跟"电网，而是内部先有一个"50 Hz、额定电压"的参考，再通过控制让输出与这个参考一致；</li>
+          <li>所以它能<strong>在没有任何电网的情况下，从零建立电压和频率</strong>——这就是黑启动能力的来源。</li>
+        </ul>
+        <figure class="fig">
+          <svg viewBox="0 0 720 336" role="img" aria-label="跟网型与构网型控制逻辑对比">
+            <rect x="8" y="10" width="342" height="316" rx="12" fill="#fdf9f7" stroke="#f2ddd2"/>
+            <text x="179" y="34" font-size="13.5" font-weight="700" fill="#b45309" text-anchor="middle">跟网型 GFL · 电流源</text>
+
+            <rect x="38" y="50" width="282" height="38" rx="8" fill="#fff" stroke="#e8d5c9"/>
+            <text x="179" y="74" font-size="11.5" fill="#8a6b52" text-anchor="middle">外部电网提供电压与相位（必须有）</text>
+
+            <rect x="38" y="104" width="282" height="42" rx="8" fill="#fdf1e9" stroke="#ebc9b2"/>
+            <text x="179" y="122" font-size="11.5" fill="#b45309" text-anchor="middle" font-weight="700">PLL 锁相环：测量电网相位 θ</text>
+            <text x="179" y="138" font-size="10.5" fill="#a97b5e" text-anchor="middle">电网一消失，θ 就"测不到"</text>
+
+            <rect x="38" y="162" width="282" height="42" rx="8" fill="#fff" stroke="#e8d5c9"/>
+            <text x="179" y="180" font-size="11.5" fill="#5c6d82" text-anchor="middle">按 θ 输出指定电流（电流环跟踪）</text>
+            <text x="179" y="196" font-size="10.5" fill="#a97b5e" text-anchor="middle">电压由电网"撑"，自己不管</text>
+
+            <rect x="38" y="220" width="282" height="42" rx="8" fill="#eef1f7" stroke="#ccd7e6"/>
+            <text x="179" y="246" font-size="11.5" fill="#31465e" text-anchor="middle">逆变器 + 电池</text>
+
+            <text x="179" y="290" font-size="11.5" fill="#c2410c" text-anchor="middle" font-weight="700">电网没了 → 失去参考 → 立即停机</text>
+            <text x="179" y="310" font-size="10.5" fill="#a97b5e" text-anchor="middle">所以跟网型储能不能做黑启动</text>
+
+            <rect x="370" y="10" width="342" height="316" rx="12" fill="#f5fbf9" stroke="#d3e9e1"/>
+            <text x="541" y="34" font-size="13.5" font-weight="700" fill="#0d7a72" text-anchor="middle">构网型 GFM · 电压源</text>
+
+            <rect x="400" y="50" width="282" height="38" rx="8" fill="#fff" stroke="#cfe6de"/>
+            <text x="541" y="74" font-size="11.5" fill="#0d7a72" text-anchor="middle" font-weight="700">内部自建参考：f* = 50 Hz，U* = 额定</text>
+
+            <rect x="400" y="104" width="282" height="42" rx="8" fill="#e9f7f4" stroke="#bfe3da"/>
+            <text x="541" y="122" font-size="11.5" fill="#0d7a72" text-anchor="middle" font-weight="700">VSG / 下垂控制：算出电压幅值与相位</text>
+            <text x="541" y="138" font-size="10.5" fill="#4f8c84" text-anchor="middle">不需要 PLL 也能"起拍子"</text>
+
+            <rect x="400" y="162" width="282" height="42" rx="8" fill="#fff" stroke="#cfe6de"/>
+            <text x="541" y="180" font-size="11.5" fill="#5c6d82" text-anchor="middle">输出电压（电压外环跟踪）</text>
+            <text x="541" y="196" font-size="10.5" fill="#4f8c84" text-anchor="middle">谁接上来，谁就获得电压和频率</text>
+
+            <rect x="400" y="220" width="282" height="42" rx="8" fill="#eef1f7" stroke="#ccd7e6"/>
+            <text x="541" y="246" font-size="11.5" fill="#31465e" text-anchor="middle">逆变器 + 电池</text>
+
+            <text x="541" y="290" font-size="11.5" fill="#0f7a52" text-anchor="middle" font-weight="700">电网没了 → 依然自主建压 → 可黑启动</text>
+            <text x="541" y="310" font-size="10.5" fill="#4f8c84" text-anchor="middle">"自带发电机属性"的储能</text>
+          </svg>
+          <figcaption>图 5-1　同一套硬件，两种"身份"。左边是伴舞，右边是领舞。</figcaption>
+        </figure>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>合唱团里，跟网型是"跟着指挥唱的团员"——唱得再准，指挥一走就哑了；构网型是"自己打拍子的领唱"——指挥不在，他照样能起调，其他人可以跟着他唱起来。</p>
+          <p>黑启动时，整个乐队（电网）都停了。你需要的不是"唱得准的团员"，而是"能起调的领唱"。</p>
+        </div>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>易错点：构网型不是"电池变大"</div>
+          <p>很多人以为构网型储能就是"配了更大电池、更大 PCS 的储能"。不对。<b>构网型是控制策略的差异</b>，核心在软件（VSG、下垂、虚拟阻抗、电压/电流双环）和相应的硬件裕度（过流能力、散热、直流侧支撑）。判断"真构网"不能看铭牌容量，要看它有没有<b>黑启动试验、人工短路试验、多机并联试验</b>的实证。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s5-2">
+        <h3><span class="hn">5.2</span>四步走：储能黑启动的完整流程</h3>
+        <p>有了"领唱"，接下来就是把歌唱起来。构网型储能的黑启动流程，比传统方案多了一个漂亮的环节：<strong>它可以把站内的光伏/风电也"带起来"</strong>。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 232" role="img" aria-label="构网型储能黑启动四步流程">
+            <defs>
+              <marker id="ar5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#8aa6c6"/>
+              </marker>
+            </defs>
+            <rect x="6" y="20" width="160" height="104" rx="10" fill="#fdf4ef" stroke="#f4dbc9"/>
+            <text x="86" y="44" font-size="12" fill="#c2410c" text-anchor="middle" font-weight="700">① 自启动建压</text>
+            <text x="86" y="66" font-size="10.8" fill="#5c6d82" text-anchor="middle">电池供能，PCS 自供电</text>
+            <text x="86" y="82" font-size="10.8" fill="#5c6d82" text-anchor="middle">零起升压至额定电压</text>
+            <text x="86" y="98" font-size="10.8" fill="#5c6d82" text-anchor="middle">建立 50 Hz 频率参考</text>
+            <text x="86" y="116" font-size="10.5" fill="#b45309" text-anchor="middle" font-weight="700">秒级</text>
+
+            <rect x="186" y="20" width="160" height="104" rx="10" fill="#fdfaef" stroke="#f0e4c0"/>
+            <text x="266" y="44" font-size="12" fill="#8a6b0a" text-anchor="middle" font-weight="700">② 带动新能源</text>
+            <text x="266" y="66" font-size="10.8" fill="#5c6d82" text-anchor="middle">给站内光伏/风电</text>
+            <text x="266" y="82" font-size="10.8" fill="#5c6d82" text-anchor="middle">提供并网参考，使其</text>
+            <text x="266" y="98" font-size="10.8" fill="#5c6d82" text-anchor="middle">并网发电、补充功率</text>
+            <text x="266" y="116" font-size="10.5" fill="#8a6b0a" text-anchor="middle" font-weight="700">秒 ~ 分钟</text>
+
+            <rect x="366" y="20" width="160" height="104" rx="10" fill="#eef5fd" stroke="#c9dcf3"/>
+            <text x="446" y="44" font-size="12" fill="#1d5aa8" text-anchor="middle" font-weight="700">③ 逐段恢复网架</text>
+            <text x="446" y="66" font-size="10.8" fill="#5c6d82" text-anchor="middle">给变压器、线路充电</text>
+            <text x="446" y="82" font-size="10.8" fill="#5c6d82" text-anchor="middle">恢复变电站母线</text>
+            <text x="446" y="98" font-size="10.8" fill="#5c6d82" text-anchor="middle">孤网范围逐步扩大</text>
+            <text x="446" y="116" font-size="10.5" fill="#1d5aa8" text-anchor="middle" font-weight="700">分钟 ~ 小时</text>
+
+            <rect x="546" y="20" width="168" height="104" rx="10" fill="#eef9f5" stroke="#c6e6da"/>
+            <text x="630" y="44" font-size="12" fill="#0f7a52" text-anchor="middle" font-weight="700">④ 同期并列复负荷</text>
+            <text x="630" y="66" font-size="10.8" fill="#5c6d82" text-anchor="middle">与主网/相邻孤网</text>
+            <text x="630" y="82" font-size="10.8" fill="#5c6d82" text-anchor="middle">同期并列，逐步带负荷</text>
+            <text x="630" y="98" font-size="10.8" fill="#5c6d82" text-anchor="middle">转入正常运行</text>
+            <text x="630" y="116" font-size="10.5" fill="#0f7a52" text-anchor="middle" font-weight="700">小时级</text>
+
+            <line x1="168" y1="72" x2="182" y2="72" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar5)"/>
+            <line x1="348" y1="72" x2="362" y2="72" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar5)"/>
+            <line x1="528" y1="72" x2="542" y2="72" stroke="#8aa6c6" stroke-width="1.8" marker-end="url(#ar5)"/>
+
+            <rect x="6" y="142" width="708" height="76" rx="9" fill="#f8fafd" stroke="#e4eaf2" stroke-dasharray="4 3"/>
+            <text x="24" y="164" font-size="11.5" fill="#5c6d82">和传统方案的关键差别：</text>
+            <text x="24" y="184" font-size="11.5" fill="#2c3a4c">传统水电只能"给别人送厂用电"，新能源场站自己起不来；构网型储能能<tspan font-weight="700" fill="#0d7a72">直接给光伏/风电当"电网"</tspan>，</text>
+            <text x="24" y="203" font-size="11.5" fill="#2c3a4c">让它们在黑启动阶段就能发电，把"纯耗电的恢复过程"变成"边恢复边发电"。</text>
+          </svg>
+          <figcaption>图 5-2　构网型储能黑启动四步。第②步是它与传统方案最大的不同。</figcaption>
+        </figure>
+        <p>第②步值得单独说：光伏逆变器也是跟网型的，它必须看到一个"活着的电网"才肯并网。传统黑启动里，光伏只能干等；有了构网型储能提供参考，光伏可以立刻并网发电。<em class="hl">这意味着恢复过程的能量来源从"电池单打"变成"电池 + 光伏"</em>，续航能力大幅提升——这对白天发生的大停电尤其关键。</p>
+      </section>
+
+      <section class="sec" id="s5-3">
+        <h3><span class="hn">5.3</span>关键指标：怎么判断"行不行"</h3>
+        <p>看一个构网型储能项目的黑启动能力，建议盯住下面六个指标。它们也是招标技术规范里应该写清楚的条款：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>指标</th><th>含义</th><th>示范工程参考值</th></tr></thead>
+            <tbody>
+              <tr><td><b>建压时间</b></td><td>从启动指令到建立额定电压的时间</td><td>秒级（公开报道中有 33 s 完成含带光伏的电网黑启动）</td></tr>
+              <tr><td><b>电压精度</b></td><td>稳态时电压与额定值的偏差</td><td>有工程报告 ±0.5%（远优于常规 ±7% 的供电电压偏差要求）</td></tr>
+              <tr><td><b>频率偏差</b></td><td>稳态频率与 50 Hz 的偏差</td><td>约 ±0.02 Hz</td></tr>
+              <tr><td><b>过载能力</b></td><td>短时输出超过额定的倍数与持续时间</td><td>PCS 通常 1.2~1.5 倍/数十秒；带变压器涌流、电机启动时需<b>超配 2~3 倍</b></td></tr>
+              <tr><td><b>并离网切换</b></td><td>孤网与并网之间切换的过渡时间</td><td>≤ 10 ms（负荷"无感"）</td></tr>
+              <tr><td><b>可持续时间</b></td><td>按黑启动负荷曲线能支撑多久</td><td>取决于电池容量与 SOC 预留，通常按小时级设计</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="box tip">
+          <div class="bt"><span class="dot"></span>算一算：黑启动要配多大电池？</div>
+          <p>这是个很实用的估算，评审时经常被问到。假设某 110 kV 变电站黑启动需带 <b>2 MW</b> 重要负荷，持续 <b>4 小时</b>；PCS 效率 0.95，电池放电深度（<abbr title="Depth of Discharge 放电深度">DOD</abbr>）取 0.9，且只允许使用 SOC 的 80%（留 20% 兜底）。</p>
+          <p style="font-family:ui-monospace,monospace;background:#fff;border:1px solid #eee3c4;border-radius:8px;padding:10px;font-size:13.5px;color:#6b5310;line-height:2">
+            需要输出的电量 = 2 MW × 4 h = 8 MWh<br>
+            考虑 PCS 效率 = 8 ÷ 0.95 ≈ 8.42 MWh<br>
+            考虑放电深度 = 8.42 ÷ 0.9 ≈ 9.36 MWh<br>
+            考虑 SOC 预留 = 9.36 ÷ 0.8 ≈ <b>11.7 MWh</b>
+          </p>
+          <p style="margin-top:8px">所以标称容量至少要 <b>12 MWh 左右</b>，还没算变压器励磁涌流、电机启动电流带来的短时功率冲击（那部分靠 PCS 过载或超配解决）。<b>注意：这只是能量账，功率账（MW）要另外算。</b></p>
+        </div>
+      </section>
+
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s7-4">验收清单十二项</a> · <a class="xref" href="#s6-4">零起升压</a> · <a class="xref" href="#s5-5">五个局限</a></div>
+      <section class="sec" id="s5-4">
+        <h3><span class="hn">5.4</span>四个"全国首次"：2026 年的实证进展</h3>
+        <p>2026 年是构网型储能黑启动从"演示"走向"实证"的一年。以下信息来自公开报道，可作为了解技术边界的窗口（具体数据以项目验收报告为准）：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>时间 / 地点</th><th>规模</th><th>做了什么</th><th>关键点</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>2026-04-14</b><br>海南文昌</td>
+                <td>100 MW / 200 MWh<br>独立构网型储能</td>
+                <td>不依赖外部电源自主启动、零起升压，带动霞山变、宝邑变及边城光伏恢复供电，完成孤网/并网切换；同场完成 110 kV 人工短路试验</td>
+                <td>验证了"<b>纯新能源局部电网孤网稳定运行</b>"与故障穿越</td>
+              </tr>
+              <tr>
+                <td><b>2026-04-26</b><br>青海（鼎曜光储）</td>
+                <td>50 MW 光储</td>
+                <td>330 kV 送出线路黑启动、35 kV 离网三相人工短路，覆盖四类共 52 项测试</td>
+                <td>33 s 完成零起升压；电压稳态误差 ±0.5%、频率偏差 ≤ ±0.02 Hz；振荡抑制约 5 s</td>
+              </tr>
+              <tr>
+                <td><b>2026-06-15</b><br>青海果洛（骅麦）</td>
+                <td>110 kV 光储<br>海拔 &gt; 4200 m</td>
+                <td>构网型储能 + 静止同步调相机（<abbr title="Static Synchronous Condenser 静止同步调相机">SSC</abbr>）协同黑启动，带动站内光伏，恢复末端电网并孤网运行</td>
+                <td>国内首次末端弱支撑电网多构网设备协同；<b>33 s 完成电网黑启动，约 2 h 全域负荷带电</b></td>
+              </tr>
+              <tr>
+                <td><b>2026-06-22</b><br>浙江衢州</td>
+                <td>110 kV 维达变</td>
+                <td>零起升压恢复变电站供电，带动工业企业负荷、充电桩、分布式光伏等多元负荷</td>
+                <td>华东首次；验证"源网荷储充"协同与同期并网</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>这四次试验连起来看，能读出三个信号：</p>
+        <ol class="pt">
+          <li><strong>技术门槛已经跨过"能不能用"。</strong>从海岛到 4200 米高原，从 110 kV 到 330 kV，从"带负荷"到"扛短路"，各种极端工况都有了真实数据。</li>
+          <li><strong>系统级协同比单机能力更重要。</strong>果洛是"储能 + 调相机"协同，衢州是"源网荷储充"协同。单台 PCS 的构网能力只是起点。</li>
+          <li><strong>"33 秒"需要正确解读。</strong>它指的是建压与形成孤网的速度，不是全网复电速度（见 <a class="xref" href="#s2-6">2.6</a>）。对外汇报时务必说清楚，否则容易被质疑"夸大宣传"。</li>
+        </ol>
+      </section>
+
+      <section class="sec" id="s5-5">
+        <h3><span class="hn">5.5</span>冷静一下：构网型储能的五个局限</h3>
+        <p>讲优势容易，讲局限才显专业。以下五条，是方案评审时几乎一定会被追问的：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>局限</th><th>具体说明</th><th>工程上的应对</th></tr></thead>
+            <tbody>
+              <tr><td><b>能量有限</b></td><td>电池是"油箱"不是"油井"，小时级就差不多见底；冬季低温还会打折</td><td>预留黑启动专用 SOC；与光伏/水电组合；设计时按最不利工况核算</td></tr>
+              <tr><td><b>过载弱</b></td><td>电力电子短时过流能力远不如同步机（同步机可数倍过载数十秒）</td><td>PCS 超配 2~3 倍；限制单次投入的负荷与变压器容量</td></tr>
+              <tr><td><b>弱网振荡</b></td><td>多机并联 + 低短路比，易出现宽频振荡（次同步/超同步），严重时脱网</td><td>虚拟阻抗、下垂系数整定、阻尼控制；必要时加调相机/SVG</td></tr>
+              <tr><td><b>保护配合难</b></td><td>故障电流只有 1.1~1.5 倍额定，传统过流保护可能"看不见"故障</td><td>设置黑启动专用保护定值区；配置差动、距离等原理不依赖大电流的保护</td></tr>
+              <tr><td><b>标准待完善</b></td><td>"构网型"标签被滥用，单机宣称 ≠ 系统级能力；验收方法仍在建立</td><td>要求提供黑启动、人工短路、多机并联的第三方试验报告</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>必须记住的判断</div>
+          <p>构网型储能目前最合适的定位是<b>"第一把火 + 电压支撑"</b>，而不是"取代水电火电的全能方案"。真实的黑启动方案往往是<b>接力赛</b>：储能点火 → 光伏/风电跟进 → 水电机组接棒 → 火电大规模复电。谁能跑哪一棒，取决于能量、过载和通道条件。</p>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 09</span><span class="qtag">单选</span><span>第 5 章 · GFL/GFM</span></div>
+          <p class="q">跟网型储能无法承担黑启动任务，最根本的原因是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q09" value="A"><span class="lb">A</span><span class="lt">电池容量太小，撑不了那么久</span></label>
+            <label class="opt"><input type="radio" name="q09" value="B"><span class="lb">B</span><span class="lt">它依赖锁相环获取电网相位，电网不存在时无法建立电压和频率参考</span></label>
+            <label class="opt"><input type="radio" name="q09" value="C"><span class="lb">C</span><span class="lt">它的 PCS 效率太低</span></label>
+            <label class="opt"><input type="radio" name="q09" value="D"><span class="lb">D</span><span class="lt">它没有孤岛保护功能</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>跟网型是<b>电流源</b>，它的输出电流必须与电网电压的相位对齐，而这个相位靠 PLL 测量。电网消失 → 没有相位参考 → 它既不知道该输出什么，也无法自己"造"出电压，只能停机。</p>
+            <p>A 是"能不能撑久"的问题，不是"能不能启动"的问题——容量再大也起不来；C 与黑启动能力无关；D 恰好相反，跟网型<b>有</b>孤岛保护，正是这个保护让它在电网消失时主动停机。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="C">
+          <div class="qh"><span class="qn">练习 10</span><span class="qtag">单选</span><span>第 5 章 · 数据解读</span></div>
+          <p class="q">某报道称"该构网型储能项目 33 秒完成黑启动，2 小时实现全域负荷带电"。下列理解正确的是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q10" value="A"><span class="lb">A</span><span class="lt">两句话矛盾，说明数据不可信</span></label>
+            <label class="opt"><input type="radio" name="q10" value="B"><span class="lb">B</span><span class="lt">33 秒是指第一台火电机组并网的时间</span></label>
+            <label class="opt"><input type="radio" name="q10" value="C"><span class="lb">C</span><span class="lt">33 秒指建压并形成孤网，2 小时指全流程恢复负荷，两者描述的是不同阶段</span></label>
+            <label class="opt"><input type="radio" name="q10" value="D"><span class="lb">D</span><span class="lt">2 小时是保守说法，实际可以更快</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>C</div>
+            <p>两个数字对应黑启动的不同阶段：33 秒是"设备启动 → 建立电压 → 带动站内光伏 → 形成末端孤网"；2 小时是"从全域失电到负荷实际带电"，中间包含逐段给线路和变压器充电、恢复变电站、逐步带负荷等大量操作。</p>
+            <p>这类"看起来矛盾"的数据在工程报道里非常常见，读的时候要问一句：<b>这个时间是从哪一步算到哪一步？</b>养成这个习惯，你在技术交流中就不容易被数字绕进去。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="C">
+          <div class="qh"><span class="qn">练习 11</span><span class="qtag">计算</span><span>第 5 章 · 容量估算</span></div>
+          <p class="q">某变电站黑启动需带 1.5 MW 重要负荷持续 3 小时。PCS 效率 0.95，放电深度取 0.9，仅允许使用 SOC 的 80%。所需电池标称容量最接近：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q11" value="A"><span class="lb">A</span><span class="lt">4.5 MWh</span></label>
+            <label class="opt"><input type="radio" name="q11" value="B"><span class="lb">B</span><span class="lt">5.3 MWh</span></label>
+            <label class="opt"><input type="radio" name="q11" value="C"><span class="lb">C</span><span class="lt">6.6 MWh</span></label>
+            <label class="opt"><input type="radio" name="q11" value="D"><span class="lb">D</span><span class="lt">8.5 MWh</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>C</div>
+            <p>逐层折算：1.5 MW × 3 h = <b>4.5 MWh</b>（负荷实际需要的电能）；÷ 0.95（PCS 效率）≈ 4.74；÷ 0.9（放电深度）≈ 5.26；÷ 0.8（可用 SOC 区间）≈ <b>6.58 MWh</b>。</p>
+            <p>A 是只算了负荷电量，漏掉三层折损——这是最典型的错误，报出去会被评审直接打回；B 漏了 SOC 预留；D 过度保守。<b>口诀：先算电量，再除效率、除 DOD、除可用区间。</b></p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 6 章 ============ -->
+    <section class="chapter" id="ch6" data-num="06" data-title="关键技术：让电力电子学会“发电机的脾气”">
+      <h2><span class="cnum">CHAPTER 06</span>关键技术：让电力电子学会"发电机的脾气"</h2>
+      <p class="ch-lead">VSG 是"心法"，零起升压和同期并列是"手法"，多机并联是"配合"。这一章偏技术，但每个概念都配了比喻，慢慢读能啃下来。</p>
+
+      <section class="sec" id="s6-1">
+        <h3><span class="hn">6.1</span>VSG：给逆变器装一个"虚拟转子"</h3>
+        <p>同步发电机之所以"稳"，是因为它有一个几百吨重的转子：负荷突变时，转子靠惯性"扛"一下，频率不会瞬间崩。逆变器没有转子，只有开关管，响应快得可怕（微秒级），但也"一点就着"。</p>
+        <p><strong>虚拟同步发电机（<abbr title="Virtual Synchronous Generator 虚拟同步发电机">VSG</abbr>）</strong>的思路很聪明：既然没有转子，那就<em class="hl">用算法"算"一个转子出来</em>。让逆变器的输出特性，在数学上模仿同步机的转子运动方程。</p>
+        <figure class="fig">
+          <svg viewBox="0 0 720 292" role="img" aria-label="VSG 虚拟同步机控制框图">
+            <defs>
+              <marker id="ar6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#7d99b8"/>
+              </marker>
+              <marker id="ar6d" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                <path d="M0 0 L10 5 L0 10 z" fill="#b9c9da"/>
+              </marker>
+            </defs>
+            <rect x="6" y="26" width="124" height="60" rx="9" fill="#eef5fd" stroke="#c9dcf3"/>
+            <text x="68" y="50" font-size="11.5" fill="#1d5aa8" text-anchor="middle" font-weight="700">设定值</text>
+            <text x="68" y="67" font-size="10.2" fill="#5c6d82" text-anchor="middle">f*、U*、P*、Q*</text>
+
+            <rect x="150" y="12" width="214" height="88" rx="9" fill="#e9f7f4" stroke="#a9dbd0" stroke-width="1.6"/>
+            <text x="257" y="34" font-size="11.5" fill="#0d7a72" text-anchor="middle" font-weight="700">虚拟转子（核心）</text>
+            <text x="257" y="53" font-size="9.6" fill="#3f7b74" text-anchor="middle">2H·dΔω/dt = ΔPm − ΔPe − D·Δω</text>
+            <text x="257" y="71" font-size="10.2" fill="#3f7b74" text-anchor="middle">积分得到相位 θ</text>
+            <text x="257" y="88" font-size="10" fill="#6aa39b" text-anchor="middle">Q–U 下垂得到电压幅值</text>
+
+            <rect x="386" y="26" width="132" height="60" rx="9" fill="#fff" stroke="#dbe5f0"/>
+            <text x="452" y="50" font-size="11.5" fill="#31465e" text-anchor="middle" font-weight="700">三相电压指令</text>
+            <text x="452" y="67" font-size="10.5" fill="#5c6d82" text-anchor="middle">u = U·sin(θ)</text>
+
+            <rect x="546" y="26" width="158" height="60" rx="9" fill="#fff" stroke="#dbe5f0"/>
+            <text x="625" y="50" font-size="11.5" fill="#31465e" text-anchor="middle" font-weight="700">电压/电流双环 + PWM</text>
+            <text x="625" y="67" font-size="10.5" fill="#5c6d82" text-anchor="middle">驱动开关管</text>
+
+            <line x1="132" y1="56" x2="146" y2="56" stroke="#7d99b8" stroke-width="1.8" marker-end="url(#ar6)"/>
+            <line x1="366" y1="56" x2="382" y2="56" stroke="#7d99b8" stroke-width="1.8" marker-end="url(#ar6)"/>
+            <line x1="520" y1="56" x2="542" y2="56" stroke="#7d99b8" stroke-width="1.8" marker-end="url(#ar6)"/>
+
+            <path d="M625 88 L625 124 L257 124 L257 106" fill="none" stroke="#b9c9da" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ar6d)"/>
+            <text x="440" y="118" font-size="10.2" fill="#8494a8" text-anchor="middle">实测 P、Q 反馈（闭环）</text>
+
+            <rect x="6" y="146" width="698" height="64" rx="8" fill="#fdf4ef" stroke="#f4dbc9"/>
+            <text x="22" y="168" font-size="11" fill="#8a6b52">H 调大 → 频率变"迟钝"，抗扰动强，但功率响应慢；D 调大 → 振荡收敛快，但稳态频率偏差变大。</text>
+            <text x="22" y="190" font-size="11" fill="#b45309" font-weight="700">这两个参数就是"脾气"的旋钮 —— 调它们，本质是在"抗扰动"与"快响应"之间找平衡。</text>
+
+            <text x="6" y="236" font-size="11" fill="#8494a8">物理约束：</text>
+            <text x="80" y="236" font-size="11" fill="#5c6d82">虚拟惯量不是白来的 —— 要"扛"频率跌落，就必须瞬间多放功率，受<tspan font-weight="700" fill="#c2410c">电池放电能力</tspan>和<tspan font-weight="700" fill="#c2410c">变流器容量</tspan>双重限制。</text>
+            <text x="80" y="258" font-size="11" fill="#5c6d82">所以 H 不能随便设大。设得太大，一次扰动就会要求超出硬件能力的电流，反而崩溃。</text>
+          </svg>
+          <figcaption>图 6-1　VSG 控制链。核心是中间那个"虚拟转子"——用方程代替铁疙瘩。</figcaption>
+        </figure>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>同步机的惯量是"体重"，天生的；VSG 的惯量是"演技"，靠算法演出来的。演技再好，也受演员体力限制——你让一个瘦子演 200 斤的胖子去挡冲撞，第一下就露馅了。这就是为什么 VSG 的 H 通常只设在 3~5 s（PPT 给的区间是合理的），而不是同步机火电的 6~8 s。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s6-2">
+        <h3><span class="hn">6.2</span>H 和 D：两个旋钮，两种代价</h3>
+        <p>VSG 的参数调试，本质是在"抗扰动"和"快响应"之间找平衡。这一节把两个核心参数讲透：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>参数</th><th>物理含义</th><th>调大以后</th><th>代价</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>惯性常数 H</b><br><span style="font-size:12px;color:#8494a8">典型 3~5 s，可调</span></td>
+                <td>虚拟转子储存的"等效动能"，决定频率变化的迟钝程度</td>
+                <td>频率跌落变慢，RoCoF 减小，系统更"扛揍"</td>
+                <td>功率响应变慢、相位滞后增大，易与电网阻抗形成<b>低频振荡</b>；且需要更大的瞬时功率支撑</td>
+              </tr>
+              <tr>
+                <td><b>阻尼系数 D</b><br><span style="font-size:12px;color:#8494a8">典型 0.1~0.3，可调</span></td>
+                <td>抑制转速/频率波动的"摩擦阻力"</td>
+                <td>振荡衰减快，动态过程更平稳</td>
+                <td>稳态频率偏差增大（相当于给系统加了"永久性的下垂"），多机之间还可能分配不均</td>
+              </tr>
+              <tr>
+                <td><b>下垂系数 k</b></td>
+                <td>频率/电压随功率变化的斜率</td>
+                <td>k 大 → 分担负荷少，但频率/电压偏差大</td>
+                <td>多机并联时必须<b>按容量比例整定</b>，否则负荷分配失衡、产生环流</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>和真实的同步发电机比一比，差别一目了然：</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>维度</th><th>VSG（构网型 PCS）</th><th>传统同步发电机</th></tr></thead>
+            <tbody>
+              <tr><td>惯量来源</td><td>算法模拟（虚拟）</td><td>物理转子（真实）</td></tr>
+              <tr><td>H 可调性</td><td class="y">可在线调节</td><td class="n">固定，由设计决定</td></tr>
+              <tr><td>响应速度</td><td class="y">毫秒级</td><td class="m">秒级（受机械与励磁时间常数限制）</td></tr>
+              <tr><td>过载能力</td><td class="n">弱（1.2~1.5 倍，秒级）</td><td class="y">强（可数倍，数十秒）</td></tr>
+              <tr><td>并离网切换</td><td class="y">≤ 10 ms，可无缝</td><td class="n">需停机的准同期并列，不能"无缝"</td></tr>
+              <tr><td>短路电流贡献</td><td class="n">受限（1.1~1.5 倍额定）</td><td class="y">大（5~8 倍额定）</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>易错点</div>
+          <p>PPT 表格里把 VSG 的"调速器响应"写成"毫秒级"、同步机写"秒级"，这是对的。<b>但"响应快"不等于"更好"</b>——响应太快、惯量太小的系统，反而更容易振荡。工程上追求的是"匹配"：构网型设备的响应特性要和电网的阻抗特性相配合，否则会出现宽频振荡（见 <a class="xref" href="#s6-3">6.3</a>）。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s6-3">
+        <h3><span class="hn">6.3</span>多机并联：为什么"人多"反而容易乱</h3>
+        <p>一座百兆瓦级储能电站，往往是几十台 PCS 并联运行。黑启动时它们要像一支训练有素的队伍，共同撑起一片电网。但"人多"会带来三个新问题：</p>
+        <p><strong>问题一：功率分配不均。</strong>理想情况下，各台 PCS 按其容量比例分担负荷。但如果下垂系数设得不匹配，就会出现"能者多劳"——某些机组扛了超出自己能力的负荷，先过载跳机，剩下的又被压垮，形成连锁。</p>
+        <p><strong>问题二：环流。</strong>如果两台 PCS 输出的电压幅值或相位有微小差异，它们之间就会产生电流——这股电流不流向负荷，而是在机间"打转"，白白发热、增加损耗，严重时触发过流保护。</p>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>两个人抬一张桌子。如果一个人个子高（电压高）、一个人个子矮（电压低），桌子就会倾斜，两个人都得额外用力去"顶"——这就是环流。如果一个人走得快、一个人走得慢（相位差），桌子就会扭。解决办法不是"谁力气大谁多抬"，而是<strong>把两个人的身高和步调校准</strong>——这就是下垂系数整定和相位同步。</p>
+        </div>
+        <p><strong>问题三：谐振。</strong>每台 PCS 都有输出滤波器（电感、电容），多台并联后，这些滤波元件与电网阻抗、线路电容组合，会在某些频率上形成"共振点"。一旦系统里出现这个频率的扰动（比如变压器合闸的谐波、负荷的突变），就会被放大，产生<strong>宽频振荡</strong>——表现为电压、电流的持续摆动，严重时保护动作、机组脱网。</p>
+        <p>这个问题在<strong>弱电网</strong>（低短路比）下尤其突出。青海鼎曜那个项目公开提到"振荡抑制时间 5 秒、成功率 100%"，就是在说这件事——<em class="hl">振荡不是"会不会发生"，而是"发生了能不能在几秒内压住"</em>。</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>问题</th><th>根本原因</th><th>常用抑制手段</th></tr></thead>
+            <tbody>
+              <tr><td>功率分配不均</td><td>下垂系数与容量不匹配</td><td>按容量比例整定下垂系数；集中监控协调</td></tr>
+              <tr><td>环流</td><td>输出电压幅值/相位不一致</td><td>虚拟阻抗；提高同步精度；均流控制</td></tr>
+              <tr><td>宽频振荡</td><td>多机输出阻抗与电网阻抗形成谐振</td><td>有源阻尼；虚拟阻抗重塑；必要时加装调相机/SVG</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sec" id="s6-4">
+        <h3><span class="hn">6.4</span>零起升压：为什么不能"啪"一下合闸</h3>
+        <p>"零起升压"是黑启动里出现频率最高的词之一，但它到底在防什么？答案是<strong>励磁涌流</strong>。</p>
+        <p>变压器空载合闸的瞬间，铁芯里的磁通会发生突变。如果合闸时刻正好赶上电压过零附近，磁通可能达到额定值的两倍以上，铁芯深度饱和，励磁阻抗骤降——电流瞬间冲到额定电流的 <strong>6~8 倍</strong>，这就是励磁涌流。</p>
+        <p>它的危害有三层：</p>
+        <ul class="pt">
+          <li><strong>电压跌落。</strong>黑启动初期系统容量很小，一个涌流就可能把电压拉下去 10%~20%，导致已经带上的负荷脱扣、甚至整个孤网崩溃。</li>
+          <li><strong>保护误动。</strong>涌流里有大量二次谐波和直流分量，差动保护靠二次谐波制动"躲"过它，但过流保护可能误跳，把刚建立的通道又切断。</li>
+          <li><strong>机械应力。</strong>巨大的电动力作用在绕组上，反复冲击会加速绝缘和结构老化。</li>
+        </ul>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>零起升压怎么做</div>
+          <p>先把电压从接近 0 缓慢升起（比如 5%、10%、20%……分档上升），让铁芯的磁通随之"慢慢长起来"，不给它突变的机会；等电压升到额定附近、系统稳定了，再合下一台设备。<b>本质是"用时间换冲击"</b>——把一次巨大的涌流，摊成很多次小的。</p>
+        </div>
+        <p>配套手段还有几个，实际方案里常组合使用：</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th>手段</th><th>原理</th><th>适用场景</th></tr></thead>
+            <tbody>
+              <tr><td><b>零起升压</b></td><td>缓慢升压，避免磁通突变</td><td>黑启动全过程的基础操作</td></tr>
+              <tr><td><b>选相合闸</b></td><td>在电压峰值时刻合闸，使磁通从零开始</td><td>断路器具备选相功能时</td></tr>
+              <tr><td><b>合闸电阻</b></td><td>串入电阻限制涌流幅值</td><td>高压断路器自带</td></tr>
+              <tr><td><b>涌流抑制器</b></td><td>通过控制合闸角度抑制剩磁影响</td><td>新建变电站可选配</td></tr>
+              <tr><td><b>保护定值调整</b></td><td>临时延长过流保护延时、提高定值</td><td>黑启动专用定值区</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>还有一个相关的坑：<strong>空载长线路的电容效应</strong>。一条几百公里的空载高压线路，相当于一个大电容，末端电压会比首端高出 10%~20%（费兰梯效应）。黑启动时如果直接把长线合上，末端设备可能过压。对策是分段充电、投入并联电抗器、或让电源"进相运行"吸收无功。</p>
+      </section>
+
+      <section class="sec" id="s6-5">
+        <h3><span class="hn">6.5</span>同期并列：把两个"小岛"合成一个"大陆"</h3>
+        <p>黑启动到后期，会出现好几个孤网"小岛"。要把它们连起来，必须做<strong>同期并列</strong>——就像两列火车要挂在一起，速度、位置、方向都得对上。</p>
+        <p>同期并列的三个条件：</p>
+        <ol class="pt">
+          <li><strong>电压幅值接近</strong>（偏差一般不超过 5%）；</li>
+          <li><strong>频率接近</strong>（偏差一般不超过 0.1~0.25 Hz，实际操作用更严）；</li>
+          <li><strong>相角差接近零</strong>（一般不超过 10°，实际多在几度以内）。</li>
+        </ol>
+        <p>满足这三条，合闸瞬间的冲击电流才小，不会把两个系统都"撞"垮。</p>
+        <p><strong>构网型的优势在这里体现得最明显</strong>：传统同步机并列，要靠调速器慢慢调转速、靠励磁调电压，操作繁琐、耗时长；构网型 PCS 可以直接调整自己的输出相位去"追"目标电网，甚至不需要 PLL 就能完成同步，并离网切换时间可做到 10 ms 以内——对负荷来说，灯都不闪一下。</p>
+        <div class="note">
+          <div class="bt"><span class="dot"></span>打个比方</div>
+          <p>两台跑步机要并排接力，一个人从 A 机跳到 B 机。如果两台速度差很多，跳过去就摔；速度、位置都对上了，才能平稳换过去。"无缝切换"就是这个意思——<b>负荷感觉不到"换了个电源"</b>。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s6-6">
+        <h3><span class="hn">6.6</span>现场六个"坑"：纸面上看不到的风险</h3>
+        <p>技术方案写得再漂亮，现场还是会踩坑。这六条来自工程实践的常见问题，值得在做方案时逐条对照：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>坑</th><th>现象</th><th>怎么防</th></tr></thead>
+            <tbody>
+              <tr><td><b>保护失配</b></td><td>短路电流只有额定的 1.1~1.5 倍，过流保护不动作，故障切不掉</td><td>设置黑启动专用定值区；用差动、距离等不依赖大电流的保护；提前做短路电流校核</td></tr>
+              <tr><td><b>涌流连锁</b></td><td>合一台变压器，电压跌，已带的负荷脱扣，孤网崩</td><td>零起升压；限制单次合闸容量；负荷分批投入</td></tr>
+              <tr><td><b>多机振荡</b></td><td>电压电流持续摆动，几秒到几十秒不收敛</td><td>虚拟阻抗、阻尼控制；仿真先行；现场逐步加机</td></tr>
+              <tr><td><b>低频减载误动</b></td><td>恢复过程中频率短暂下探，减载装置把重要负荷切了</td><td>黑启动期间调整或闭锁相关装置；加强频率支撑</td></tr>
+              <tr><td><b>辅助系统失电</b></td><td>通信、监控、直流充电机没电，调度"看不见"现场</td><td>黑启动前核查直流系统、通信电源、UPS 续航</td></tr>
+              <tr><td><b>人跟不上</b></td><td>操作票不熟、界面不熟、协同不顺，时间全耗在沟通上</td><td>定期实战演练；把黑启动纳入常态化培训（本课件的目的之一）</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 12</span><span class="qtag">单选</span><span>第 6 章 · VSG 参数</span></div>
+          <p class="q">把某构网型 PCS 的虚拟惯性常数 H 从 3 s 调到 8 s，最可能出现的后果是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q12" value="A"><span class="lb">A</span><span class="lt">频率跌落更快，但恢复更平稳</span></label>
+            <label class="opt"><input type="radio" name="q12" value="B"><span class="lb">B</span><span class="lt">频率跌落变慢，但功率响应变慢，可能引发低频振荡或超出变流器能力</span></label>
+            <label class="opt"><input type="radio" name="q12" value="C"><span class="lb">C</span><span class="lt">没有任何影响，H 只是显示参数</span></label>
+            <label class="opt"><input type="radio" name="q12" value="D"><span class="lb">D</span><span class="lt">黑启动时间会缩短到 10 秒以内</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>H 增大 → 同样功率缺额下 Δf/Δt 变小，频率"跌得慢"，这是好处。但代价是：虚拟转子需要"扛"住更长时间的不平衡，意味着要瞬间释放更多功率，受<b>电池放电能力与变流器容量</b>限制；同时相位滞后增大，容易与电网阻抗形成低频振荡。</p>
+            <p>这就是"不是越大越好"的原因。实际工程中 H 常设在 3~5 s，与真实同步机接近，兼顾支撑能力与稳定性。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="C">
+          <div class="qh"><span class="qn">练习 13</span><span class="qtag">单选</span><span>第 6 章 · 涌流</span></div>
+          <p class="q">黑启动过程中要给一座 110 kV 变电站充电，为抑制主变合闸的励磁涌流，最直接有效的操作是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q13" value="A"><span class="lb">A</span><span class="lt">先把所有负荷都带满，再合变压器</span></label>
+            <label class="opt"><input type="radio" name="q13" value="B"><span class="lb">B</span><span class="lt">把保护全部退出，避免误跳</span></label>
+            <label class="opt"><input type="radio" name="q13" value="C"><span class="lb">C</span><span class="lt">采用零起升压，缓慢把电压从零升到额定后再带负荷</span></label>
+            <label class="opt"><input type="radio" name="q13" value="D"><span class="lb">D</span><span class="lt">提高电池 SOC 到 100% 再合闸</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>C</div>
+            <p>励磁涌流的根源是<b>磁通突变</b>。零起升压让磁通随电压缓慢建立，从根本上消除突变；同时把"一次大冲击"摊成多次小冲击。</p>
+            <p>A 会让涌流叠加负荷电流，情况更糟；B 是严重违章操作，失去保护等于"蒙眼开车"，任何故障都可能烧设备；D 与涌流无关（涌流由铁芯特性和合闸角决定，不由 SOC 决定）。实际工程中还会配合选相合闸、合闸电阻、黑启动专用保护定值等手段。</p>
+          </div>
+        </div>
+
+        <div class="quiz" data-answer="A">
+          <div class="qh"><span class="qn">练习 14</span><span class="qtag">单选</span><span>第 6 章 · 多机并联</span></div>
+          <p class="q">某储能电站多台构网型 PCS 并联运行，发现两台机组之间存在明显环流（电流在机间流动而不流向负荷），最可能的原因是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q14" value="A"><span class="lb">A</span><span class="lt">两台 PCS 输出电压的幅值或相位存在偏差</span></label>
+            <label class="opt"><input type="radio" name="q14" value="B"><span class="lb">B</span><span class="lt">电池的 SOC 不一致</span></label>
+            <label class="opt"><input type="radio" name="q14" value="C"><span class="lb">C</span><span class="lt">负荷太小，储能"没活干"</span></label>
+            <label class="opt"><input type="radio" name="q14" value="D"><span class="lb">D</span><span class="lt">环境温度过高导致散热不良</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>A</div>
+            <p>环流的本质是两台电压源之间存在<b>电势差</b>：ΔU = U₁ − U₂，环流 I = ΔU / Z（Z 为两台机之间的等效阻抗）。幅值差或相位差都会产生 ΔU。</p>
+            <p>B 的 SOC 不一致影响的是"能撑多久"和功率分配，不直接产生环流（但会通过下垂控制间接影响出力）；C、D 与环流无因果关系。常用的抑制手段是虚拟阻抗、提高同步精度、均流控制，并在整定时让下垂系数与容量匹配。</p>
+          </div>
+        </div>
+      </section>
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s7-3">三层验证：仿真、动模、现场</a> · <a class="xref" href="#s2-6">33 秒不等于全城复电</a></div>
+    </section>
+
+    <!-- ============ 第 7 章 ============ -->
+    <section class="chapter" id="ch7" data-num="07" data-title="标准与验证：怎么证明“我真的能黑启动”">
+      <h2><span class="cnum">CHAPTER 07</span>标准与验证：怎么证明"我真的能黑启动"</h2>
+      <p class="ch-lead">黑启动最尴尬的地方是"平时用不上、用时输不起"。所以标准的核心不是"怎么设计"，而是"怎么验证"。</p>
+
+      <section class="sec" id="s7-1">
+        <h3><span class="hn">7.1</span>GB/T 43462—2023：储能黑启动的"专用说明书"</h3>
+        <p>PPT 里提到"GB/T 43462 已实施"，这句话是对的，但信息太少。把关键信息补全：</p>
+        <div class="tw">
+          <table>
+            <tbody>
+              <tr><td style="width:130px;background:#f7f9fc"><b>标准号</b></td><td>GB/T 43462—2023</td></tr>
+              <tr><td style="background:#f7f9fc"><b>中文名称</b></td><td>电化学储能黑启动技术导则</td></tr>
+              <tr><td style="background:#f7f9fc"><b>英文名称</b></td><td>Technical guide for black-start of electrochemical energy storage</td></tr>
+              <tr><td style="background:#f7f9fc"><b>发布日期</b></td><td>2023-12-28</td></tr>
+              <tr><td style="background:#f7f9fc"><b>实施日期</b></td><td><b>2024-07-01</b></td></tr>
+              <tr><td style="background:#f7f9fc"><b>归口单位</b></td><td>全国电力储能标准化技术委员会（TC 550）</td></tr>
+              <tr><td style="background:#f7f9fc"><b>主要引用</b></td><td>GB/T 36558、GB/T 38334、GB 51048、GB/T 50064、DL/T 2528 等</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>这份导则要解决的核心问题是：<strong>电化学储能参与黑启动时，能力怎么界定、过程怎么组织、效果怎么验证。</strong>它通常会覆盖几个方面（具体条款以标准正文为准）：</p>
+        <ul class="pt">
+          <li><strong>基本要求</strong>：黑启动电源应具备的条件、与电网的配合关系、安全边界；</li>
+          <li><strong>黑启动过程</strong>：自启动、建立电压频率、带负荷、并网（同期）各阶段的技术要求；</li>
+          <li><strong>能力指标</strong>：建压时间、电压/频率偏差、带载能力、持续时间等；</li>
+          <li><strong>试验与验证</strong>：试验项目、测试方法、判据；</li>
+          <li><strong>安全与保障</strong>：防止误操作、防孤岛、防设备损坏的措施。</li>
+        </ul>
+        <div class="warn">
+          <div class="bt"><span class="dot"></span>引用时的注意事项</div>
+          <p>在技术方案或投标文件里引用标准，务必<b>写全标准号、年份和名称</b>（GB/T 43462—2023《电化学储能黑启动技术导则》），并说明引用的是哪一类要求。<b>不要写成"依据 GB/T 43462 规定，构网型储能必须在 33 秒内完成黑启动"</b>——标准不会给这种具体数字，33 秒是工程实测值，混淆了会被专家挑出来。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s7-2">
+        <h3><span class="hn">7.2</span>标准体系地图：一份文件管不了一件事</h3>
+        <p>做黑启动项目，往往要同时满足一整套标准。下面这张表可以作为查标准的索引：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>层级</th><th>标准（示例）</th><th>管什么</th></tr></thead>
+            <tbody>
+              <tr><td><b>顶层</b></td><td>GB 38755—2019《电力系统安全稳定导则》</td><td>三道防线、黑启动的总体定位与原则</td></tr>
+              <tr><td><b>专项</b></td><td>GB/T 43462—2023《电化学储能黑启动技术导则》</td><td>储能黑启动的能力要求、过程与试验</td></tr>
+              <tr><td><b>接入</b></td><td>GB/T 36547《电化学储能电站接入电网技术规定》<br>GB/T 44112《电化学储能电站接入电网运行控制规范》</td><td>并网的技术条件与运行控制</td></tr>
+              <tr><td><b>测试</b></td><td>GB/T 36548《电化学储能电站接入电网测试规程》</td><td>并网测试项目与方法</td></tr>
+              <tr><td><b>设备</b></td><td>GB/T 34120《电化学储能系统储能变流器技术要求》<br>GB/T 34133《储能变流器检测技术规程》</td><td>PCS 的技术要求与检测</td></tr>
+              <tr><td><b>设计</b></td><td>GB 51048《电化学储能电站设计规范》</td><td>电站总体设计、消防与安全</td></tr>
+              <tr><td><b>构网型</b></td><td>GB/T 47968—2026《构网型变流器通用技术规范》<br><span style="font-size:12px;color:#8494a8">（已发布，待实施，以官方信息为准）</span></td><td>构网型设备的定义、性能与试验</td></tr>
+              <tr><td><b>虚拟同步机</b></td><td>GB/T 38983.2—2026《虚拟同步机 第 2 部分：电力储能虚拟同步机》<br><span style="font-size:12px;color:#8494a8">（已发布，待实施）</span></td><td>VSG 的技术要求与测试</td></tr>
+              <tr><td><b>新能源场站</b></td><td>GB/T 19964《光伏发电站接入电力系统技术规定》<br>GB/T 19963《风电场接入电力系统技术规定》</td><td>场站并网与故障穿越</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>读这张表的方法：<strong>先看顶层确定"要不要做"，再看专项确定"怎么做"，然后接入/测试/设备三条线确定"做成什么样、怎么证明"。</strong>做方案时按这个顺序查，不会漏项。</p>
+      </section>
+
+      <section class="sec" id="s7-3">
+        <h3><span class="hn">7.3</span>三层验证：仿真、动模、现场</h3>
+        <p>黑启动不能"设计完就宣布具备能力"。工程上一般要过三道关：</p>
+        <ol class="steps">
+          <li><b>全电磁暂态仿真</b><span>用 PSCAD/EMTDC 等工具建立"电网 + 储能 + 变压器 + 负荷"的精细模型，仿真零起升压、变压器合闸涌流、多机并联、故障穿越等工况。目的是把"会不会振荡、电压跌多少、保护会不会误动"提前算出来。这一步成本最低，但最依赖建模精度——模型错了，后面全错。</span></li>
+            <li><b>动模试验 / 硬件在环</b><span>把真实的 PCS 控制器接入实时仿真器（RTDS），或者接入按比例缩小的物理模拟系统。目的是验证"真实控制器 + 模拟电网"的配合，能发现纯软件仿真发现不了的控制延时、采样误差、通信延迟问题。</span></li>
+            <li><b>现场试验</b><span>真刀真枪：零起升压建压、给真实变压器充电、带动真实光伏、孤网运行一段时间、同期并入主网、必要时做人工短路。这是唯一能出"验收报告"的一步，也是风险最高的一步，必须配预案（万一失败怎么退回）。</span></li>
+        </ol>
+        <p>公开报道的几个示范工程，基本都走了完整流程。比如青海果洛那次，报道提到试验前"完成局部电网全电磁精细化建模，闭环开展构网储能、静止同步调相机联动黑启动全流程仿真推演"——这就是第 1 步；而海南文昌、青海鼎曜都做了"人工短路试验"，那是第 3 步里最硬的一项。</p>
+        <div class="key">
+          <div class="bt"><span class="dot"></span>为什么人工短路试验这么重要</div>
+          <p>黑启动只证明"能从零起来"，但起来之后遇到故障能不能扛住，是另一回事。人工短路试验是<b>故意制造一个真实的短路</b>，看构网型储能能不能提供足够的故障电流、故障切除后能不能毫秒级重建电压、会不会脱网或闭锁。<b>没有这一项，"构网"两个字就只是宣传语。</b></p>
+        </div>
+      </section>
+
+      <section class="sec" id="s7-4">
+        <h3><span class="hn">7.4</span>验收清单：十二个必查项</h3>
+        <p>如果你要评审一份黑启动方案或验收一个项目，可以拿这张表逐条打勾：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>#</th><th>检查项</th><th>看什么</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>自启动能力</td><td>是否真正不依赖外部电源（含控制回路、辅助电源）</td></tr>
+              <tr><td>2</td><td>建压时间</td><td>从指令到额定电压的实测秒数，是否含辅助设备启动</td></tr>
+              <tr><td>3</td><td>电压/频率精度</td><td>稳态偏差、动态恢复时间</td></tr>
+              <tr><td>4</td><td>带载能力</td><td>能带多大负荷、单次最大合闸变压器容量</td></tr>
+              <tr><td>5</td><td>涌流抑制</td><td>合闸时电压跌落幅度、保护是否误动</td></tr>
+              <tr><td>6</td><td>多机并联</td><td>功率分配偏差、环流大小、振荡收敛时间</td></tr>
+              <tr><td>7</td><td>同期并列</td><td>并列冲击电流、切换时间、是否无缝</td></tr>
+              <tr><td>8</td><td>故障穿越</td><td>人工短路后的电压恢复、是否脱网/闭锁</td></tr>
+              <tr><td>9</td><td>持续时间</td><td>按实际负荷曲线能撑多久，SOC 下限多少</td></tr>
+              <tr><td>10</td><td>保护配合</td><td>黑启动专用定值区、短路电流校核报告</td></tr>
+              <tr><td>11</td><td>辅助系统</td><td>直流、通信、监控、消防的续航与切换</td></tr>
+              <tr><td>12</td><td>预案与演练</td><td>失败退回方案、人员分工、定期演练记录</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="quiz" data-answer="B">
+          <div class="qh"><span class="qn">练习 15</span><span class="qtag">单选</span><span>第 7 章 · 标准</span></div>
+          <p class="q">GB/T 43462—2023 的标准名称和实施日期是：</p>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="q15" value="A"><span class="lb">A</span><span class="lt">《构网型变流器通用技术规范》，2026 年实施</span></label>
+            <label class="opt"><input type="radio" name="q15" value="B"><span class="lb">B</span><span class="lt">《电化学储能黑启动技术导则》，2024 年 7 月 1 日实施</span></label>
+            <label class="opt"><input type="radio" name="q15" value="C"><span class="lb">C</span><span class="lt">《电力系统安全稳定导则》，2019 年实施</span></label>
+            <label class="opt"><input type="radio" name="q15" value="D"><span class="lb">D</span><span class="lt">《电化学储能电站设计规范》，2024 年实施</span></label>
+          </div>
+          <div class="qacts"><button class="btn btn-p ck">提交答案</button><button class="btn btn-g rv">显示答案</button></div>
+          <div class="qres"></div>
+          <div class="qexp"><div class="ans"><span class="tag">答案</span>B</div>
+            <p>GB/T 43462—2023《电化学储能黑启动技术导则》，2023-12-28 发布，2024-07-01 实施，归口全国电力储能标委会（TC 550）。</p>
+            <p>其他几个容易混：A 是 GB/T 47968—2026；C 是 GB 38755—2019（注意是强制性国标，没有"/T"）；D 是 GB 51048，属于工程建设标准。<b>记住一个诀窍：黑启动的专项标准号里有"43462"这串数字，和"黑启动"绑定记。</b></p>
+          </div>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 8 章 ============ -->
+    <section class="chapter" id="ch8" data-num="08" data-title="趋势与市场：从“技术储备”到“标准配置”">
+      <h2><span class="cnum">CHAPTER 08</span>趋势与市场：从"技术储备"到"标准配置"</h2>
+      <p class="ch-lead">PPT 给了 2024—2028 的三阶段判断。方向大体成立，但节奏需要修正——2026 年的实证进展比原判断更快。</p>
+
+      <section class="sec" id="s8-1">
+        <h3><span class="hn">8.1</span>一条时间轴看清演进</h3>
+        <figure class="fig">
+          <svg viewBox="0 0 720 196" role="img" aria-label="黑启动技术路线演进时间轴">
+            <line x1="30" y1="104" x2="700" y2="104" stroke="#dbe4ef" stroke-width="2.5"/>
+            <circle cx="52" cy="104" r="6" fill="#8aa6c6"/>
+            <circle cx="182" cy="104" r="6" fill="#8aa6c6"/>
+            <circle cx="312" cy="104" r="6" fill="#4a86d4"/>
+            <circle cx="442" cy="104" r="6" fill="#4a86d4"/>
+            <circle cx="572" cy="104" r="6" fill="#12a06b"/>
+            <circle cx="682" cy="104" r="6" fill="#12a06b"/>
+
+            <text x="52" y="88" font-size="12" fill="#12509e" text-anchor="middle" font-weight="700">2008</text>
+            <text x="52" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">冰灾实战</text>
+            <text x="52" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">水电孤网</text>
+
+            <text x="182" y="88" font-size="12" fill="#12509e" text-anchor="middle" font-weight="700">2019</text>
+            <text x="182" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">英国大停电</text>
+            <text x="182" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">低惯量暴露</text>
+
+            <text x="312" y="88" font-size="12" fill="#12509e" text-anchor="middle" font-weight="700">2023.12</text>
+            <text x="312" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">GB/T 43462</text>
+            <text x="312" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">发布</text>
+
+            <text x="442" y="88" font-size="12" fill="#12509e" text-anchor="middle" font-weight="700">2024.07</text>
+            <text x="442" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">标准实施</text>
+            <text x="442" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">有据可依</text>
+
+            <text x="572" y="88" font-size="12" fill="#0f7a52" text-anchor="middle" font-weight="700">2026</text>
+            <text x="572" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">多项"首次"</text>
+            <text x="572" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">现场实证</text>
+
+            <text x="682" y="88" font-size="12" fill="#0f7a52" text-anchor="middle" font-weight="700">2027→</text>
+            <text x="682" y="128" font-size="10.5" fill="#5c6d82" text-anchor="middle">规模化</text>
+            <text x="682" y="144" font-size="10.5" fill="#5c6d82" text-anchor="middle">走向标配</text>
+
+            <text x="360" y="180" font-size="10.8" fill="#a9b8ca" text-anchor="middle">技术成熟度：示范验证 → 标准配套 → 规模化推广（当前处于"标准配套"的补课阶段）</text>
+          </svg>
+          <figcaption>图 8-1　技术路线演进。注意 2026 年这一格：不是"开始示范"，而是"密集实证"。</figcaption>
+        </figure>
+        <p>PPT 把 2025—2026 定位为"示范项目"，2027—2028 为"规模化推广"。从公开信息看，<strong>2026 年的进展实际上超出了这个节奏</strong>：一年之内，海南、青海、浙江、四川等地完成了多项"全国首次"，覆盖了 110 kV 到 330 kV、从海岛到 4200 米高原的多种场景。这说明技术成熟度已经不是主要瓶颈，<strong>瓶颈转移到了标准配套、验收方法和商业模式上</strong>。</p>
+      </section>
+
+        <div class="rel"><span class="lb">相关</span><a class="xref" href="#s5-4">四个全国首次</a> · <a class="xref" href="#s7-2">标准体系地图</a></div>
+      <section class="sec" id="s8-2">
+        <h3><span class="hn">8.2</span>钱从哪来：黑启动的价值怎么变现</h3>
+        <p>"平时不用、用时不省钱"的能力，怎么让它有商业回报？目前主要有四条路径：</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>路径</th><th>逻辑</th><th>现实情况</th></tr></thead>
+            <tbody>
+              <tr><td><b>容量补偿 / 固定费用</b></td><td>电网为"随时可用的保底能力"付费，类似消防队的年度预算</td><td>部分地区已将构网型、黑启动能力纳入独立储能容量补偿的考量</td></tr>
+              <tr><td><b>辅助服务市场</b></td><td>调频、调压、惯量支撑等可作为辅助服务品种交易</td><td>品种和规则各地差异大，惯量/构网类品种仍在试点</td></tr>
+              <tr><td><b>政策强制配比</b></td><td>要求新建储能必须采用构网型技术，形成"准入型"需求</td><td>新疆、内蒙古等地已有明确比例或门槛要求</td></tr>
+              <tr><td><b>绿电与零碳价值</b></td><td>零碳黑启动电源，契合零碳园区、绿色供应链的认证需求</td><td>与绿证、碳核算体系结合，是差异化的加分项</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>对集睿思这类做规划咨询的角色来说，这里有一个很实际的机会点：<strong>很多业主并不清楚"黑启动能力"该怎么写进技术规范、怎么验收</strong>。把 GB/T 43462 的要求翻译成可执行的技术条款 + 试验大纲 + 验收清单，就是一块高价值的咨询内容。</p>
+      </section>
+
+      <section class="sec" id="s8-3">
+        <h3><span class="hn">8.3</span>三个判断（可以拿去讲的观点）</h3>
+        <div class="terms">
+          <div class="term-c">
+            <div class="t">判断一</div>
+            <div class="d"><b>从"电源可选"到"能力必备"。</b>过去黑启动电源是"有水电就用水电，没有就算了"；现在越来越多省份把构网型能力写进准入条件，黑启动正从"加分项"变成"及格线"。</div>
+          </div>
+          <div class="term-c">
+            <div class="t">判断二</div>
+            <div class="d"><b>从"单机能力"到"系统协同"。</b>2026 年的几个标杆项目，没有一个是靠单台设备完成的：果洛是"储能 + 调相机"，衢州是"源网荷储充"。未来比拼的是<b>系统集成与协调控制</b>，不是 PCS 铭牌。</div>
+          </div>
+          <div class="term-c">
+            <div class="t">判断三</div>
+            <div class="d"><b>从"电网侧"到"用户侧"。</b>微电网、园区、数据中心、偏远牧区都在要"离网保供"。黑启动能力正在下沉，从"城市级"变成"园区级""台区级"。</div>
+          </div>
+        </div>
+        <div class="tip">
+          <div class="bt"><span class="dot"></span>给做方案的人一句提醒</div>
+          <p>写趋势判断时，<b>把"预测"和"已发生"分开说</b>。2026 年的实证是已发生的事实，2027—2028 年的规模化是预测。混在一起写，评审时容易被问"依据呢"。</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- ============ 第 9 章 ============ -->
+    <section class="chapter" id="ch9" data-num="09" data-title="收束：一张地图、十个坑、一份术语表">
+      <h2><span class="cnum">CHAPTER 09</span>收束：一张地图、十个坑、一份术语表</h2>
+      <p class="ch-lead">最后这一章不讲新知识，只做三件事：把前面串成一张图、把容易说错的话纠正、把术语翻译成人话。</p>
+
+      <section class="sec" id="s9-1">
+        <h3><span class="hn">9.1</span>知识地图：四问四答</h3>
+        <p>如果你只能记住一页，记这一页。黑启动的全部内容，可以收敛成四个问题：</p>
+        <div class="terms">
+          <div class="term-c" style="border-left:3px solid #dd6b20">
+            <div class="t">① 为什么难？</div>
+            <div class="d" style="margin-top:8px">
+              · 全黑死锁：电厂要厂用电，厂用电要电网<br>
+              · 电网靠惯量、短路比维持稳定，新能源把两样都削弱了<br>
+              · 恢复过程本身是"极弱电网"，一步走错就二次崩溃<br>
+              <span style="color:#0d8c86">→ 第 1、2、3 章</span>
+            </div>
+          </div>
+          <div class="term-c" style="border-left:3px solid #c9a227">
+            <div class="t">② 靠什么救？</div>
+            <div class="d" style="margin-top:8px">
+              · 水电：天生适合，但被地理和水位锁死<br>
+              · 燃机：快，但被燃料管道栓住<br>
+              · 储能：能进城，但必须先解决"跟"还是"构"<br>
+              <span style="color:#0d8c86">→ 第 4、5 章</span>
+            </div>
+          </div>
+          <div class="term-c" style="border-left:3px solid #12a06b">
+            <div class="t">③ 怎么实现？</div>
+            <div class="d" style="margin-top:8px">
+              · VSG 造出"虚拟转子"，让逆变器有发电机的脾气<br>
+              · 零起升压躲开励磁涌流，同期并列把孤网合成大网<br>
+              · 多机并联要治环流、治谐振<br>
+              <span style="color:#0d8c86">→ 第 6 章</span>
+            </div>
+          </div>
+          <div class="term-c" style="border-left:3px solid #4a86d4">
+            <div class="t">④ 怎么证明？</div>
+            <div class="d" style="margin-top:8px">
+              · GB/T 43462 定规矩<br>
+              · 仿真 → 动模 → 现场，三层验证<br>
+              · 十二项验收清单，缺一项都是隐患<br>
+              <span style="color:#0d8c86">→ 第 7、8 章</span>
+            </div>
+          </div>
+        </div>
+        <div class="box key">
+          <div class="bt"><span class="dot"></span>把四问串成一条线（试着背一遍）</div>
+          <p>电网靠<b>惯量</b>和<b>短路容量</b>保持稳定，全黑后这两样一起归零，而且电厂和电网互相等待，形成<b>死锁</b>；破解死锁需要一台能<b>自启动</b>、能<b>建压建频</b>的电源；传统水电和燃机受地理与燃料限制，于是有了能进城的<b>构网型储能</b>；它靠 <b>VSG</b> 模拟同步机、靠<b>零起升压</b>避开涌流、靠<b>同期并列</b>把孤网连成大网；这一切是否真的成立，最终要靠 <b>GB/T 43462</b> 框架下的三层试验来证明。</p>
+        </div>
+      </section>
+
+      <section class="sec" id="s9-2">
+        <h3><span class="hn">9.2</span>十个最容易说错的地方</h3>
+        <p>这一节可以直接拿去做技术交流前的"自检清单"。很多争议，本质是表述不严谨。</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>常见说法</th><th>问题在哪</th><th>更准确的说法</th></tr></thead>
+            <tbody>
+              <tr><td>"黑启动就是把电恢复上"</td><td>太笼统，和普通复电没区别</td><td>黑启动是<b>不依赖外部电源、从零建压</b>的恢复过程，是复电的<b>第一阶段</b></td></tr>
+              <tr><td>"33 秒全城复电"</td><td>混淆了建压与全网恢复</td><td>33 秒是<b>建压并形成孤网</b>；全域负荷带电约 2 小时</td></tr>
+              <tr><td>"构网型就是电池更大"</td><td>把控制策略问题当成容量问题</td><td>构网型是<b>电压源控制策略</b>，核心在算法与过流能力</td></tr>
+              <tr><td>"储能黑启动可以撑很久"</td><td>忽略能量边界</td><td>受 <b>SOC 与电池容量</b>限制，通常小时级；靠光伏/水电接力才能撑长</td></tr>
+              <tr><td>"有水电就一定可靠"</td><td>忽略水位与通道</td><td>还受<b>水位、来水、输电通道</b>制约，2008 年冰灾就是例子</td></tr>
+              <tr><td>"装了 UPS 就不怕全黑"</td><td>容量差三个数量级</td><td>UPS 只保<b>控制与 IT 设备</b>，带不动生产负荷</td></tr>
+              <tr><td>"构网型可以替代同步机"</td><td>忽略过载与惯量上限</td><td>目前是<b>互补接力</b>：储能点火，同步机接棒</td></tr>
+              <tr><td>"能并网就能黑启动"</td><td>混淆两种工况</td><td>黑启动需要<b>专门试验验证</b>，并网能力不等于自启动能力</td></tr>
+              <tr><td>"黑启动只是电网公司的事"</td><td>忽略场站与用户侧配合</td><td>场站要预留 SOC、用户要配合负荷恢复顺序</td></tr>
+              <tr><td>"有标准就等于有能力"</td><td>标准是底线不是保证</td><td>标准规定"应满足什么"，<b>能力要靠试验证明</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sec" id="s9-3">
+        <h3><span class="hn">9.3</span>术语速查表</h3>
+        <p>按拼音/字母混排，方便回头查。带 ★ 的是本课核心术语。</p>
+        <div class="tw">
+          <table class="compact">
+            <thead><tr><th style="width:150px">术语 / 缩写</th><th style="width:200px">全称</th><th>一句话解释</th></tr></thead>
+            <tbody>
+              <tr><td><b>★ 黑启动</b></td><td>Black Start</td><td>全黑后不依赖外部电源，靠自启动电源逐步恢复电网</td></tr>
+              <tr><td><b>★ 全黑</b></td><td>Blackout</td><td>系统大面积失去全部正常电源的状态</td></tr>
+              <tr><td><b>★ 构网型</b></td><td>Grid-Forming, GFM</td><td>设备自己建立电压和频率参考，像发电机当"领舞"</td></tr>
+              <tr><td><b>★ 跟网型</b></td><td>Grid-Following, GFL</td><td>靠锁相环跟随电网相位，输出电流，电网没了就停机</td></tr>
+              <tr><td><b>★ VSG</b></td><td>Virtual Synchronous Generator 虚拟同步发电机</td><td>用算法模拟同步机转子运动，让逆变器具备惯量与阻尼</td></tr>
+              <tr><td><b>★ 零起升压</b></td><td>—</td><td>电压从接近零缓慢升到额定，避免磁通突变与励磁涌流</td></tr>
+              <tr><td><b>★ 励磁涌流</b></td><td>Inrush Current</td><td>变压器空载合闸瞬间可达额定 6~8 倍的冲击电流</td></tr>
+              <tr><td><b>★ 同期并列</b></td><td>Synchronization</td><td>电压、频率、相角接近时合闸，把两个系统连起来</td></tr>
+              <tr><td>PCS</td><td>Power Conversion System 储能变流器</td><td>电池与电网之间的"翻译官"，交直流互变</td></tr>
+              <tr><td>BMS</td><td>Battery Management System 电池管理系统</td><td>管电池的电压、温度、SOC，防过充过放</td></tr>
+              <tr><td>EMS</td><td>Energy Management System 能量管理系统</td><td>站内的"大脑"，决定充放电策略与功率分配</td></tr>
+              <tr><td>PLL</td><td>Phase Locked Loop 锁相环</td><td>测量电网电压相位的算法，跟网型的"眼睛"</td></tr>
+              <tr><td>SCR</td><td>Short Circuit Ratio 短路比</td><td>并网点短路容量 ÷ 设备容量，衡量电网"软硬"</td></tr>
+              <tr><td>SOC</td><td>State of Charge 荷电状态</td><td>电池还剩多少电，百分比表示</td></tr>
+              <tr><td>DOD</td><td>Depth of Discharge 放电深度</td><td>一次能放出多少比例的电量，影响寿命</td></tr>
+              <tr><td>H</td><td>Inertia Constant 惯性时间常数</td><td>转子储能可维持额定功率的秒数，衡量惯量大小</td></tr>
+              <tr><td>D</td><td>Damping Coefficient 阻尼系数</td><td>抑制频率/功率振荡的"摩擦力"</td></tr>
+              <tr><td>RoCoF</td><td>Rate of Change of Frequency 频率变化率</td><td>频率每秒变化多少 Hz，惯量越小越大</td></tr>
+              <tr><td>AGC</td><td>Automatic Generation Control 自动发电控制</td><td>调度端"油门"，分钟级把频率调回 50 Hz</td></tr>
+              <tr><td>AVC</td><td>Automatic Voltage Control 自动电压控制</td><td>调度端"调压阀"，维持各点电压</td></tr>
+              <tr><td>SVG</td><td>Static Var Generator 静止无功发生器</td><td>快速发/吸无功，支撑电压（跟网型设备）</td></tr>
+              <tr><td>SSC</td><td>Static Synchronous Condenser 静止同步调相机</td><td>构网型无功设备，可提供惯量与短路容量支撑</td></tr>
+              <tr><td>SFC</td><td>Static Frequency Converter 静态变频装置</td><td>把静止的燃机/抽蓄机组"盘"到启动转速</td></tr>
+              <tr><td>UPS</td><td>Uninterruptible Power Supply 不间断电源</td><td>短时保关键设备不失电，带不动大负荷</td></tr>
+              <tr><td>DCS</td><td>Distributed Control System 分散控制系统</td><td>电厂/变电站的监控系统，"大脑"</td></tr>
+              <tr><td>孤网</td><td>Islanded Grid</td><td>与主网断开、独立运行的小系统</td></tr>
+              <tr><td>微电网</td><td>Microgrid</td><td>有源、有荷、可孤岛运行的小型电力系统</td></tr>
+              <tr><td>失步解列</td><td>Out-of-step Splitting</td><td>机组间失去同步时主动断开，防止事故扩大</td></tr>
+              <tr><td>低频减载</td><td>UFLS</td><td>频率过低时按轮次自动切负荷，保住发电机组</td></tr>
+              <tr><td>三道防线</td><td>—</td><td>继保/预防、安控、解列减载与黑启动（GB 38755）</td></tr>
+              <tr><td>人工短路试验</td><td>—</td><td>人为制造短路，检验设备故障电流支撑与恢复能力</td></tr>
+              <tr><td>N-1</td><td>—</td><td>单一元件故障不失稳的准则，黑启动方案也按 N-1 校核</td></tr>
+              <tr><td>费兰梯效应</td><td>Ferranti Effect</td><td>空载长线路末端电压升高的现象</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sec" id="s9-4">
+        <h3><span class="hn">9.4</span>结课练习：动手拟一份试验大纲</h3>
+        <p>这是本课唯一的开放式题目，也是最接近真实工作的一道。建议先自己写，再看参考答案。</p>
+        <div class="quiz" data-type="open" data-answer="">
+          <div class="qh"><span class="qn">练习 16</span><span class="qtag">综合应用</span><span>第 9 章 · 融会贯通</span></div>
+          <p class="q">某工业园区新建一座 50 MW / 100 MWh 构网型储能电站，业主要求它具备园区黑启动能力。请列出你认为必须开展的现场试验项目（至少 6 项），并说明每项要验证什么。</p>
+          <div class="qacts"><button class="btn btn-g rv">显示参考答案</button></div>
+          <div class="qexp"><div class="ans"><span class="tag">参考</span>六类核心试验</div>
+            <p><b>1. 自启动与零起升压试验</b>——断开所有外部电源，验证储能能否自主启动、控制回路自供电是否可靠，以及电压从零升到额定需要多久、稳态偏差多大。</p>
+            <p><b>2. 变压器充电（涌流）试验</b>——给园区主变空载合闸，测量励磁涌流幅值、母线电压跌落深度、保护是否误动。这是最容易出问题的一项。</p>
+            <p><b>3. 带新能源试验</b>——用储能给园区光伏提供并网参考，验证光伏能否在黑启动阶段并网发电、功率波动是否可控。</p>
+            <p><b>4. 负荷分级投入试验</b>——按 10%、30%、50% 分档投入真实负荷（或阻感负载），验证频率电压恢复到稳态的时间、有无振荡。</p>
+            <p><b>5. 孤网/并网切换试验</b>——孤网运行一段时间后与主网同期并列，再反向切换回孤网，测量切换时间（目标 ≤10 ms）与负荷是否闪断。</p>
+            <p><b>6. 人工短路与故障穿越试验</b>——制造单相接地等故障，验证故障电流支撑能力、保护动作正确性、故障清除后电压能否毫秒级重建、设备是否脱网或闭锁。</p>
+            <p style="margin-top:6px">加分项：<b>多机并联均流试验</b>（若为多台 PCS）、<b>长时间孤网续航试验</b>（验证 SOC 与温升）、<b>通信中断/单点故障下的降级运行试验</b>。</p>
+            <p style="color:#8494a8;margin-top:8px">提示：答这道题的关键不是罗列名词，而是每条都对应"验证什么指标"。这正好是第 7 章验收清单的实战应用。</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec" id="s9-5">
+        <h3><span class="hn">9.5</span>学完之后：三条继续深入的路</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>方向</th><th>建议动作</th><th>适合谁</th></tr></thead>
+            <tbody>
+              <tr><td><b>读标准</b></td><td>把 GB/T 43462—2023 和 GB 38755—2019 原文过一遍，重点看"要求"和"试验"章节</td><td>做方案、写标书、做验收的人</td></tr>
+              <tr><td><b>做仿真</b></td><td>用 PSCAD/EMTDC 搭一个"构网型储能 + 变压器 + 负荷"的小模型，亲手做一次零起升压</td><td>技术岗、想搞懂机理的人</td></tr>
+              <tr><td><b>看项目</b></td><td>找一份示范工程的试验报告或技术方案，对照第 7 章清单逐条打勾，看哪些项没做</td><td>需要判断方案质量的人</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="box tip">
+          <div class="bt"><span class="dot"></span>最后一句</div>
+          <p>黑启动这个题目，最容易被讲成"技术清单的堆砌"。但它的内核其实很朴素：<b>一个系统在最糟糕的时刻，还留着一根能自己划着的火柴。</b>理解了这根火柴为什么必须"不依赖别人"，剩下的都是工程细节。</p>
+        </div>
+      </section>
+    </section>
+
+    <footer style="margin-top:56px;padding:26px 0 10px;border-top:1px solid var(--line);color:#8494a8;font-size:12.5px;line-height:1.9">
+      <p style="margin:0 0 8px"><b style="color:#5c6d82">黑启动入门 · 从一根火柴到点亮一座城</b>　|　JRS 内部培训课件　v1.0　2026-11</p>
+      <p style="margin:0 0 8px">内容依据《什么是黑启动？》培训 PPT 所涉知识范围重新编排，并对其中表述不严谨之处作了修正与补充。标准信息来源于全国标准信息公共服务平台公开数据；示范工程数据来源于公开报道，仅用于教学说明。</p>
+      <p style="margin:0">本课件不替代标准正文、项目技术方案与验收报告。工程应用请以现行有效标准、电网调度规程及项目实测数据为准。</p>
+    </footer>
+
+  </div><!-- /wrap -->
+</div><!-- /main -->
+
+<button id="toTop" aria-label="回到顶部">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- 1. 生成目录树 ---------- */
+  var toc = document.getElementById('toc');
+  var chapters = Array.prototype.slice.call(document.querySelectorAll('#main .chapter'));
+  var linkMap = {};     // id -> <a>
+  var chapMap = {};     // id -> button
+  var groups = [];
+
+  chapters.forEach(function(ch){
+    var group = document.createElement('div');
+    group.className = 'toc-group';
+
+    var btn = document.createElement('button');
+    btn.className = 'toc-chapter';
+    btn.type = 'button';
+    btn.setAttribute('aria-expanded','true');
+    btn.dataset.target = ch.id;
+    btn.innerHTML = '<span class="caret">▶</span><span class="num">' + (ch.dataset.num||'') +
+                    '</span><span class="tt">' + (ch.dataset.title||'') + '</span>';
+    group.appendChild(btn);
+    chapMap[ch.id] = btn;
+
+    var ul = document.createElement('ul');
+    ul.className = 'toc-sub';
+
+    var secs = ch.querySelectorAll('.sec');
+    Array.prototype.forEach.call(secs, function(sec){
+      var h3 = sec.querySelector('h3');
+      if(!h3) return;
+      var clone = h3.cloneNode(true);
+      var hn = clone.querySelector('.hn');
+      var numTxt = hn ? hn.textContent.trim() : '';
+      if(hn) hn.parentNode.removeChild(hn);
+      var label = clone.textContent.trim();
+
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = '#' + sec.id;
+      a.dataset.target = sec.id;
+      a.textContent = (numTxt ? numTxt + ' ' : '') + label;
+      li.appendChild(a);
+      ul.appendChild(li);
+      linkMap[sec.id] = a;
+      a.dataset.kw = (sec.textContent || '').replace(/\s+/g,'').toLowerCase();
+    });
+
+    group.appendChild(ul);
+    toc.appendChild(group);
+    groups.push({el: group, btn: btn, ul: ul});
+
+    btn.addEventListener('click', function(){
+      var open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      ul.style.display = open ? 'none' : '';
+    });
+  });
+
+  /* ---------- 2. 滚动监听 ---------- */
+  var allSecs = Array.prototype.slice.call(document.querySelectorAll('#main section[id]'));
+  var currentId = null;
+  var tocEl = document.getElementById('toc');
+  var ticking = false;
+
+  function ensureVisible(el){
+    var r = el.getBoundingClientRect();
+    var nr = tocEl.getBoundingClientRect();
+    if(r.top < nr.top + 8){
+      tocEl.scrollTop -= (nr.top + 8 - r.top);
+    } else if(r.bottom > nr.bottom - 8){
+      tocEl.scrollTop += (r.bottom - nr.bottom + 8);
+    }
+  }
+
+  function updateSpy(){
+    var probe = window.scrollY + (window.innerWidth <= 980 ? 96 : 132);
+    var cur = null;
+    for(var i=0;i<allSecs.length;i++){
+      var el = allSecs[i];
+      var top = el.getBoundingClientRect().top + window.scrollY;
+      if(top <= probe) cur = el; else break;
+    }
+    if(!cur) cur = allSecs[0];
+    if(!cur || cur.id === currentId) { paintProgress(); return; }
+    currentId = cur.id;
+
+    // 清除旧状态
+    Object.keys(linkMap).forEach(function(k){ linkMap[k].classList.remove('active'); });
+    Object.keys(chapMap).forEach(function(k){ chapMap[k].classList.remove('current'); });
+
+    var isSec = !!linkMap[cur.id];
+    var chEl = cur.classList.contains('chapter') ? cur : cur.closest('.chapter');
+
+    if(chEl && chapMap[chEl.id]) chapMap[chEl.id].classList.add('current');
+
+    if(isSec){
+      var a = linkMap[cur.id];
+      a.classList.add('active');
+      // 自动展开所属章节
+      var g = chEl ? chEl.id : null;
+      if(g && chapMap[g]){
+        var grp = groups.filter(function(x){ return x.btn.dataset.target === g; })[0];
+        if(grp && grp.btn.getAttribute('aria-expanded') === 'false'){
+          grp.btn.setAttribute('aria-expanded','true');
+          grp.ul.style.display = '';
+        }
+      }
+      ensureVisible(a);
+    } else if(chEl && chapMap[chEl.id]) {
+      ensureVisible(chapMap[chEl.id]);
+    }
+    paintProgress();
+  }
+
+  /* ---------- 3. 进度条 ---------- */
+  var progress = document.getElementById('progress');
+  var sbPct = document.getElementById('sbPct');
+  var toTop = document.getElementById('toTop');
+
+  function paintProgress(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? Math.min(100, Math.max(0, window.scrollY / h * 100)) : 0;
+    progress.style.width = p.toFixed(1) + '%';
+    sbPct.textContent = Math.round(p) + '%';
+    toTop.classList.toggle('on', window.scrollY > 600);
+  }
+
+  function onScroll(){
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      updateSpy();
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', function(){ updateSpy(); });
+
+  /* ---------- 4. 移动端抽屉 ---------- */
+  var body = document.body;
+  var overlay = document.getElementById('overlay');
+  var menuBtn = document.getElementById('menuBtn');
+
+  function closeNav(){ body.classList.remove('nav-open'); }
+  menuBtn.addEventListener('click', function(){ body.classList.toggle('nav-open'); });
+  overlay.addEventListener('click', closeNav);
+
+  toc.addEventListener('click', function(e){
+    var t = e.target.closest('a[data-target]');
+    if(t && window.innerWidth <= 980) setTimeout(closeNav, 120);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeNav();
+  });
+
+  /* ---------- 5. 目录搜索（标题 + 小节正文） ---------- */
+  var si = document.getElementById('searchInput');
+  var sc = document.getElementById('searchClear');
+  var noHit = document.createElement('div');
+  noHit.style.cssText = 'display:none;padding:14px 10px;font-size:12.5px;color:#9aabc0;line-height:1.8;text-align:center';
+  noHit.textContent = '没有找到相关小节，换个更短的关键词试试。';
+  toc.appendChild(noHit);
+
+  function doFilter(){
+    var raw = (si.value || '').trim();
+    var q = raw.toLowerCase();
+    var qn = q.replace(/\s+/g,'');
+    sc.style.display = raw ? 'block' : 'none';
+    var total = 0;
+
+    groups.forEach(function(g){
+      var any = false;
+      var links = g.ul.querySelectorAll('li');
+      Array.prototype.forEach.call(links, function(li){
+        var a = li.querySelector('a');
+        var label = a.textContent.toLowerCase();
+        var hit = !q || label.indexOf(q) > -1 || (qn && (a.dataset.kw || '').indexOf(qn) > -1);
+        li.classList.toggle('hide', !hit);
+        if(hit && q) any = true;
+        if(!q) any = true;
+      });
+      var chHit = !q || g.btn.textContent.toLowerCase().indexOf(q) > -1;
+      if(q && chHit) any = true;
+      g.el.classList.toggle('hide', !any);
+      if(any) total++;
+      if(q && any){
+        g.btn.setAttribute('aria-expanded','true');
+        g.ul.style.display = '';
+      }
+    });
+    noHit.style.display = (q && total === 0) ? 'block' : 'none';
+  }
+  si.addEventListener('input', doFilter);
+  sc.addEventListener('click', function(){ si.value=''; doFilter(); si.focus(); });
+  si.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ si.value=''; doFilter(); si.blur(); } });
+
+  /* ---------- 6. 练习判题 ---------- */
+  var quizzes = Array.prototype.slice.call(document.querySelectorAll('.quiz'));
+  quizzes.forEach(function(q){
+    var ans = (q.dataset.answer || '').toUpperCase().replace(/[^A-Z]/g,'');
+    var opts = Array.prototype.slice.call(q.querySelectorAll('.opt'));
+    var ck = q.querySelector('.ck');
+    var rv = q.querySelector('.rv');
+    var res = q.querySelector('.qres');
+    var exp = q.querySelector('.qexp');
+    var isMulti = !!q.querySelector('input[type="checkbox"]');
+
+    opts.forEach(function(o){
+      var inp = o.querySelector('input');
+      if(!inp) return;
+      inp.addEventListener('change', function(){
+        if(!isMulti){
+          opts.forEach(function(x){ x.classList.remove('pick'); });
+        }
+        o.classList.toggle('pick', inp.checked);
+        if(res && res.classList.contains('show')){
+          res.className = 'qres'; res.textContent = '';
+        }
+      });
+    });
+
+    function shade(){
+      opts.forEach(function(o){
+        var v = o.querySelector('input').value;
+        if(ans.indexOf(v) > -1) o.classList.add('right');
+      });
+    }
+
+    if(ck){
+      ck.addEventListener('click', function(){
+        var sel = opts.filter(function(o){ return o.querySelector('input').checked; })
+                      .map(function(o){ return o.querySelector('input').value; })
+                      .sort().join('');
+        if(!sel){
+          res.className = 'qres show no';
+          res.textContent = '先选一个答案再提交吧。';
+          return;
+        }
+        var ok = sel === ans.split('').sort().join('');
+        res.className = 'qres show ' + (ok ? 'ok' : 'no');
+        res.textContent = ok ? '✓ 回答正确，解析见下方。' : '✗ 不对。正确答案见下方解析，建议回到对应小节再看一遍。';
+        opts.forEach(function(o){
+          var inp = o.querySelector('input');
+          var v = inp.value;
+          if(ans.indexOf(v) > -1 && !inp.checked) o.classList.add('right');
+          if(inp.checked && ans.indexOf(v) === -1) o.classList.add('wrong');
+        });
+        shade();
+        exp.classList.add('show');
+        rv.textContent = '收起解析';
+        q.classList.add('solved');
+        ck.disabled = true;
+      });
+    }
+
+    if(rv){
+      rv.addEventListener('click', function(){
+        var shown = exp.classList.contains('show');
+        if(shown){
+          exp.classList.remove('show');
+          rv.textContent = q.dataset.type === 'open' ? '显示参考答案' : '显示答案';
+        } else {
+          exp.classList.add('show');
+          rv.textContent = '收起解析';
+          q.classList.add('solved');
+          shade();
+          if(!ck || ck.disabled){
+            if(res && !res.classList.contains('show') && ck){
+              res.className = 'qres show no';
+              res.textContent = '已显示正确答案，对照一下你的选择。';
+            }
+          }
+        }
+      });
+    }
+  });
+
+  /* ---------- 7. 图表：小屏可横向滑动 ---------- */
+  var figs = Array.prototype.slice.call(document.querySelectorAll('.fig'));
+  figs.forEach(function(fig){
+    var svg = fig.querySelector('svg');
+    if(!svg || (svg.parentElement && svg.parentElement.classList.contains('svgwrap'))) return;
+    var w = document.createElement('div');
+    w.className = 'svgwrap';
+    fig.insertBefore(w, svg);
+    w.appendChild(svg);
+  });
+
+  function checkSwipe(){
+    figs.forEach(function(fig){
+      var w = fig.querySelector('.svgwrap');
+      if(!w) return;
+      var need = (w.scrollWidth - w.clientWidth) > 4;
+      var hint = fig.querySelector('.swipe-hint');
+      var cap = fig.querySelector('figcaption');
+      if(need && !hint){
+        var d = document.createElement('div');
+        d.className = 'swipe-hint';
+        d.textContent = '← 左右滑动查看完整图 →';
+        if(cap) fig.insertBefore(d, cap); else fig.appendChild(d);
+      } else if(!need && hint && hint.parentNode){
+        hint.parentNode.removeChild(hint);
+      }
+    });
+  }
+  window.addEventListener('resize', checkSwipe);
+  setTimeout(checkSwipe, 220);
+
+  /* ---------- 8. 回到顶部 & 初始化 ---------- */
+  toTop.addEventListener('click', function(){
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  window.addEventListener('load', function(){ updateSpy(); paintProgress(); });
+  updateSpy();
+  paintProgress();
+
+  // 首屏若带 hash，等布局稳定后校正一次
+  if(location.hash){
+    setTimeout(function(){
+      var el = document.getElementById(location.hash.slice(1));
+      if(el) el.scrollIntoView({block:'start'});
+      updateSpy();
+    }, 120);
+  }
+})();
+</script>
+</body>
+</html>
