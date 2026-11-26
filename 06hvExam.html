@@ -26710,13 +26710,15 @@ function fmtTime(ts){ if(!ts) return '—'; const d=new Date(ts); const p=n=>Str
 function toast(msg){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
 const $ = s => document.querySelector(s);
 
-/* ================= 轮次队列（艾宾浩斯） =================
+/* ================= 轮次队列（组内滚动重推） =================
  * 规则：
- * - “已掌握”判定：该题历史答对（correct=true），且最近一次答对时刻 lastCorrectAt 仍在遗忘间隔内
- *   （即距上次答对 < INTERVALS[wrong] 小时，wrong 为该题累计答错次数）。
- * - 本轮队列 = 组内尚未掌握的题 + 间隔到期的“已掌握”题（回归复习）
- * - 队列内按组内 seq 排序；同一题若因“已出过”重复出现，用确定性伪随机微调位置，保证可重复性
- * - 本轮答对 → 该题在本轮锁定，不再出现；本轮答错 → 本轮内按间隔继续推送（最多一次）
+ * - 本轮队列 = 组内“未答对”的题 + 间隔到期的“已答对”题（回归复习）。
+ *   “未答对” = 从未作答，或当前未掌握（correct=false，即最近一次作答为错）。
+ * - 队列顺序：先按“真实考试顺序”排已答对的题（选择题按原序在前、判断题在后），
+ *   组内未答对的题统一排到队尾（同样先选择后判断），保证“全组做完后再补练错题”。
+ * - 本轮答对 → 该题本轮不再出现；本轮答错 → 该题立即排回本轮队列末尾，本轮内反复出现，直到答对为止。
+ * - 组内答对且未到遗忘间隔的题不在本轮推送（间隔到期才回归复习一次）。
+ * - “未掌握 N 题” 统计口径 = 组内尚未答对的题数（即本轮队列中未答对部分的题数）。
  */
 /* 选择题选项乱序：本次作答（同一轮次）内选项顺序锁定不变（答题、查看解析、回看均一致），
    下一次作答（下一轮）才重新洗牌。判断题（正确/错误）固定不洗。
@@ -26736,42 +26738,36 @@ function queueForRound(u, gid, round){
   const g = u.groups[gid] || { questions:{} };
   const grp = COURSE_DATA.groups[gid-1];
   const now = nowH();
-  const pool = [];
-  const keep = q => {
-    const s = g.questions[q.question_id] || {seen:false,correct:false,wrong:0,lastCorrectAt:null};
-    if(s.correct){
-      const slot = Math.min(s.wrong||0, INTERVALS.length-1);
-      const due = (s.lastCorrectAt||0) + INTERVALS[slot]*3600000;
-      return due <= now;
-    }
-    return true;
+  // 组内“未答对”的题：从未作答，或当前未掌握（最近一次作答为错）
+  const isNotMastered = q => {
+    const s = g.questions[q.question_id];
+    return !s || !s.seen || !s.correct;
   };
-  // 按“真实考试顺序”组织：先做选择题、后做判断题。
-  // 数据里 选择题 seq 在前、判断题 seq 在后；这里先推全部选择题（按原 seq），再推全部判断题（按原 seq）。
-  const singles = [], judges = [];
-  for(const q of grp.questions){
-    if(!keep(q)) continue;
-    (q.kind==='judge' ? judges : singles).push(q);
-  }
-  // 同一种题型内部保持原 seq 升序（题序不变，仅调整跨题型的大块顺序）
-  singles.sort((a,b)=> a.seq - b.seq);
-  judges.sort((a,b)=> a.seq - b.seq);
-  for(const q of singles) pool.push({q, qin:false});   // 先选择
-  for(const q of judges) pool.push({q, qin:false});    // 后判断
-  // 确定性打乱“同一题第二次出现”的相邻项（保持题型块顺序基本不变，仅微调重复出现的相对位置）
-  const r = mulberry32(SEED + gid*7919 + round*104729);
-  const posOf = {};
-  pool.forEach((p,i)=>{ posOf[p.q.question_id]=i; });
-  const seenIds = new Set();
-  for(let i=0;i<pool.length;i++){
-    const qid = pool[i].q.question_id;
-    if(seenIds.has(qid)){
-      const j = Math.floor(r()*(i));
-      const t = pool[i]; pool[i]=pool[j]; pool[j]=t;
-    } else {
-      seenIds.add(qid);
-    }
-  }
+  // 已答对的题：仅当遗忘间隔到期才回归复习一次（间隔未到则本轮不推）
+  const dueBack = q => {
+    const s = g.questions[q.question_id];
+    if(!s || !s.correct) return false;
+    const slot = Math.min(s.wrong||0, INTERVALS.length-1);
+    const due = (s.lastCorrectAt||0) + INTERVALS[slot]*3600000;
+    return due <= now;
+  };
+  const s_correct = q => { const s = g.questions[q.question_id]; return !!(s && s.correct); };
+  // 按“真实考试顺序”组织：先做选择题、后做判断题（按原 seq 升序）
+  const byKind = arr => {
+    const singles = [], judges = [];
+    for(const q of arr){ if(q.kind==='judge') judges.push(q); else singles.push(q); }
+    singles.sort((a,b)=> a.seq - b.seq);
+    judges.sort((a,b)=> a.seq - b.seq);
+    const out = [];
+    for(const q of singles) out.push({q, qin:false});
+    for(const q of judges) out.push({q, qin:false});
+    return out;
+  };
+  const pool = [
+    ...byKind(grp.questions.filter(dueBack)),                          // 已答对且间隔到期：回归复习
+    ...byKind(grp.questions.filter(q => isNotMastered(q)))            // 未答对的题：排到队尾补练
+  ];
+  // 队列里同一题不会出现两次（已答对与未答对互斥）；组内 seq 顺序保持不变
   return pool;
 }
 
@@ -26780,19 +26776,19 @@ function stats(gid){
   const u = loadUser(curUser);
   const grp = COURSE_DATA.groups[gid-1];
   const g = u.groups[gid];
-  if(!g) return {total:grp.questions.length, answered:0, allCorrect:false, wrongNow:0, wrongIds:[], rounds:0, lastSaved:null};
-  const qn = grp.questions.length;
-  let answered=0, wrongNow=0; const wrongIds=[];
-  const now = nowH();
+  const total = grp.questions.length;
+  if(!g) return {total, answered:0, unmastered:total, wrongNow:total, allCorrect:false, rounds:0, lastSaved:null};
+  const qn = total;
+  let answered=0, unmastered=0, wrongNow=0; const wrongIds=[];
   for(const q of grp.questions){
     const s = g.questions[q.question_id];
-    if(!s || !s.seen) continue;
+    if(!s || !s.seen){ unmastered++; continue; }   // 未作答也算“未答对”
     answered++;
-    if(!s.correct){ wrongNow++; wrongIds.push(q.question_id); }
+    if(!s.correct){ unmastered++; wrongNow++; wrongIds.push(q.question_id); }
   }
   return {
-    total:qn, answered, wrongNow, wrongIds,
-    allCorrect: answered===qn && wrongNow===0 && qn>0,
+    total:qn, answered, unmastered, wrongNow, wrongIds,
+    allCorrect: unmastered===0 && qn>0,
     rounds: g.attempts||0,
     lastSaved: g.lastSaved||g.lastReset||null
   };
@@ -26830,12 +26826,12 @@ function renderGroups(){
     <div class="ggroup" style="margin-top:14px">`;
   COURSE_DATA.groups.forEach(gr=>{
     const st = stats(gr.id);
-    const pct = st.total? Math.round(st.answered/st.total*100) : 0;
+    const pct = st.total? Math.round(st.unmastered===0 ? 100 : (st.total-st.unmastered)/st.total*100) : 0;
     const badge = st.allCorrect ? '<span class="chip ok">✓ 全部掌握</span>'
-      : (st.rounds>0 ? `<span class="chip">已练 ${st.rounds} 轮 · 未掌握 ${st.wrongNow}</span>` : '<span class="chip">未开始</span>');
+      : (st.rounds>0 ? `<span class="chip">已练 ${st.rounds} 轮 · 未答对 <b>${st.unmastered}</b></span>` : '<span class="chip">未开始</span>');
     html += `<div class="gcard ${curGid===gr.id?'active':''}" data-gid="${gr.id}">
       <h4>${esc(gr.title)}</h4>
-      <div class="stat">${badge}<div class="muted">${st.answered}/${st.total} 已作答</div></div>
+      <div class="stat">${badge}<div class="muted">${st.total-st.unmastered}/${st.total} 已答对</div></div>
       <div class="bar"><i style="width:${pct}%"></i></div>
     </div>`;
   });
@@ -26876,9 +26872,10 @@ function renderQuestion(){
   const u = loadUser(curUser);
   const grp = COURSE_DATA.groups[curGid-1];
   const cur = curQueue[curPos];
+  const isRepush = !!(cur && cur.qin);   // 是否为本轮内“答错后重新推上来”的题
   let html = `<div class="card" style="margin-top:14px">
     <div class="progress-line">
-      <b>${esc(grp.title)}</b> · 第 ${curRound} 轮 · 队列剩余 <b>${curQueue.length-curPos}</b> 题
+      <b>${esc(grp.title)}</b> · 第 ${curRound} 轮${isRepush?' · <span style="color:var(--amber)">本轮补练</span>':''} · 队列剩余 <b>${curQueue.length-curPos}</b> 题
       <span class="chip tag-j">判断 ${grp.judge_count}</span><span class="chip tag-s">选择 ${grp.single_count}</span>
     </div>
   </div>`;
@@ -26886,15 +26883,15 @@ function renderQuestion(){
   if(!cur){
     // 本轮队列走完
     const st = stats(curGid);
-    const remain = st.wrongNow;
+    const remain = st.unmastered;
     const okAll = st.allCorrect;
     html += `<div class="card">
       <h2>${okAll?'🎉 本组全部题目已掌握':'🏁 本轮练习完成'}</h2>
       <div class="notice ${okAll?'good':''}">${okAll
-        ? `本组全部 ${grp.total} 题已答对并通过一轮完整检查，视为完全掌握。可继续下一组，或稍后按遗忘曲线回归复习。`
-        : `组内还有 <b>${remain}</b> 题未掌握，将在下一轮按艾宾浩斯间隔（${INTERVALS.join(' / ')} 小时）继续推送，直到全部掌握。`}</div>
+        ? `本组全部 ${grp.total} 题已答对，视为完全掌握。可继续下一组；已答对的题会按遗忘间隔（${INTERVALS.join(' / ')} 小时）稍后回归复习。`
+        : `组内还有 <b>${remain}</b> 题未答对。继续下一轮时，这些题会排在队末重点补练：答错多少次，就在组内反复重推多少次，直到全部答对为止。`}</div>
       <div style="margin-top:14px">
-        <button class="btn" id="btnNextRound">开始下一轮（遗忘曲线重推）</button>
+        <button class="btn" id="btnNextRound">开始下一轮（继续补练未答对的题）</button>
         <button class="btn gray" id="btnBackGrp">返回分组</button>
       </div>
     </div>`;
@@ -26936,7 +26933,7 @@ function renderQuestion(){
     fbHtml = `<div class="feedback ${okc?'ok':'bad'}">
       <div class="ans">${okc?'✓ 回答正确':'✗ 回答错误，正确答案：'+correctDispLetter}</div>
       ${q.analysis&&q.analysis!=='暂无'?`<div class="explain">${'解析：'+esc(tight(q.analysis))}</div>`:''}
-      ${!okc?`<div class="explain">该题已累计答错 ${s.wrong} 次，${INTERVALS[Math.min(s.wrong,INTERVALS.length-1)]} 小时后将再次推送。</div>`:''}
+      ${!okc?`<div class="explain">该题本轮内已重排到队尾补练（累计答错 ${s.wrong} 次），答对前会在本轮继续出现；答对后，间隔 ${INTERVALS[Math.min(s.wrong,INTERVALS.length-1)]} 小时到期的回归复习仍会再考一次。</div>`:''}
     </div>`;
   }
   html += `<div class="card" style="margin-top:14px">
@@ -26953,7 +26950,7 @@ function renderQuestion(){
     <div class="stem">${esc(q.stem)}</div>
     <ol class="opts" id="opts">${optHtml}</ol>
     ${fbHtml}
-    <div class="tagline">答对自动跳下一题 · 答错停留查看解析与正确选项 · 选项作答后锁定</div>
+    <div class="tagline">答对自动跳下一题 · 答错查看解析后，该题排到队尾本轮内重推直到答对 · 选项作答后锁定</div>
   </div>`;
   $('#page').innerHTML = html;
 
@@ -27023,6 +27020,16 @@ function chooseRaw(rawIdx, q, s){
       if(curQueue.every(p=> curAnswered[p.q.question_id]!==undefined)) finishRound();
       else nextBtn();
     }, 900);
+  } else {
+    // 本轮内重推：把刚答错的题（当前位置）摘出来，标记为“补练”后追加到队尾。
+    // 该题本轮内反复出现，直到答对为止；本轮全部答对后才会结束。
+    const p0 = curQueue[curPos];
+    if(p0){
+      curQueue.splice(curPos, 1);
+      p0.qin = true;
+      curQueue.push(p0);
+      curPos = curQueue.length - 1;
+    }
   }
 }
 
@@ -27061,9 +27068,9 @@ function buildGrid(){
       const qid = +el.dataset.qid;
       let idx = curQueue.findIndex(p=> p.q.question_id===qid);
       if(idx<0){
-        // 不在当前队列（已掌握锁定或间隔未到）：跳到队首并提示
-        idx = Math.min(curPos, Math.max(0,curQueue.length-1));
-        toast('该题本轮暂不在推送队列（已掌握/间隔未到），已跳到最接近位置');
+        // 不在当前队列（已答对且遗忘间隔未到）：跳到当前题并提示
+        idx = curPos;
+        toast('该题已答对，遗忘间隔未到，本轮暂不推送；已停在当前题');
       }
       curPos = idx;
       $('#modal').classList.add('hidden');
@@ -27079,12 +27086,13 @@ function renderStats(){
   const u = loadUser(curUser);
   let html = `<h2>练习统计 · <span>${esc(curUser)}</span></h2>
     <div class="card"><h3>各组进度</h3>
-    <table class="tbl"><tr><th>组</th><th>轮次</th><th>已答/总</th><th>掌握率</th><th>当前未掌握</th><th>最近活动</th></tr>`;
+    <table class="tbl"><tr><th>组</th><th>轮次</th><th>已答对/总</th><th>掌握率</th><th>未答对</th><th>最近活动</th></tr>`;
   COURSE_DATA.groups.forEach(gr=>{
     const st = stats(gr.id);
-    const pct = st.total? Math.round(st.answered/st.total*100):0;
-    html += `<tr><td>${gr.id}</td><td>${st.rounds}</td><td>${st.answered}/${st.total}</td>
-      <td>${pct}%</td><td>${st.wrongNow}</td><td>${fmtTime(st.lastSaved)}</td></tr>`;
+    const mastered = st.total-st.unmastered;
+    const pct = st.total? Math.round((mastered/st.total)*100):0;
+    html += `<tr><td>${gr.id}</td><td>${st.rounds}</td><td>${mastered}/${st.total}</td>
+      <td>${pct}%</td><td>${st.unmastered}</td><td>${fmtTime(st.lastSaved)}</td></tr>`;
   });
   html += `</table></div>`;
 
@@ -27116,10 +27124,10 @@ function renderStats(){
   }
   html += `</div>`;
 
-  html += `<div class="card"><h3>遗忘曲线说明</h3><div class="muted">
-    · 每题答错后，按 <b>1h → 6h → 12h → 36h → 72h</b> 的间隔逐级推送，累计答错次数越多，下次推送间隔越长。<br>
-    · 每题答对后，本轮内锁定不再出现；若间隔到期，下一轮仍会回归复习一次，确认仍掌握。<br>
-    · 组内全部题目“当前未掌握 = 0” 且 全部已答对时，该组视为<b>完全掌握</b>（末组为 237 题）。
+  html += `<div class="card"><h3>重推与遗忘曲线说明</h3><div class="muted">
+    · 组内做错的题会<b>排到组尾在本轮内反复补练</b>，答错多少次就重推多少次，直到全部答对；组内全答对后本轮才结束。<br>
+    · 已答对的题本轮不再出现；按 <b>1h → 6h → 12h → 36h → 72h</b> 的遗忘间隔到期的题，会在后续轮次回归复习一次确认仍掌握。<br>
+    · “未答对 N” = 组内尚未答对的题数（含从未作答的题）。组内全部答对时，该组视为<b>完全掌握</b>。
   </div></div>`;
 
   html += `<div class="card"><h3>数据管理</h3>
