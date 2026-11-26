@@ -26982,8 +26982,14 @@ function nextBtn(){
   if(np >= curQueue.length){
     // 到达队尾：若队尾是“本轮补练”（答错后重排上来、已作答）的题，必须回到队尾重答，不结束本轮
     const last = curQueue[curQueue.length-1];
-    if(last && last.qin && curAnswered[last.q.question_id]!==undefined){
-      np = curQueue.length-1;
+    if(last && last.qin && curAnswered[last.q.question_id]===undefined){
+      // 队尾是“本轮补练”且尚未作答（刚答错被重排上来，或用户在队尾查看解析后按下一题）：
+      // 跳到第一道未作答的题继续（扫遍全队列，找不到则停在 0），避免卡死在队尾
+      let np2 = -1;
+      for(let i=0;i<curQueue.length;i++){
+        if(curAnswered[curQueue[i].q.question_id]===undefined){ np2=i; break; }
+      }
+      np = np2<0 ? 0 : np2;
     } else if(curQueue.length===0 || (last && curAnswered[last.q.question_id]!==undefined)){
       return finishRound();
     } else {
@@ -27025,9 +27031,11 @@ function chooseRaw(rawIdx, q, s){
     }, 900);
   } else {
     // 本轮内重推：把刚答错的题（当前位置）摘出来，标记为“补练”后追加到队尾。
-    // 该题本轮内反复出现，直到答对为止；本轮全部答对后才会结束。
+    // 清除 curAnswered 里该题的旧记录，使其在重推后视为“尚未作答”，
+    // 用户重新答对后 nextBtn 才会正常推进，本轮全部答对后才结束。
     const p0 = curQueue[curPos];
     if(p0){
+      delete curAnswered[p0.q.question_id];
       curQueue.splice(curPos, 1);
       p0.qin = true;
       curQueue.push(p0);
