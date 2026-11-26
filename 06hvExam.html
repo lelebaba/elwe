@@ -26980,12 +26980,15 @@ function nextBtn(){
     np++;
   }
   if(np >= curQueue.length){
-    // 到达队尾；若当前题已答或队列空 → 完成本轮
+    // 到达队尾：若队尾是“本轮补练”（答错后重排上来、已作答）的题，必须回到队尾重答，不结束本轮
     const last = curQueue[curQueue.length-1];
-    if(curQueue.length===0 || (last && curAnswered[last.q.question_id]!==undefined)){
+    if(last && last.qin && curAnswered[last.q.question_id]!==undefined){
+      np = curQueue.length-1;
+    } else if(curQueue.length===0 || (last && curAnswered[last.q.question_id]!==undefined)){
       return finishRound();
+    } else {
+      np = curQueue.length-1;
     }
-    np = curQueue.length-1;
   }
   curPos = np;
   renderQuestion();
