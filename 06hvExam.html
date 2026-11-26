@@ -127,6 +127,7 @@ input[type=text]:focus{outline:none;border-color:var(--blue)}
       <span><i style="background:var(--amber-bg);border:1px solid #f5d9ae"></i>答错过/待复练</span>
       <span><i style="background:#fff;border:1px solid var(--line)"></i>未作答</span>
       <span><i style="background:var(--blue)"></i>当前题</span>
+      <div style="width:100%;margin-top:4px;color:var(--ink2)">提示：上一题/下一题按本轮推送顺序切换（不跳题）；点击数字可跳转到任意题。答错的题会排在队尾补练，本轮内做完全队列后重考它，不会因答错而提前结束本轮</div>
     </div>
   </div>
 </div>
@@ -26798,9 +26799,9 @@ function stats(gid){
 let curUser = null;
 let curGid = null;
 let curRound = 0;
-let curQueue = [];
-let curPos = 0;
-let curAnswered = {};
+let curQueue = [];      // 本轮队列：答错时只在队尾追加“补练副本”，绝不在中间删除，保证浏览位置稳定
+let curPos = 0;         // 当前浏览位置（curQueue 的下标），上一题/下一题严格在此下标上 ±1
+let curFeedback = [];   // 按【位置】记录的作答反馈：curFeedback[pos]={raw,ok}；同一题多次出现时各位置独立
 
 function render(){
   if(!curUser){ $('#app').classList.add('hidden'); $('#login').classList.remove('hidden'); return; }
@@ -26855,7 +26856,7 @@ function startGroup(gid){
 function startRoundN(gid, round){
   curGid = gid;
   curRound = round;
-  curAnswered = {};
+  curFeedback = [];
   curOptOrder = {};          // 新一轮作答：重新洗牌，清除上一轮选项排列缓存
   const u = loadUser(curUser);
   const g = (u.groups[gid] = u.groups[gid] || { attempts:0, lastReset:null, lastSaved:null, questions:{} });
@@ -26904,7 +26905,8 @@ function renderQuestion(){
   const q = cur.q;
   const s = qState(u, curGid, q.question_id);
   const rawOpts = parseOpts(q.options);
-  const chosenRaw = curAnswered[q.question_id];
+  const fb = curFeedback[curPos] || null;   // 按位置取反馈（同一题可能在队列里出现多次，各位置独立）
+  const chosenRaw = fb ? fb.raw : undefined;
   // 选择题选项乱序（本次作答内锁定；下一轮重新洗牌；判断题固定 正确/错误 顺序）
   const isSingle = q.kind==='single';
   const perm = isSingle ? optOrder(q.question_id, curRound, curGid, rawOpts.length) : null;
@@ -26928,8 +26930,8 @@ function renderQuestion(){
     optHtml += `<li class="${cls}" data-raw="${rawIdx}"><span class="letter">${L}</span><span>${esc(txt)}</span></li>`;
   }
   let fbHtml = '';
-  if(chosenRaw!==undefined){
-    const okc = chosenRaw===rawAnsIdx;
+  if(fb){
+    const okc = fb.ok;
     fbHtml = `<div class="feedback ${okc?'ok':'bad'}">
       <div class="ans">${okc?'✓ 回答正确':'✗ 回答错误，正确答案：'+correctDispLetter}</div>
       ${q.analysis&&q.analysis!=='暂无'?`<div class="explain">${'解析：'+esc(tight(q.analysis))}</div>`:''}
@@ -26943,14 +26945,14 @@ function renderQuestion(){
         <span class="chip">第 ${curPos+1} / ${curQueue.length} 题</span></div>
       <div>
         <button class="btn gray sm" id="btnPrev">← 上一题</button>
-        <button class="btn gray sm" id="btnJump">按序号跳转</button>
         <button class="btn gray sm" id="btnNext">下一题 →</button>
+        <button class="btn gray sm" id="btnJump">按序号跳转</button>
       </div>
     </div>
     <div class="stem">${esc(q.stem)}</div>
     <ol class="opts" id="opts">${optHtml}</ol>
     ${fbHtml}
-    <div class="tagline">答对自动跳下一题 · 答错查看解析后，该题排到队尾本轮内重推直到答对 · 选项作答后锁定</div>
+    <div class="tagline">答对自动跳下一题 · 答错的题排到队尾，本轮做完全队列后重考它（不会提前结束本轮） · 选项作答后锁定</div>
   </div>`;
   $('#page').innerHTML = html;
 
@@ -26972,43 +26974,31 @@ function renderQuestion(){
   window.scrollTo(0,0);
 }
 
+/* 严格顺序导航：「下一题」= curPos + 1，「上一题」= curPos - 1，都不跳题。
+   初始队列按「先选择、后判断、原序」排定；答错的题不会从中间删除，而是以“补练副本”
+   追加到队尾（队列只增不减），本轮走到队尾时重考，答错再追加，直到答对才结束。
+   因为队列中间从不被删除，curPos 与“第 N 题”始终一一对应，来回翻页不会错位或跳题。 */
 function nextBtn(){
-  let np = curPos+1;
-  while(np < curQueue.length){
-    const q = curQueue[np].q;
-    if(curAnswered[q.question_id]===undefined) break;
-    np++;
+  if(curPos+1 < curQueue.length){
+    curPos++;
+    renderQuestion();
+  } else {
+    finishRound();
   }
-  if(np >= curQueue.length){
-    // 到达队尾：若队尾是“本轮补练”（答错后重排上来、已作答）的题，必须回到队尾重答，不结束本轮
-    const last = curQueue[curQueue.length-1];
-    if(last && last.qin && curAnswered[last.q.question_id]===undefined){
-      // 队尾是“本轮补练”且尚未作答（刚答错被重排上来，或用户在队尾查看解析后按下一题）：
-      // 跳到第一道未作答的题继续（扫遍全队列，找不到则停在 0），避免卡死在队尾
-      let np2 = -1;
-      for(let i=0;i<curQueue.length;i++){
-        if(curAnswered[curQueue[i].q.question_id]===undefined){ np2=i; break; }
-      }
-      np = np2<0 ? 0 : np2;
-    } else if(curQueue.length===0 || (last && curAnswered[last.q.question_id]!==undefined)){
-      return finishRound();
-    } else {
-      np = curQueue.length-1;
-    }
-  }
-  curPos = np;
-  renderQuestion();
 }
 
 /* rawIdx：用户点选的是“原始选项下标”（0 起）。判断题固定 A=0/B=1。
-   保存原始下标而非显示字母，选项顺序锁定后重新渲染（如查看解析）选中/对错标记依然一致。 */
+   保存原始下标而非显示字母，选项顺序锁定后重新渲染（如查看解析）选中/对错标记依然一致。
+   作答反馈按【位置】记录（curFeedback[curPos]）而不是按题目 ID：答错的题会以“补练副本”
+   追加到队尾，同一题在本轮可能出现多次，每个位置的作答状态必须相互独立，
+   否则回看原位置时会被队尾的新作答覆盖，造成“答案丢失/跳题”的错觉。 */
 function chooseRaw(rawIdx, q, s){
-  if(curAnswered[q.question_id]!==undefined) return;
+  if(curFeedback[curPos]) return;          // 该位置已作答，锁定
   const u = loadUser(curUser);
-  curAnswered[q.question_id] = rawIdx;
   // 正确答案原始下标：选择题 A=0,B=1…；判断题按数据 answer（A=正确→0，B=错误→1）
   const rawAnsIdx = q.kind==='single' ? (q.answer.charCodeAt(0)-65) : ((q.answer==='B')?1:0);
   const ok = rawIdx===rawAnsIdx;
+  curFeedback[curPos] = {raw: rawIdx, ok}; // 记录本位置的作答反馈（位置独立）
   const s2 = qState(u, curGid, q.question_id);   // 内部会 ensureGroup，组数据必然存在
   s2.seen = true;
   s2.lastSeenAt = Date.now();
@@ -27022,25 +27012,20 @@ function chooseRaw(rawIdx, q, s){
   }
   ensureGroup(curGid).groups[curGid].lastSaved = Date.now();
   saveUser(u);
+  if(!ok){
+    // 答错：先把该题作为“补练副本”追加到队尾，再渲染反馈页——这样反馈页上的
+    // “第 N 题 / 队列剩余”立即反映新增的补练量，数字准确。
+    // 不删除当前位置的题（中间删除会让 curPos 与“第 N 题”错位，导致翻页跳题），
+    // 当前位置保留答错反馈与解析供回看；本轮走到队尾时重考补练副本，答错再追加，直到答对。
+    const p0 = curQueue[curPos];
+    if(p0) curQueue.push({q: p0.q, qin: true});
+  }
   renderQuestion();
   if(ok){
     setTimeout(()=>{
-      const u2 = loadUser(curUser);
-      if(curQueue.every(p=> curAnswered[p.q.question_id]!==undefined)) finishRound();
+      if(curQueue.every((p,i)=> curFeedback[i]!==undefined)) finishRound();
       else nextBtn();
     }, 900);
-  } else {
-    // 本轮内重推：把刚答错的题（当前位置）摘出来，标记为“补练”后追加到队尾。
-    // 清除 curAnswered 里该题的旧记录，使其在重推后视为“尚未作答”，
-    // 用户重新答对后 nextBtn 才会正常推进，本轮全部答对后才结束。
-    const p0 = curQueue[curPos];
-    if(p0){
-      delete curAnswered[p0.q.question_id];
-      curQueue.splice(curPos, 1);
-      p0.qin = true;
-      curQueue.push(p0);
-      curPos = curQueue.length - 1;
-    }
   }
 }
 
@@ -27048,7 +27033,7 @@ function finishRound(){
   const u = loadUser(curUser);
   ensureGroup(curGid).groups[curGid].lastSaved = Date.now();
   saveUser(u);
-  curQueue = []; curPos = 0;
+  curQueue = []; curPos = 0; curFeedback = [];
   renderQuestion();
 }
 
