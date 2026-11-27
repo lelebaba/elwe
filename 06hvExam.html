@@ -26692,18 +26692,23 @@ function uKey(name){ return 'u_' + name; }
 function loadUser(name){
   const all = loadAll();
   let u = all[uKey(name)];
-  if(!u){ u = { groups:{} }; all[uKey(name)] = u; saveAll(all); }
+  if(!u){ u = { name, groups:{} }; all[uKey(name)] = u; saveAll(all); }
+  u.name = name;   // 关键：用户对象必须带 name，saveUser 才能写回正确的键
   return u;
 }
-function saveUser(u){ const all = loadAll(); all[uKey(u.name)] = u; saveAll(all); }
-
-function ensureGroup(gid){
-  const u = loadUser(curUser);
-  if(!u.groups[gid]) u.groups[gid] = { attempts:0, lastReset:null, lastSaved:null, questions:{} };
-  return u;
+function saveUser(u){
+  const all = loadAll();
+  all[uKey(u.name || curUser)] = u;   // 兜底：个别旧对象缺 name 时用当前登录名
+  saveAll(all);
+}
+/* 统一在传入的 u 上操作并返回它，避免“重新 loadUser 得到新对象、写回去丢失”的问题 */
+function ensureGroup(gid, u){
+  const uu = u || loadUser(curUser);
+  if(!uu.groups[gid]) uu.groups[gid] = { attempts:0, lastReset:null, lastSaved:null, questions:{} };
+  return uu;
 }
 function qState(u,gid,qid){
-  const u2 = ensureGroup(gid);
+  const u2 = ensureGroup(gid, u);
   const g = u2.groups[gid];
   if(!g.questions[qid]) g.questions[qid] = { seen:false, correct:false, wrong:0, lastCorrectAt:null, lastWrongAt:null, lastSeenAt:null };
   return g.questions[qid];
@@ -27018,7 +27023,7 @@ function chooseRaw(rawIdx, q, s){
     s2.wrong = (s2.wrong||0)+1;
     s2.lastWrongAt = Date.now();
   }
-  ensureGroup(curGid).groups[curGid].lastSaved = Date.now();
+  ensureGroup(curGid, u).groups[curGid].lastSaved = Date.now();
   saveUser(u);
   if(!ok){
     // 答错：先把该题作为“补练副本”追加到队尾，再渲染反馈页——这样反馈页上的
@@ -27039,7 +27044,7 @@ function chooseRaw(rawIdx, q, s){
 
 function finishRound(){
   const u = loadUser(curUser);
-  ensureGroup(curGid).groups[curGid].lastSaved = Date.now();
+  ensureGroup(curGid, u).groups[curGid].lastSaved = Date.now();
   saveUser(u);
   curQueue = []; curPos = 0; curFeedback = [];
   renderQuestion();
