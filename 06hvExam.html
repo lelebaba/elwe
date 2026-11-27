@@ -74,6 +74,14 @@ h3{margin:14px 0 8px;font-size:15px}
 .gnum.correct{background:var(--green-bg);color:var(--ok);border-color:#b6e2c7}
 .gnum.wrong{background:var(--amber-bg);color:var(--amber);border-color:#f5d9ae}
 .gnum.cur{outline:3px solid var(--blue)}
+/* 本轮作答状态标记：优先显示答对，其次答错，再次为在队列中未作答 */
+.gnum.r-ok{background:var(--green-bg);color:var(--ok);border-color:#9ed8b5;font-weight:700}
+.gnum.r-bad{background:var(--red-bg);color:var(--bad);border-color:#f0b4b4;font-weight:700}
+.gnum.r-todo{background:#eef4ff;color:var(--blue-d);border-color:#c7d7fb;border-style:dashed}
+.gnum.r-ok::after{content:" ✓"}
+.gnum.r-bad::after{content:" ✗"}
+#modalLegend{display:flex;flex-wrap:wrap;gap:10px 14px;margin:0 0 10px;font-size:12px;color:var(--ink2)}
+#modalLegend i{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:5px;border:1px solid var(--line);font-style:normal;font-size:11px;margin-right:4px}
 .mlegend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);padding:10px 16px 14px;border-top:1px solid var(--line)}
 .mlegend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 input[type=text]{border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;font:inherit;width:260px}
@@ -121,7 +129,7 @@ input[type=text]:focus{outline:none;border-color:var(--blue)}
 <div id="modal" class="mwrap hidden">
   <div class="mbox">
     <div class="mhead"><b id="modalHeadText">按序号选择题目</b><button class="btn gray sm" id="mClose">✕ 关闭</button></div>
-    <div class="mbody"><div id="modalGrid"></div></div>
+    <div class="mbody"><div id="modalLegend"></div><div id="modalGrid"></div></div>
     <div class="mlegend">
       <span><i style="background:var(--green-bg);border:1px solid #b6e2c7"></i>已答对</span>
       <span><i style="background:var(--amber-bg);border:1px solid #f5d9ae"></i>答错过/待复练</span>
@@ -27049,20 +27057,51 @@ function buildGrid(){
   const g = u.groups[curGid]||{questions:{}};
   const grp = COURSE_DATA.groups[curGid-1];
   const q = curQueue[curPos]? curQueue[curPos].q : null;
+  // 本轮作答状态：按位置遍历当前队列（同一题可能因补练出现多次，任一位置答对即视为本轮已答对）
+  const roundState = {};   // qid -> {ok, wrong, todo, firstUnanswered}
+  curQueue.forEach((p,i)=>{
+    const qid = p.q.question_id;
+    const st = roundState[qid] || (roundState[qid] = {ok:false, wrong:false, todo:false, firstUnanswered:-1});
+    const fb = curFeedback[i];
+    if(!fb){
+      st.todo = true;
+      if(st.firstUnanswered < 0) st.firstUnanswered = i;
+    } else if(fb.ok){ st.ok = true; }
+    else { st.wrong = true; }
+  });
+  let nOk=0, nBad=0, nTodo=0;
   let html='';
   grp.questions.forEach(p=>{
     const s = g.questions[p.question_id];
+    const rs = roundState[p.question_id];
     let cls='gnum';
-    if(s && s.correct) cls+=' correct';
-    else if(s && (s.wrong>0 || s.seen)) cls+=' wrong';
+    if(rs && rs.ok){ cls+=' r-ok'; nOk++; }
+    else if(rs && rs.wrong){ cls+=' r-bad'; nBad++; }
+    else if(rs && rs.todo){ cls+=' r-todo'; nTodo++; }
+    else {
+      // 不在本轮队列：仅历史状态（如已答对且遗忘间隔未到）
+      if(s && s.correct) cls+=' correct';
+      else if(s && (s.wrong>0 || s.seen)) cls+=' wrong';
+    }
     if(q && p.question_id===q.question_id) cls+=' cur';
-    html += `<div class="${cls}" data-qid="${p.question_id}" data-seq="${p.seq}">${p.index_in_group}</div>`;
+    html += `<div class="${cls}" role="button" tabindex="0" data-qid="${p.question_id}" data-seq="${p.seq}" title="${esc(p.stem)}">${p.index_in_group}</div>`;
   });
+  $('#modalHeadText').textContent = `按序号选择题目（1–${grp.total}）· 本轮已做 ${nOk+nBad} 题（对 ${nOk} / 错 ${nBad}）· 待做 ${nTodo} 题`;
+  $('#modalLegend').innerHTML =
+    `<span><i class="gnum r-ok"></i>本轮已答对</span>`+
+    `<span><i class="gnum r-bad"></i>本轮答错（在队尾补练）</span>`+
+    `<span><i class="gnum r-todo"></i>本轮待做</span>`+
+    `<span><i class="gnum correct"></i>历史已掌握</span>`+
+    `<span><i class="gnum wrong"></i>历史答错</span>`;
   $('#modalGrid').innerHTML = html;
   document.querySelectorAll('#modalGrid .gnum').forEach(el=>{
-    el.onclick = ()=>{
+    const go = ()=>{
       const qid = +el.dataset.qid;
-      let idx = curQueue.findIndex(p=> p.q.question_id===qid);
+      const rs = roundState[qid];
+      // 优先跳到该题在本轮中最早的未作答位置；若都已作答，则跳到第一个位置回看
+      let idx = -1;
+      if(rs && rs.firstUnanswered >= 0) idx = rs.firstUnanswered;
+      else idx = curQueue.findIndex(p=> p.q.question_id===qid);
       if(idx<0){
         // 不在当前队列（已答对且遗忘间隔未到）：跳到当前题并提示
         idx = curPos;
@@ -27072,6 +27111,8 @@ function buildGrid(){
       $('#modal').classList.add('hidden');
       renderQuestion();
     };
+    el.onclick = go;
+    el.onkeydown = e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } };
   });
 }
 $('#mClose').onclick = ()=> $('#modal').classList.add('hidden');
